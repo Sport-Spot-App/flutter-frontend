@@ -60,18 +60,22 @@ class LoginPage extends StatelessWidget {
                 },
               ),
               const SizedBox(height: 20),
-              const Text.rich(
-                TextSpan(
-                  text: "Ainda não tem uma conta? ",
-                  style: TextStyle(color: Colors.black54),
-                  children: [
-                    TextSpan(
-                      text: "Registrar",
-                      style: TextStyle(color: Color(0xFFF85B00)),
-                    ),
-                  ],
+              TextButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, '/register-role');
+                },
+                child: const Text.rich(
+                  TextSpan(
+                    text: "Não Possui Uma Conta? ",
+                    style: TextStyle(color: Colors.black54),
+                    children: [
+                      TextSpan(
+                        text: "Registrar",
+                        style: TextStyle(color: Color(0xFFF85B00)),
+                      ),
+                    ],
+                  ),
                 ),
-                textAlign: TextAlign.center,
               ),
             ],
           ),

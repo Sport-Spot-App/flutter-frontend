@@ -34,12 +34,13 @@ class OnboardingPage extends StatelessWidget {
           PrimaryButton(
             text: "Entrar",
             onPressed: () {
-              print("Entrar clicado!");
+              Navigator.pushNamed(context, '/login');
             },
           ),
               const SizedBox(height: 10),
               TextButton(
                 onPressed: () {
+                  Navigator.pushNamed(context, '/register-role');
                 },
                 child: const Text.rich(
                   TextSpan(
