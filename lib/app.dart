@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/features/onboarding/onboarding_page.dart';
 import 'package:flutter_application_1/features/login/login_page.dart';
+import 'package:flutter_application_1/features/register/register_page.dart';
 import 'package:flutter_application_1/features/register/role_page.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 
@@ -24,13 +25,13 @@ class _AppState extends State<App> {
     initialization();
   }
 
-  void initialization() async{
+  void initialization() async {
     print('pausing...');
-    await Future.delayed(const Duration(seconds: 3));
+    await Future.delayed(const Duration(seconds: 5));
     print('unpausing');
     FlutterNativeSplash.remove();
-
   }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -40,6 +41,7 @@ class _AppState extends State<App> {
         '/': (context) => const OnboardingPage(),
         '/login': (context) => const LoginPage(),
         '/register-role': (context) => const RegisterRoleSelectionPage(),
+        '/register-form': (context) => const RegisterPage(),
       },
     );
   }
