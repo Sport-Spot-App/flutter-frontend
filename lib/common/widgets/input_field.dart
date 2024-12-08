@@ -4,14 +4,14 @@ class InputField extends StatefulWidget {
   final String label;
   final String hintText;
   final TextEditingController? controller;
-  final bool isPassword; 
+  final bool isPassword;
 
   const InputField({
     super.key,
     required this.label,
     required this.hintText,
     this.controller,
-    this.isPassword = false, 
+    this.isPassword = false,
   });
 
   @override
@@ -64,6 +64,7 @@ class _InputFieldState extends State<InputField> {
             ),
           ),
         ),
+        const SizedBox(height: 15),
       ],
     );
   }
