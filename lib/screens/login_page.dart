@@ -32,12 +32,10 @@ class LoginPage extends StatelessWidget {
               const SizedBox(height: 20),
               const InputField(
                 label: "EMAIL",
-                hintText: "moses@email.com",
               ),
               const SizedBox(height: 20),
               const InputField(
                 label: "SENHA",
-                hintText: "123456#Abcd",
                 isPassword: true,
               ),
               Align(
@@ -56,6 +54,7 @@ class LoginPage extends StatelessWidget {
               PrimaryButton(
                 text: "Entrar",
                 onPressed: () {
+                  Navigator.pushNamed(context, '/users');
                   print("Entrar pressionado");
                 },
               ),
