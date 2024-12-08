@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/features/onboarding/onboarding_page.dart';
-import 'package:flutter_application_1/features/login/login_page.dart';
-import 'package:flutter_application_1/features/register/register_page.dart';
-import 'package:flutter_application_1/features/register/role_page.dart';
+import 'package:flutter_application_1/screens/onboarding_page.dart';
+import 'package:flutter_application_1/screens/login_page.dart';
+import 'package:flutter_application_1/screens/register_page.dart';
+import 'package:flutter_application_1/screens/role_page.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 void main() {
