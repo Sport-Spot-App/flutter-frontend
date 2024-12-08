@@ -2,15 +2,17 @@ import 'package:flutter/material.dart';
 
 class InputField extends StatefulWidget {
   final String label;
-  final String hintText;
+  final String? hintText;
   final TextEditingController? controller;
   final bool isPassword;
+  final ValueChanged<String>? onChanged;
 
   const InputField({
     super.key,
     required this.label,
-    required this.hintText,
+    this.hintText,
     this.controller,
+    this.onChanged,
     this.isPassword = false,
   });
 
@@ -37,6 +39,7 @@ class _InputFieldState extends State<InputField> {
         const SizedBox(height: 5),
         TextFormField(
           controller: widget.controller,
+          onChanged: widget.onChanged,
           obscureText: widget.isPassword ? _obscureText : false,
           decoration: InputDecoration(
             hintText: widget.hintText,
