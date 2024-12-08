@@ -3,11 +3,13 @@ import 'package:flutter_application_1/screens/onboarding_page.dart';
 import 'package:flutter_application_1/screens/login_page.dart';
 import 'package:flutter_application_1/screens/register_page.dart';
 import 'package:flutter_application_1/screens/role_page.dart';
+import 'package:flutter_application_1/screens/user_page.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 void main() {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+
   runApp(const App());
 }
 
@@ -41,7 +43,8 @@ class _AppState extends State<App> {
         '/': (context) => const OnboardingPage(),
         '/login': (context) => const LoginPage(),
         '/register-role': (context) => const RegisterRoleSelectionPage(),
-        '/register-form': (context) => const RegisterPage(),
+        '/register-form': (context) => RegisterPage(),
+        '/users': (context) => const UserListPage(),
       },
     );
   }
