@@ -13,7 +13,7 @@ class RegisterPage extends StatelessWidget {
         backgroundColor: Colors.white,
         body: Center(
             child: SingleChildScrollView(
-                padding: EdgeInsets.symmetric(horizontal: 16.0),
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
