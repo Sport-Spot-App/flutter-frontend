@@ -176,6 +176,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.0.0"
+  lucid_validation:
+    dependency: "direct main"
+    description:
+      name: lucid_validation
+      sha256: "2741e7cb953cca8e03354e59ff7aa8ee093a16094e5a0de600b50340f534d8e9"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.0"
   matcher:
     dependency: transitive
     description:
