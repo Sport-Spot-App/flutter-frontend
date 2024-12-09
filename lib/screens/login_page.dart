@@ -1,80 +1,77 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/common/widgets/primary_button.dart';
-import 'package:flutter_application_1/common/widgets/input_field.dart';
-import 'package:flutter_application_1/common/constants/app_text_styles.dart';
-import 'package:flutter_application_1/common/constants/app_colors.dart';
+import 'package:flutter_application_1/repositories/auth_repository.dart';
+import 'package:flutter_application_1/screens/stores/auth_store.dart';
 
 class LoginPage extends StatelessWidget {
-  const LoginPage({super.key});
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final AuthStore store = AuthStore(repository: AuthRepository());
+
+  LoginPage({super.key});
+
+  void _handleLogin(BuildContext context) async {
+    final email = emailController.text.trim();
+    final password = passwordController.text;
+
+    if (email.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Preencha todos os campos')),
+      );
+      return;
+    }
+
+    await store.login(email, password);
+
+    if (store.error.value.isNotEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(store.error.value)),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Login realizado com sucesso!')),
+      );
+      Navigator.pushReplacementNamed(
+          context, '/users'); // Navegar para a próxima tela
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      appBar: AppBar(title: const Text('Login')),
       body: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
-                "Bem-vindo(a)!",
-                style: AppTextStyles.mediumText.copyWith(
-                  color: AppColors.darkOrange,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 20),
-              Image.asset(
-                'assets/images/soccer_players.png',
-                height: 200,
-              ),
-              const SizedBox(height: 20),
-              const InputField(
-                label: "EMAIL",
-              ),
-              const SizedBox(height: 20),
-              const InputField(
-                label: "SENHA",
-                isPassword: true,
-              ),
-              Align(
-                alignment: Alignment.centerRight,
-                child: TextButton(
-                  onPressed: () {
-                    print("Esqueceu a senha pressionado");
-                  },
-                  child: const Text(
-                    "Esqueceu a senha?",
-                    style: TextStyle(color: Colors.black54),
-                  ),
+              TextField(
+                controller: emailController,
+                decoration: const InputDecoration(
+                  labelText: 'Email',
+                  border: OutlineInputBorder(),
                 ),
               ),
-              const SizedBox(height: 50),
-              PrimaryButton(
-                text: "Entrar",
-                onPressed: () {
-                  Navigator.pushNamed(context, '/users');
-                  print("Entrar pressionado");
+              const SizedBox(height: 16),
+              TextField(
+                controller: passwordController,
+                obscureText: true,
+                decoration: const InputDecoration(
+                  labelText: 'Senha',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 16),
+              ValueListenableBuilder<bool>(
+                valueListenable: store.isLoading,
+                builder: (context, isLoading, child) {
+                  return ElevatedButton(
+                    onPressed: isLoading ? null : () => _handleLogin(context),
+                    child: isLoading
+                        ? const CircularProgressIndicator(color: Colors.white)
+                        : const Text('Entrar'),
+                  );
                 },
-              ),
-              const SizedBox(height: 20),
-              TextButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, '/register-role');
-                },
-                child: const Text.rich(
-                  TextSpan(
-                    text: "Não Possui Uma Conta? ",
-                    style: TextStyle(color: Colors.black54),
-                    children: [
-                      TextSpan(
-                        text: "Registrar",
-                        style: TextStyle(color: Color(0xFFF85B00)),
-                      ),
-                    ],
-                  ),
-                ),
               ),
             ],
           ),
