@@ -8,7 +8,9 @@ import 'package:flutter_application_1/repositories/user_repository.dart';
 import 'package:flutter_application_1/screens/stores/user_store.dart';
 
 class RegisterPage extends StatelessWidget {
-  RegisterPage({super.key});
+  final int role;
+
+  RegisterPage({Key? key, required this.role}) : super(key: key);
 
   final userRepository = UserRepository();
   final userStore = UserStore(repository: UserRepository());
@@ -36,7 +38,7 @@ class RegisterPage extends StatelessWidget {
       password: passwordController.text,
       document: cpfController.text.trim(),
       cellphone: cellphoneController.text.trim(),
-      role: 1,
+      role: role,
       status: true,
       is_approved: false,
       created_at: DateTime.now(),
