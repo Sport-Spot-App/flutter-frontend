@@ -10,18 +10,22 @@ class RegisterRoleSelectionPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      appBar: AppBar(
+        title: const Text(''),
+        backgroundColor: Colors.white,
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const SizedBox(height: 40),
               // Título da página
               Text(
                 "Como deseja se cadastrar?",
                 style: AppTextStyles.mediumText.copyWith(
                   color: AppColors.darkOrange,
+                  height: 1,
                 ),
                 textAlign: TextAlign.center,
               ),

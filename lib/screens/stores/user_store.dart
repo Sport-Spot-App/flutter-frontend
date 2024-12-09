@@ -55,4 +55,9 @@ class UserStore {
       isLoading.value = false;
     }
   }
+
+  Future<void> deleteUser(int id) async {
+    await repository.deleteUser(id);
+    await getUsers();
+  }
 }

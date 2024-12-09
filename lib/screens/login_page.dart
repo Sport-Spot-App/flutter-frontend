@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/common/constants/app_colors.dart';
+import 'package:flutter_application_1/common/constants/app_text_styles.dart';
+import 'package:flutter_application_1/common/widgets/input_field.dart';
+import 'package:flutter_application_1/common/widgets/primary_button.dart';
 import 'package:flutter_application_1/repositories/auth_repository.dart';
 import 'package:flutter_application_1/screens/stores/auth_store.dart';
 
@@ -45,31 +49,30 @@ class LoginPage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              TextField(
-                controller: emailController,
-                decoration: const InputDecoration(
-                  labelText: 'Email',
-                  border: OutlineInputBorder(),
+              Text(
+                'Bem-vindo(a)!',
+                style: AppTextStyles.mediumText.copyWith(
+                  color: AppColors.darkOrange,
+                  height: 1,
                 ),
               ),
-              const SizedBox(height: 16),
-              TextField(
+              Image.asset('assets/images/soccer_players.png'),
+              InputField(
+                controller: emailController,
+                label: 'EMAIL',
+              ),
+              InputField(
                 controller: passwordController,
-                obscureText: true,
-                decoration: const InputDecoration(
-                  labelText: 'Senha',
-                  border: OutlineInputBorder(),
-                ),
+                isPassword: true,
+                label: 'SENHA',
               ),
               const SizedBox(height: 16),
               ValueListenableBuilder<bool>(
                 valueListenable: store.isLoading,
                 builder: (context, isLoading, child) {
-                  return ElevatedButton(
+                  return PrimaryButton(
+                    text: isLoading ? 'Carregando...' : 'Entrar',
                     onPressed: isLoading ? null : () => _handleLogin(context),
-                    child: isLoading
-                        ? const CircularProgressIndicator(color: Colors.white)
-                        : const Text('Entrar'),
                   );
                 },
               ),

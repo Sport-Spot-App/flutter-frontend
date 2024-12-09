@@ -6,6 +6,7 @@ import 'package:flutter_application_1/http/exceptions.dart';
 abstract class IUserRepository {
   Future<List<UserModel>> getUsers();
   Future<bool> registerUser(UserModel user);
+  Future<void> deleteUser(int userId);
 }
 
 class UserRepository implements IUserRepository {
@@ -46,6 +47,15 @@ class UserRepository implements IUserRepository {
       print(response.statusCode);
       print(response.body);
       throw Exception('Erro no registro');
+    }
+  }
+
+  Future<void> deleteUser(int userId) async {
+    final response =
+        await http.delete(Uri.parse('http://localhost/api/users/$userId'));
+
+    if (response.statusCode != 200) {
+      throw Exception("Erro ao excluir usuário");
     }
   }
 }

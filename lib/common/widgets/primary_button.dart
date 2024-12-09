@@ -3,7 +3,7 @@ import 'package:flutter_application_1/common/constants/app_colors.dart';
 
 class PrimaryButton extends StatelessWidget {
   final String text;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
   final Gradient gradient;
   final double width;
   final double height;
@@ -11,7 +11,7 @@ class PrimaryButton extends StatelessWidget {
   const PrimaryButton({
     super.key,
     required this.text,
-    required this.onPressed,
+    this.onPressed,
     this.gradient = const LinearGradient(
       colors: AppColors.orangeGradient,
       begin: Alignment.topCenter,

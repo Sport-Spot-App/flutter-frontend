@@ -66,6 +66,10 @@ class RegisterPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      appBar: AppBar(
+        title: const Text(''),
+        backgroundColor: Colors.white,
+      ),
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -77,13 +81,17 @@ class RegisterPage extends StatelessWidget {
                 'Comece a reservar sua quadra agora!',
                 style: AppTextStyles.mediumText.copyWith(
                   color: AppColors.darkOrange,
+                  height: 1,
                 ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 10),
               InputField(controller: nameController, label: "NOME"),
               InputField(controller: emailController, label: "EMAIL"),
-              InputField(controller: cpfController, label: "CPF"),
+              InputField(
+                controller: cpfController,
+                label: role == 2 ? "CNPJ" : "CPF",
+              ),
               InputField(controller: cellphoneController, label: "CELULAR"),
               InputField(
                 controller: passwordController,

@@ -85,14 +85,39 @@ class _UserListState extends State<UserListPage> {
             Text("Celular: ${user.cellphone}"),
           ],
         ),
-        trailing: user.is_approved
-            ? const Icon(Icons.check_circle, color: Colors.green)
-            : const Icon(Icons.block, color: Colors.red),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            user.is_approved
+                ? const Icon(Icons.check_circle, color: Colors.green)
+                : const Icon(Icons.block, color: Colors.red),
+            IconButton(
+              icon: const Icon(Icons.delete, color: Colors.red),
+              onPressed: () async {
+                await _deleteUser(user.id);
+              },
+            ),
+          ],
+        ),
         onTap: () {
           _showUserDetails(user);
         },
       ),
     );
+  }
+
+  Future<void> _deleteUser(int userId) async {
+    try {
+      await store.deleteUser(userId);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Usuário excluído com sucesso")),
+      );
+      store.getUsers(); // Atualiza a lista após a exclusão
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Erro ao excluir usuário")),
+      );
+    }
   }
 
   void _showUserDetails(UserModel user) {
