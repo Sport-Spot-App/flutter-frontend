@@ -31,7 +31,8 @@ class RegisterRoleSelectionPage extends StatelessWidget {
                 imagePath: 'assets/images/basketball_court.png',
                 onPressed: () {
                   print("Dono de Quadra selecionado");
-                  Navigator.pushNamed(context, '/register-form');
+                  Navigator.pushNamed(context, '/register-form',
+                      arguments: {'role': 2});
                 },
               ),
               const SizedBox(height: 20),
@@ -40,7 +41,8 @@ class RegisterRoleSelectionPage extends StatelessWidget {
                 imagePath: 'assets/images/soccer_players.png',
                 onPressed: () {
                   print("Atleta selecionado");
-                  Navigator.pushNamed(context, '/register-form');
+                  Navigator.pushNamed(context, '/register-form',
+                      arguments: {'role': 3});
                 },
               ),
               const SizedBox(height: 40),
