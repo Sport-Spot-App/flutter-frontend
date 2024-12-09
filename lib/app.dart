@@ -28,9 +28,7 @@ class _AppState extends State<App> {
   }
 
   void initialization() async {
-    print('pausing...');
     await Future.delayed(const Duration(seconds: 5));
-    print('unpausing');
     FlutterNativeSplash.remove();
   }
 
@@ -41,9 +39,13 @@ class _AppState extends State<App> {
       initialRoute: '/',
       routes: {
         '/': (context) => const OnboardingPage(),
-        '/login': (context) => const LoginPage(),
+        '/login': (context) => LoginPage(),
         '/register-role': (context) => const RegisterRoleSelectionPage(),
-        '/register-form': (context) => RegisterPage(),
+        '/register-form': (context) {
+          final args = ModalRoute.of(context)?.settings.arguments as Map?;
+          final role = args?['role'] as int? ?? 0;
+          return RegisterPage(role: role);
+        },
         '/users': (context) => const UserListPage(),
       },
     );
