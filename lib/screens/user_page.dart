@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/common/widgets/navigation_bar.dart';
 import 'package:flutter_application_1/repositories/user_repository.dart';
 import 'package:flutter_application_1/screens/stores/user_store.dart';
 import 'package:flutter_application_1/models/user_model.dart';
@@ -55,6 +56,9 @@ class _UserListState extends State<UserListPage> {
             );
           }
         },
+      ),
+      bottomNavigationBar: const CustomNavigationBar(
+        currentIndex: 3, 
       ),
     );
   }
