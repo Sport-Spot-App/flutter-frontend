@@ -10,7 +10,7 @@ import 'package:flutter_application_1/screens/stores/user_store.dart';
 class RegisterPage extends StatelessWidget {
   final int role;
 
-  RegisterPage({Key? key, required this.role}) : super(key: key);
+  RegisterPage({super.key, required this.role});
 
   final userRepository = UserRepository();
   final userStore = UserStore(repository: UserRepository());
