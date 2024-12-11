@@ -3,6 +3,7 @@
 </p>
 
 # 🏐 Sport Spot Frontend
+[![API (Backend)](https://img.shields.io/badge/API-F98C43?style=for-the-badge)](https://github.com/Sport-Spot-App/laravel-api)
 
 ## Introdução
 Este é o frontend do Sport Spot, uma aplicação desenvolvida com Flutter/Dart que consome a API do Sport Spot para oferecer uma interface intuitiva e funcional para usuários e administradores. Com este app, é possível realizar reservas, gerenciar quadras esportivas e visualizar informações de esportes disponíveis.
