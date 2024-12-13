@@ -7,12 +7,13 @@ abstract class IUserRepository {
   Future<List<UserModel>> getUsers();
   Future<bool> registerUser(UserModel user);
   Future<void> deleteUser(int userId);
+  Future<bool> updateUser(UserModel user);
 }
 
 class UserRepository implements IUserRepository {
   @override
   Future<List<UserModel>> getUsers() async {
-    final response = await http.get(Uri.parse('http://localhost/api/users'));
+    final response = await http.get(Uri.parse('http://localhost/users'));
 
     if (response.statusCode == 200) {
       final List<UserModel> users = [];
@@ -34,7 +35,7 @@ class UserRepository implements IUserRepository {
   @override
   Future<bool> registerUser(UserModel user) async {
     final response = await http.post(
-      Uri.parse('http://localhost/api/users'),
+      Uri.parse('http://localhost/users'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(user.toMap()),
     );
@@ -52,10 +53,30 @@ class UserRepository implements IUserRepository {
 
   Future<void> deleteUser(int userId) async {
     final response =
-        await http.delete(Uri.parse('http://localhost/api/users/$userId'));
+        await http.delete(Uri.parse('http://localhost/users/$userId'));
 
     if (response.statusCode != 200) {
       throw Exception("Erro ao excluir usuário");
     }
   }
+
+  @override
+Future<bool> updateUser(UserModel user) async {
+  final response = await http.put(
+    Uri.parse('http://localhost/users/${user.id}'),
+    headers: {'Content-Type': 'application/json'},
+    body: jsonEncode(user.toMap()),
+  );
+
+  if (response.statusCode == 200) {
+    return true;
+  } else if (response.statusCode == 404) {
+    throw NotFoundException('Usuário não encontrado.');
+  } else {
+    print(response.statusCode);
+    print(response.body);
+    throw Exception('Erro ao atualizar o usuário.');
+  }
+}
+
 }

@@ -31,7 +31,7 @@ class UserModel {
 
   factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
-      id: map['id'],
+      id: int.tryParse(map['id'].toString()) ?? 0,
       name: map['name'],
       photo: map['photo'] != null ? map['photo'] as String : null,
       email: map['email'],
@@ -64,5 +64,34 @@ class UserModel {
       'updated_at': updated_at.toIso8601String(),
       'deleted_at': deleted_at?.toIso8601String(),
     };
+  }
+
+   UserModel copyWith({
+    int? id,
+    String? name,
+    String? email,
+    int? role,
+    String? photo,
+    String? cellphone,
+    String? document,
+    bool? status,
+    bool? isApproved,
+    DateTime? emailVerifiedAt,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) {
+    return UserModel(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      email: email ?? this.email,
+      role: role ?? this.role,
+      photo: photo ?? this.photo,
+      cellphone: cellphone ?? this.cellphone,
+      document: document ?? this.document,
+      status: status ?? this.status,
+      is_approved: is_approved,
+      created_at: created_at,
+      updated_at: updated_at,
+    );
   }
 }

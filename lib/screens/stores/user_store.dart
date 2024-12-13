@@ -42,7 +42,6 @@ class UserStore {
       final response = await repository.registerUser(user);
 
       if (response) {
-        // Caso o registro seja bem-sucedido
         erro.value = '';
       } else {
         erro.value = 'Falha no registro';
@@ -56,8 +55,45 @@ class UserStore {
     }
   }
 
+  /// Método para excluir um usuário
   Future<void> deleteUser(int id) async {
-    await repository.deleteUser(id);
-    await getUsers();
+    isLoading.value = true;
+
+    try {
+      await repository.deleteUser(id);
+      await getUsers(); // Atualiza a lista de usuários
+    } catch (e) {
+      erro.value = e.toString();
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  /// Método para atualizar um usuário
+  Future<void> updateUser(UserModel updatedUser) async {
+    isLoading.value = true;
+
+    try {
+      final response = await repository.updateUser(updatedUser);
+
+      if (response) {
+        erro.value = '';
+        // Atualiza o usuário na lista de estado
+        final users = state.value.map((user) {
+          if (user.id == updatedUser.id) {
+            return updatedUser; // Substitui pelo usuário atualizado
+          }
+          return user;
+        }).toList();
+
+        state.value = users;
+      } else {
+        erro.value = 'Falha ao atualizar o usuário';
+      }
+    } catch (e) {
+      erro.value = e.toString();
+    } finally {
+      isLoading.value = false;
+    }
   }
 }
