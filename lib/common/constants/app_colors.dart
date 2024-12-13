@@ -6,7 +6,8 @@ class AppColors {
   static const Color mediumOrange = Color(0xFFEF9A61);
   static const Color darkOrange = Color(0xFFF85B00);
 
+  static const Color gray = Color(0xFF666666);
   static const Color charcoalBlue = Color(0XFF37474F);
   
-  static const List<Color> orangeGradient = [Color(0xFFEF9A61), Color(0xFFF85B00)];
+  static const List<Color> orangeGradient = [Color(0xFFF85B00),Color(0xFFEF9A61)];
 }
