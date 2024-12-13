@@ -3,6 +3,7 @@ import 'package:flutter_application_1/common/widgets/navigation_bar.dart';
 import 'package:flutter_application_1/repositories/user_repository.dart';
 import 'package:flutter_application_1/screens/stores/user_store.dart';
 import 'package:flutter_application_1/models/user_model.dart';
+import 'package:flutter_application_1/screens/edit_user_page.dart';
 
 class UserListPage extends StatefulWidget {
   const UserListPage({super.key});
@@ -23,8 +24,10 @@ class _UserListState extends State<UserListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text("Lista de Usuários"),
+        title: const Text("Usuários"),
+        backgroundColor: Colors.transparent,
         centerTitle: true,
       ),
       body: AnimatedBuilder(
@@ -58,7 +61,7 @@ class _UserListState extends State<UserListPage> {
         },
       ),
       bottomNavigationBar: const CustomNavigationBar(
-        currentIndex: 3, 
+        currentIndex: 3,
       ),
     );
   }
@@ -95,6 +98,24 @@ class _UserListState extends State<UserListPage> {
             user.is_approved
                 ? const Icon(Icons.check_circle, color: Colors.green)
                 : const Icon(Icons.block, color: Colors.red),
+            IconButton(
+              icon: const Icon(Icons.edit, color: Colors.blue),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => EditUserPage(
+                      user: user,
+                      userStore: store,
+                    ),
+                  ),
+                ).then((value) {
+                  if (value == true) {
+                    store.getUsers(); // Atualiza a lista após edição
+                  }
+                });
+              },
+            ),
             IconButton(
               icon: const Icon(Icons.delete, color: Colors.red),
               onPressed: () async {
