@@ -68,7 +68,7 @@ class RegisterPage extends StatelessWidget {
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text(''),
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.transparent,
       ),
       body: Center(
         child: SingleChildScrollView(
