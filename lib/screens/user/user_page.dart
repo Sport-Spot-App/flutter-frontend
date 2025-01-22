@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/common/widgets/navigation_bar.dart';
-import 'package:flutter_application_1/repositories/user_repository.dart';
-import 'package:flutter_application_1/screens/stores/user_store.dart';
-import 'package:flutter_application_1/models/user_model.dart';
-import 'package:flutter_application_1/screens/edit_user_page.dart';
+import 'package:sport_spot/api/api.dart';
+import 'package:sport_spot/common/widgets/navigation_bar.dart';
+import 'package:sport_spot/repositories/user_repository.dart';
+import 'package:sport_spot/stores/user_store.dart';
+import 'package:sport_spot/models/user_model.dart';
+import 'package:sport_spot/screens/user/edit_user_page.dart';
 
 class UserListPage extends StatefulWidget {
   const UserListPage({super.key});
@@ -13,7 +14,7 @@ class UserListPage extends StatefulWidget {
 }
 
 class _UserListState extends State<UserListPage> {
-  final UserStore store = UserStore(repository: UserRepository());
+  final UserStore store = UserStore(repository: UserRepository(Api()));
 
   @override
   void initState() {

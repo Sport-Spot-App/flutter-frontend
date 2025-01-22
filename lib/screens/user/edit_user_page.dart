@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/common/widgets/input_field.dart';
-import 'package:flutter_application_1/common/widgets/primary_button.dart';
-import 'package:flutter_application_1/common/widgets/half_clipper.dart'; // Your custom clipper
-import 'package:flutter_application_1/models/user_model.dart';
-import 'package:flutter_application_1/screens/stores/user_store.dart';
-import 'package:flutter_application_1/common/constants/app_colors.dart';
+import 'package:sport_spot/common/widgets/input_field.dart';
+import 'package:sport_spot/common/widgets/primary_button.dart';
+import 'package:sport_spot/common/widgets/half_clipper.dart'; // Your custom clipper
+import 'package:sport_spot/models/user_model.dart';
+import 'package:sport_spot/stores/user_store.dart';
+import 'package:sport_spot/common/constants/app_colors.dart';
 
 class EditUserPage extends StatefulWidget {
   final UserModel user;
   final UserStore userStore;
 
-  const EditUserPage({Key? key, required this.user, required this.userStore})
-      : super(key: key);
+  const EditUserPage({super.key, required this.user, required this.userStore});
 
   @override
   _EditUserPageState createState() => _EditUserPageState();
@@ -60,7 +59,7 @@ class _EditUserPageState extends State<EditUserPage> {
       if (widget.userStore.erro.value.isEmpty) {
         Navigator.pop(context); // Fecha a tela se tudo deu certo
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Usuário atualizado com sucesso!')),
+          const SnackBar(content: Text('Usuário atualizado com sucesso!')),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -75,7 +74,7 @@ class _EditUserPageState extends State<EditUserPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text('Editar Usuário'),
+        title: const Text('Editar Usuário'),
         backgroundColor: AppColors.darkOrange,
       ),
       body: Column(
@@ -104,7 +103,7 @@ class _EditUserPageState extends State<EditUserPage> {
                       : const AssetImage('assets/images/default_user.png')
                           as ImageProvider,
                   child: IconButton(
-                    icon: Icon(Icons.camera_alt, color: Colors.white),
+                    icon: const Icon(Icons.camera_alt, color: Colors.white),
                     onPressed: () {
                       // Ação para alterar a foto
                     },
