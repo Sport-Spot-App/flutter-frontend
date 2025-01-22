@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/http/exceptions.dart';
-import 'package:flutter_application_1/models/user_model.dart';
-import 'package:flutter_application_1/repositories/user_repository.dart';
+import 'package:sport_spot/http/exceptions.dart';
+import 'package:sport_spot/models/user_model.dart';
+import 'package:sport_spot/repositories/user_repository.dart';
 
 class UserStore {
   final IUserRepository repository;
@@ -10,8 +10,7 @@ class UserStore {
   final ValueNotifier<bool> isLoading = ValueNotifier<bool>(false);
 
   // Variável reativa para o estado
-  final ValueNotifier<List<UserModel>> state =
-      ValueNotifier<List<UserModel>>([]);
+  final ValueNotifier<List<UserModel>> state = ValueNotifier<List<UserModel>>([]);
 
   // Variável reativa para erros
   final ValueNotifier<String> erro = ValueNotifier<String>('');
@@ -90,6 +89,19 @@ class UserStore {
       } else {
         erro.value = 'Falha ao atualizar o usuário';
       }
+    } catch (e) {
+      erro.value = e.toString();
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> getUserData() async {
+    isLoading.value = true;
+    erro.value = '';
+
+    try {
+      await repository.getUserData();
     } catch (e) {
       erro.value = e.toString();
     } finally {

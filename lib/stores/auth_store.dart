@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/repositories/auth_repository.dart';
-import 'package:flutter_application_1/models/auth_model.dart';
+import 'package:sport_spot/api/token/token_storage.dart';
+import 'package:sport_spot/repositories/auth_repository.dart';
 
 class AuthStore {
   final IAuthRepository repository;
@@ -11,9 +11,6 @@ class AuthStore {
   // Variável reativa para o erro
   final ValueNotifier<String> error = ValueNotifier<String>('');
 
-  // Variável para armazenar o token
-  AuthModel? auth;
-
   AuthStore({required this.repository});
 
   Future<void> login(String email, String password) async {
@@ -21,11 +18,17 @@ class AuthStore {
     error.value = '';
 
     try {
-      auth = await repository.login(email, password);
+      await repository.login(email, password);
+
     } catch (e) {
       error.value = e.toString();
     } finally {
       isLoading.value = false;
     }
+  }
+
+  Future<void> logout() async {
+    final tokenStorage = TokenStorage();
+    await tokenStorage.delete();
   }
 }
