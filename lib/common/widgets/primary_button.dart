@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/common/constants/app_colors.dart';
+import 'package:sport_spot/common/constants/app_colors.dart';
 
 class PrimaryButton extends StatelessWidget {
   final String text;

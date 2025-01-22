@@ -33,12 +33,6 @@ class RoleButton extends StatelessWidget {
         ),
         child: Column(
           children: [
-            Image.asset(
-              imagePath,
-              height: 120,
-              fit: BoxFit.contain,
-            ),
-            const SizedBox(height: 10),
             Text(
               title,
               style: const TextStyle(
@@ -46,6 +40,12 @@ class RoleButton extends StatelessWidget {
                 fontWeight: FontWeight.bold,
                 color: Color(0xFF333333),
               ),
+            ),
+            const SizedBox(height: 10),
+            Image.asset(
+              imagePath,
+              height: 200,
+              fit: BoxFit.contain,
             ),
           ],
         ),
