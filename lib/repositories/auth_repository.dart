@@ -1,28 +1,30 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
-import 'package:flutter_application_1/models/auth_model.dart';
+import 'package:dio/dio.dart';
+import 'package:sport_spot/models/auth_model.dart';
 
 abstract class IAuthRepository {
   Future<AuthModel> login(String email, String password);
 }
 
 class AuthRepository implements IAuthRepository {
+  final Dio dio;
+
+  AuthRepository(this.dio);
+
   @override
   Future<AuthModel> login(String email, String password) async {
-    final response = await http.post(
-      Uri.parse('http://localhost/api/login'),
-      headers: {'Content-Type': 'application/json'},
-      body: json.encode({
-        'email': email,
-        'password': password,
-      }),
-    );
+    var payload = {
+      'email': email,
+      'password': password,
+    };
+
+    final response = await dio.post('/login', data: json.encode(payload));
 
     if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
+      final data = response.data;
       return AuthModel.fromMap(data);
     } else {
-      throw Exception('Erro ao fazer login: ${response.body}');
+      throw Exception('Erro ao fazer login: ${response.data}');
     }
   }
 }
