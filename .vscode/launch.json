@@ -5,18 +5,18 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "flutter_application_1",
+            "name": "sport_spot",
             "request": "launch",
             "type": "dart"
         },
         {
-            "name": "flutter_application_1 (profile mode)",
+            "name": "sport_spot (profile mode)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "profile"
         },
         {
-            "name": "flutter_application_1 (release mode)",
+            "name": "sport_spot (release mode)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "release"
