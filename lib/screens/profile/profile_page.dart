@@ -1,17 +1,35 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/common/constants/app_colors.dart';
+import 'package:sport_spot/api/api.dart';
+import 'package:sport_spot/common/constants/app_colors.dart';
+import 'package:sport_spot/common/utils/user_map.dart';
+import 'package:sport_spot/models/user_model.dart';
+import 'package:sport_spot/repositories/auth_repository.dart';
+import 'package:sport_spot/routes/routing_constants.dart';
+import 'package:sport_spot/screens/profile/change_password.dart';
+import 'package:sport_spot/screens/profile/edit_profile.dart';
+import 'package:sport_spot/stores/auth_store.dart';
 
-class ProfilePage extends StatelessWidget {
-  final String userName;
-  final String userEmail;
-  final String? userPhoto;
+class ProfilePage extends StatefulWidget {
 
-  const ProfilePage({
-    super.key,
-    required this.userName,
-    required this.userEmail,
-    this.userPhoto,
-  });
+  const ProfilePage({super.key});
+
+  @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  final AuthStore store = AuthStore(repository: AuthRepository(Api()));
+  UserModel? user;
+
+  @override
+  void initState() {
+    UserMap.getUserMap().then((value) {
+      setState(() {
+        user = value;
+      });
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,21 +64,20 @@ class ProfilePage extends StatelessWidget {
                 ),
               ),
               Positioned(
-                top: 140,
-                left: MediaQuery.of(context).size.width / 2 - 50,
+                top: 110,
+                left: MediaQuery.of(context).size.width / 2 - 70,
                 child: CircleAvatar(
-                  radius: 50,
-                  backgroundImage: userPhoto != null
-                      ? NetworkImage(userPhoto!)
-                      : const AssetImage('assets/images/default_user.png')
-                          as ImageProvider,
+                  radius: 70,
+                  backgroundImage: user?.photo != null && user?.photo != ""
+                      ? NetworkImage(user!.photo!)
+                      : const AssetImage('assets/images/default_user.png') as ImageProvider,
                 ),
               ),
             ],
           ),
           const SizedBox(height: 60), // Espaço abaixo da foto
           Text(
-            userName,
+            user?.name ?? "",
             style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
@@ -68,28 +85,32 @@ class ProfilePage extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            userEmail,
+           user?.email ?? "",
             style: const TextStyle(
               fontSize: 16,
               color: AppColors.gray,
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 40),
 
           // Menu items
           Expanded(
             child: ListView(
+              padding: const EdgeInsets.only(left: 20, right: 20,),
+              shrinkWrap: true,
               children: [
                 ListTile(
                   leading: const Icon(Icons.person, color: AppColors.charcoalBlue),
                   title: const Text("Editar perfil"),
                   onTap: () {
-                    // Navegar para a página de edição
+                    Navigator.of(context).push(MaterialPageRoute(builder: (_) => EditProfilePage(user!)));
                   },
                 ),
                 ListTile(
                   leading: const Icon(Icons.favorite, color: Colors.red),
                   title: const Text("Favoritos"),
+
+                  
                   onTap: () {
                     // Navegar para favoritos
                   },
@@ -98,14 +119,15 @@ class ProfilePage extends StatelessWidget {
                   leading: const Icon(Icons.lock, color: AppColors.charcoalBlue),
                   title: const Text("Trocar senha"),
                   onTap: () {
-                    // Navegar para troca de senha
+                    Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ChangePasswordPage()));
                   },
                 ),
                 ListTile(
                   leading: const Icon(Icons.logout, color: AppColors.gray),
                   title: const Text("Sair"),
-                  onTap: () {
-                    // Sair da aplicação
+                  onTap: () async {
+                    await store.logout();
+                    Navigator.of(context).pushNamedAndRemoveUntil(onboarding, (route) => false);
                   },
                 ),
               ],
