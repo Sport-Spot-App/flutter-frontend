@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/common/constants/app_colors.dart';
-import 'package:flutter_application_1/common/constants/app_text_styles.dart';
-import 'package:flutter_application_1/common/widgets/input_field.dart';
-import 'package:flutter_application_1/common/widgets/primary_button.dart';
-import 'package:flutter_application_1/repositories/auth_repository.dart';
-import 'package:flutter_application_1/screens/stores/auth_store.dart';
+import 'package:sport_spot/api/api.dart';
+import 'package:sport_spot/common/constants/app_colors.dart';
+import 'package:sport_spot/common/constants/app_text_styles.dart';
+import 'package:sport_spot/common/widgets/input_field.dart';
+import 'package:sport_spot/common/widgets/primary_button.dart';
+import 'package:sport_spot/repositories/auth_repository.dart';
+import 'package:sport_spot/routes/routing_constants.dart';
+import 'package:sport_spot/stores/auth_store.dart';
 
 class LoginPage extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final AuthStore store = AuthStore(repository: AuthRepository());
+  final AuthStore store = AuthStore(repository: AuthRepository(Api()));
 
   LoginPage({super.key});
 
@@ -34,8 +36,7 @@ class LoginPage extends StatelessWidget {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Login realizado com sucesso!')),
       );
-      Navigator.pushReplacementNamed(
-          context, '/users'); // Navegar para a próxima tela
+      Navigator.of(context).pushNamedAndRemoveUntil(profile, (route) => false);
     }
   }
 
@@ -44,14 +45,14 @@ class LoginPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('Login'),
-        backgroundColor: Colors.transparent,),
-      body: Center(
+        backgroundColor: Colors.transparent,
+      ),
+      body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              SizedBox(height: 50),
               Text(
                 'Bem-vindo(a)!',
                 style: AppTextStyles.mediumText.copyWith(

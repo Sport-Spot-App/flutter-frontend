@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/common/constants/app_colors.dart';
-import 'package:flutter_application_1/common/constants/app_text_styles.dart';
-import 'package:flutter_application_1/common/widgets/role_button.dart';
+import 'package:sport_spot/common/constants/app_colors.dart';
+import 'package:sport_spot/common/constants/app_text_styles.dart';
+import 'package:sport_spot/common/widgets/role_button.dart';
+import 'package:sport_spot/routes/routing_constants.dart';
 
 class RegisterRoleSelectionPage extends StatelessWidget {
   const RegisterRoleSelectionPage({super.key});
@@ -10,16 +11,21 @@ class RegisterRoleSelectionPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: const Text(''),
-        backgroundColor: Colors.transparent,
-      ),
-      body: SingleChildScrollView(
+      body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              Align(
+                alignment: Alignment.topLeft,
+                child: IconButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  }, 
+                  icon: Icon(Icons.arrow_back),
+                ),
+              ),
               // Título da página
               Text(
                 "Como deseja se cadastrar?",
@@ -34,9 +40,7 @@ class RegisterRoleSelectionPage extends StatelessWidget {
                 title: "Dono de Quadra",
                 imagePath: 'assets/images/basketball_court.png',
                 onPressed: () {
-                  print("Dono de Quadra selecionado");
-                  Navigator.pushNamed(context, '/register-form',
-                      arguments: {'role': 2});
+                  Navigator.of(context).pushNamed(registerForm, arguments: {'role': 2});
                 },
               ),
               const SizedBox(height: 20),
@@ -44,9 +48,7 @@ class RegisterRoleSelectionPage extends StatelessWidget {
                 title: "Atleta",
                 imagePath: 'assets/images/soccer_players.png',
                 onPressed: () {
-                  print("Atleta selecionado");
-                  Navigator.pushNamed(context, '/register-form',
-                      arguments: {'role': 3});
+                  Navigator.of(context).pushNamed(registerForm, arguments: {'role': 3});
                 },
               ),
               const SizedBox(height: 40),

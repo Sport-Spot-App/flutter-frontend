@@ -1,27 +1,28 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/common/constants/app_colors.dart';
-import 'package:flutter_application_1/common/constants/app_text_styles.dart';
-import 'package:flutter_application_1/common/widgets/input_field.dart';
-import 'package:flutter_application_1/common/widgets/primary_button.dart';
-import 'package:flutter_application_1/models/user_model.dart';
-import 'package:flutter_application_1/repositories/user_repository.dart';
-import 'package:flutter_application_1/screens/stores/user_store.dart';
+import 'package:sport_spot/api/api.dart';
+import 'package:sport_spot/common/constants/app_colors.dart';
+import 'package:sport_spot/common/constants/app_text_styles.dart';
+import 'package:sport_spot/common/widgets/input_field.dart';
+import 'package:sport_spot/common/widgets/primary_button.dart';
+import 'package:sport_spot/models/user_model.dart';
+import 'package:sport_spot/repositories/user_repository.dart';
+import 'package:sport_spot/routes/routing_constants.dart';
+import 'package:sport_spot/stores/user_store.dart';
 
 class RegisterPage extends StatelessWidget {
   final int role;
 
   RegisterPage({super.key, required this.role});
 
-  final userRepository = UserRepository();
-  final userStore = UserStore(repository: UserRepository());
+  final userRepository = UserRepository(Api());
+  final userStore = UserStore(repository: UserRepository(Api()));
 
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController cpfController = TextEditingController();
   final TextEditingController cellphoneController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController =
-      TextEditingController();
+  final TextEditingController confirmPasswordController = TextEditingController();
 
   Future<void> _handleRegister(BuildContext context) async {
     if (userStore.isLoading.value) return;
@@ -53,6 +54,7 @@ class RegisterPage extends StatelessWidget {
           content: Text('Usuário cadastrado com sucesso!'),
         ),
       );
+      Navigator.of(context).pushNamedAndRemoveUntil(onboarding, (route) => false);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -67,12 +69,11 @@ class RegisterPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text(''),
         backgroundColor: Colors.transparent,
       ),
       body: Center(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          padding: const EdgeInsets.symmetric(horizontal: 20.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
@@ -85,7 +86,7 @@ class RegisterPage extends StatelessWidget {
                 ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 20),
               InputField(controller: nameController, label: "NOME"),
               InputField(controller: emailController, label: "EMAIL"),
               InputField(
@@ -109,8 +110,9 @@ class RegisterPage extends StatelessWidget {
                 builder: (context, isLoading, child) {
                   return PrimaryButton(
                     text: isLoading ? 'Carregando...' : 'Cadastrar',
-                    onPressed:
-                        isLoading ? () {} : () => _handleRegister(context),
+                    onPressed: isLoading
+                        ? null 
+                        : () => _handleRegister(context),
                   );
                 },
               ),
