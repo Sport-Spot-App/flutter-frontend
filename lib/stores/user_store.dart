@@ -95,17 +95,4 @@ class UserStore {
       isLoading.value = false;
     }
   }
-
-  Future<void> getUserData() async {
-    isLoading.value = true;
-    erro.value = '';
-
-    try {
-      await repository.getUserData();
-    } catch (e) {
-      erro.value = e.toString();
-    } finally {
-      isLoading.value = false;
-    }
-  }
 }

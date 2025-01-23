@@ -27,6 +27,19 @@ class AuthStore {
     }
   }
 
+  Future<void> getAuthData() async {
+    isLoading.value = true;
+    error.value = '';
+
+    try {
+      await repository.getAuthData();
+    } catch (e) {
+      error.value = e.toString();
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
   Future<void> logout() async {
     final tokenStorage = TokenStorage();
     await tokenStorage.delete();

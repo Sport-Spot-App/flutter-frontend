@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:sport_spot/api/api.dart';
 import 'package:sport_spot/api/token/token_storage.dart';
-import 'package:sport_spot/repositories/user_repository.dart';
+import 'package:sport_spot/repositories/auth_repository.dart';
 import 'package:sport_spot/routes/routing_constants.dart';
-import 'package:sport_spot/stores/user_store.dart';
+import 'package:sport_spot/stores/auth_store.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -13,7 +13,7 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
-  final UserStore store = UserStore(repository: UserRepository(Api()));
+  final AuthStore store = AuthStore(repository: AuthRepository(Api()));
 
   @override
   void initState() {
@@ -21,7 +21,7 @@ class _SplashPageState extends State<SplashPage> {
       final tokenStorage = TokenStorage();
       String? token = await tokenStorage.read();
       if (token != null) {
-        await store.getUserData();
+        await store.getAuthData();
         Navigator.of(context).pushNamedAndRemoveUntil(profile, (route) => false);
       } else {
         Navigator.of(context).pushNamedAndRemoveUntil(onboarding, (route) => false);

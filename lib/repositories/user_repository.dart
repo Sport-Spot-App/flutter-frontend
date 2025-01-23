@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
-import 'package:sport_spot/common/utils/user_map.dart';
 import 'package:sport_spot/models/user_model.dart';
 import 'package:sport_spot/http/exceptions.dart';
 
@@ -9,7 +8,6 @@ abstract class IUserRepository {
   Future<bool> registerUser(UserModel user);
   Future<void> deleteUser(int userId);
   Future<bool> updateUser(UserModel user);
-  Future<void> getUserData();
 }
 
 class UserRepository implements IUserRepository {
@@ -78,19 +76,6 @@ class UserRepository implements IUserRepository {
       print(response.statusCode);
       print(response.data);
       throw Exception('Erro ao atualizar o usuário.');
-    }
-  }
-
-  @override
-  Future<void> getUserData() async {
-    final response = await dio.get('/user/auth');
-
-    if (response.statusCode == 200) {
-      var data = response.data;
-      UserModel user = UserModel.fromMap(data);
-      await UserMap.setUserMap(user);
-    } else {
-      throw Exception('Erro ao buscar usuário: ${response.data}');
     }
   }
 }

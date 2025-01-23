@@ -33,6 +33,7 @@ class LoginPage extends StatelessWidget {
         SnackBar(content: Text(store.error.value)),
       );
     } else {
+      await store.getAuthData();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Login realizado com sucesso!')),
       );

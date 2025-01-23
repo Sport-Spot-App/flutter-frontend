@@ -38,4 +38,20 @@ class UserMap {
       updated_at: updateAt,
     );
   }
+
+  static Future<void> removeUserMap() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove('userId');
+    await prefs.remove('userName');
+    await prefs.remove('userEmail');
+    await prefs.remove('userRole');
+    await prefs.remove('userPhoto');
+    await prefs.remove('userCellphone');
+    await prefs.remove('userDocument');
+    await prefs.remove('userApproved');
+    await prefs.remove('userStatus');
+    await prefs.remove('userCellphone');
+    await prefs.remove('userCreateAt');
+    await prefs.remove('userUpdateAt');
+  }
 }
