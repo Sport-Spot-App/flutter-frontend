@@ -1,18 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 
-class CourtCard extends StatelessWidget {
-  final String imageUrl;
+class CourtCard extends StatefulWidget {
+  final List<String> imageUrlList;
   final String name;
   final String type;
   final String price;
 
   const CourtCard({
-    Key? key,
-    required this.imageUrl,
+    super.key,
+    required this.imageUrlList,
     required this.name,
     required this.type,
     required this.price,
-  }) : super(key: key);
+  });
+  
+  @override
+  State<CourtCard> createState() => _CourtCardState();
+}
+
+class _CourtCardState extends State<CourtCard> {
+  final CarouselSliderController _controller = CarouselSliderController();
+  int currentIndex = 0;
+  
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,17 +35,45 @@ class CourtCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Court Image
-          ClipRRect(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
-            child: Image.asset(
-              imageUrl,
-              height: 350,
-              width: double.infinity,
-              fit: BoxFit.cover,
+          // Court Images
+          CarouselSlider(
+            carouselController: _controller,
+            options: CarouselOptions(
+              aspectRatio: 2.0,
+              enlargeCenterPage: true,
+              scrollDirection: Axis.horizontal,
+              onPageChanged:(index, reason) {
+                setState(() {
+                  currentIndex = index;
+                });
+              },
             ),
+            items: widget.imageUrlList.map((item) => Container(
+              margin: EdgeInsets.all(5.0),
+              child: ClipRRect(
+                borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                child: Image.network(item, fit: BoxFit.cover, width: 1000.0),
+              ),
+            )).toList(),
           ),
-
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: widget.imageUrlList.asMap().entries.map((entry) {
+              return Container(
+                width: 6.0,
+                height: 6.0,
+                margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: (
+                    Theme.of(context).brightness == Brightness.dark
+                      ? Colors.white
+                      : Colors.black
+                  ).withOpacity(currentIndex == entry.key ? 0.9 : 0.4),
+                ),
+              );
+            }).toList(),
+          ),
           // Court Info
           Padding(
             padding: const EdgeInsets.all(12.0),
@@ -39,7 +81,7 @@ class CourtCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  name,
+                  widget.name,
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -49,7 +91,7 @@ class CourtCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  type,
+                  widget.type,
                   style: TextStyle(
                     fontSize: 14,
                     color: const Color.fromARGB(255, 100, 100, 100),
@@ -61,7 +103,7 @@ class CourtCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'R\$$price/hora',
+                      'R\$ ${widget.price}/hora',
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Color.fromARGB(255, 0, 0, 0),
