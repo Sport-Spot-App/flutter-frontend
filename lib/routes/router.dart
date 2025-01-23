@@ -3,6 +3,7 @@ import 'package:sport_spot/routes/routing_constants.dart';
 import 'package:sport_spot/screens/auth/login_page.dart';
 import 'package:sport_spot/screens/auth/onboarding_page.dart';
 import 'package:sport_spot/screens/auth/register_page.dart';
+import 'package:sport_spot/screens/courts/favorites_page.dart';
 import 'package:sport_spot/screens/profile/profile_page.dart';
 import 'package:sport_spot/screens/auth/role_page.dart';
 import 'package:sport_spot/screens/splash/splash_page.dart';
@@ -35,6 +36,9 @@ RouteFactory rotas() {
         break;
       case users:
         screen = UserListPage();
+        break;
+      case favorites:
+        screen = FavoritesPage();
         break;
       default:
         screen = OnboardingPage();

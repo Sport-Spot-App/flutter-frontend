@@ -13,3 +13,5 @@ const home = "homePage";
 const users = "usersPage";
 
 const profile = "profilePage";
+
+const favorites = "favoritesPage";
