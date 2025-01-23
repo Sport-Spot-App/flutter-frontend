@@ -58,9 +58,9 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
             padding: EdgeInsets.only(left: 20, right: 20),
             child: Column(
               children: [
-                InputField(label: "Senha atual"),
-                InputField(label: "Nova senha"),
-                InputField(label: "Confirmar senha"),
+                InputField(label: "SENHA ATUAL"),
+                InputField(label: "NOVA SENHA"),
+                InputField(label: "CONFIRMAR NOVA SENHA"),
                 ElevatedButton(
                   onPressed: () {
                     // TODO: Alterar Senha
