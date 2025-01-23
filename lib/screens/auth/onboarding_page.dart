@@ -25,7 +25,7 @@ class OnboardingPage extends StatelessWidget {
               children: [
                 Text(
                   'Organize suas partidas em minutos',
-                  style: AppTextStyles.mediumText.copyWith(
+                  style: AppTextStyles.bigText.copyWith(
                     color: AppColors.charcoalBlue,
                     height: 1,
                   ),

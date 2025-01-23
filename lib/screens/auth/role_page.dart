@@ -29,7 +29,7 @@ class RegisterRoleSelectionPage extends StatelessWidget {
               // Título da página
               Text(
                 "Como deseja se cadastrar?",
-                style: AppTextStyles.mediumText.copyWith(
+                style: AppTextStyles.bigText.copyWith(
                   color: AppColors.darkOrange,
                   height: 1,
                 ),

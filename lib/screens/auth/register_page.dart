@@ -80,7 +80,7 @@ class RegisterPage extends StatelessWidget {
             children: [
               Text(
                 'Comece a reservar sua quadra agora!',
-                style: AppTextStyles.mediumText.copyWith(
+                style: AppTextStyles.bigText.copyWith(
                   color: AppColors.darkOrange,
                   height: 1,
                 ),

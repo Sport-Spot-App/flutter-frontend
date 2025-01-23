@@ -95,7 +95,7 @@ class _LoginPageState extends State<LoginPage> {
               const SizedBox(height: 50),
               Text(
                 'Bem-vindo(a)!',
-                style: AppTextStyles.mediumText.copyWith(
+                style: AppTextStyles.bigText.copyWith(
                   color: AppColors.darkOrange,
                   height: 1,
                 ),
