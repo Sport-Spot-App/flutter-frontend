@@ -32,24 +32,42 @@ class _SplashPageState extends State<SplashPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Image.asset('assets/images/background_gradient.png'),
-        Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Center(
-              child: Column(
-                children: [
-                  Image.asset('assets/images/logo-sportspot.png', width: 250),
-                  Image.asset('assets/images/branding-sportspot.png', width: 250),
-                ],
-              ) 
-            ),
-          ],
-        ),
-      ],
+    return Scaffold(
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final maxHeight = constraints.maxHeight;
+          final maxWidth = constraints.maxWidth;
+
+          return Stack(
+            children: [
+              Positioned.fill(
+                child: Image.asset(
+                  'assets/images/background_gradient.png',
+                  fit: BoxFit.cover,
+                ),
+              ),
+              Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                      'assets/images/logo-sportspot.png',
+                      width: maxWidth * 0.6, 
+                      fit: BoxFit.contain,
+                    ),
+                    SizedBox(height: maxHeight * 0.02),
+                    Image.asset(
+                      'assets/images/branding-sportspot.png',
+                      width: maxWidth * 0.6,
+                      fit: BoxFit.contain,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          );
+        },
+      ),
     );
   }
 }
