@@ -5,8 +5,8 @@ import 'package:sport_spot/common/utils/user_map.dart';
 import 'package:sport_spot/models/user_model.dart';
 import 'package:sport_spot/repositories/auth_repository.dart';
 import 'package:sport_spot/routes/routing_constants.dart';
-import 'package:sport_spot/screens/profile/change_password.dart';
-import 'package:sport_spot/screens/profile/edit_profile.dart';
+import 'package:sport_spot/screens/profile/change_password_page.dart';
+import 'package:sport_spot/screens/profile/edit_profile_page.dart';
 import 'package:sport_spot/stores/auth_store.dart';
 
 class ProfilePage extends StatefulWidget {
