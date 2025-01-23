@@ -7,7 +7,7 @@ class FavoritesPage extends StatelessWidget {
 
   final List<Map<String, String>> courts = [
     {
-      'image': 'assets/images/tennis-player-big-hall.jpg',
+      'image':'assets/images/basketball_court.jpg',
       'name': 'Jardim Belvedere',
       'type': 'Poliesportiva',
       'price': '60'
