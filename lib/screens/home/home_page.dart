@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sport_spot/common/constants/app_colors.dart';
 import 'package:sport_spot/common/widgets/court_card.dart';
+import 'package:sport_spot/common/widgets/search_field.dart';
 import 'package:sport_spot/screens/court/favorites_page.dart';
 import 'package:sport_spot/screens/profile/profile_page.dart';
 
@@ -26,6 +27,19 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  String _getAppBarTitle(int index) {
+    switch (index) {
+      case 0:
+        return 'Sport Spot';
+      case 1:
+        return 'Favorios';
+      case 2:
+        return 'Perfil';
+      default:
+        return 'Sport Spot';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,9 +47,9 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: AppColors.darkOrange,
         elevation: 0,
         centerTitle: true,
-        title: const Text(
-          "Sport Spot",
-          style: TextStyle(color: Colors.white),
+        title: Text(
+          _getAppBarTitle(_selectedIndex),
+          style: const TextStyle(color: Colors.white),
         ),
       ),
       body: _widgetOptions.elementAt(_selectedIndex),
@@ -47,14 +61,12 @@ class _HomePageState extends State<HomePage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.favorite),
-            label: 'Favorites',
+            label: 'Favoritos',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
-            label: 'Profile',
+            label: 'Perfil',
           ),
-          
-          
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: AppColors.darkOrange,
@@ -164,37 +176,45 @@ class HomePageContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // Search Field
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: TextField(
-            decoration: InputDecoration(
-              hintText: 'Pesquisar quadras',
-              prefixIcon: const Icon(Icons.search, color: AppColors.darkOrange),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: const BorderSide(color: AppColors.darkOrange),
+        Container(
+          decoration: const BoxDecoration(
+            color: const Color.fromARGB(255, 243, 243, 243),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black12,
+                offset: Offset(0, 3),
+                blurRadius: 6,
               ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: const BorderSide(color: AppColors.darkOrange),
-              ),
-            ),
+            ],
           ),
-        ),
-        // Sports Icons Bar
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Row(
-            children: const [
-              IconWithLabel(icon: Icons.sports_volleyball, label: 'Vôlei'),
-              IconWithLabel(icon: Icons.sports_tennis, label: 'Tênis'),
-              IconWithLabel(icon: Icons.sports_soccer, label: 'Futebol'),
-              IconWithLabel(icon: Icons.sports_basketball, label: 'Basquete'),
-              IconWithLabel(icon: Icons.sports_handball, label: 'Handebol'),
-              IconWithLabel(icon: Icons.sports_rugby, label: 'Fut Americano'),
-              IconWithLabel(icon: Icons.beach_access_outlined, label: 'Beach Tennis'),
+          child: Column(
+            children: [
+              // Search Field
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: SearchField(
+                  hintText: 'Pesquisar quadras',
+                  onChanged: (value) {
+                    // Handle search logic
+                  },
+                ),
+              ),
+              // Sports Icons Bar
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                child: Row(
+                  children: const [
+                    IconWithLabel(icon: Icons.sports_volleyball, label: 'Vôlei'),
+                    IconWithLabel(icon: Icons.sports_tennis, label: 'Tênis'),
+                    IconWithLabel(icon: Icons.sports_soccer, label: 'Futebol'),
+                    IconWithLabel(icon: Icons.sports_basketball, label: 'Basquete'),
+                    IconWithLabel(icon: Icons.sports_handball, label: 'Handebol'),
+                    IconWithLabel(icon: Icons.sports_rugby, label: 'Futebol Americano'),
+                    IconWithLabel(icon: Icons.beach_access_outlined, label: 'Beach Tennis'),
+                  ],
+                ),
+              ),
             ],
           ),
         ),
