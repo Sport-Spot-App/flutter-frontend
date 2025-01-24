@@ -24,7 +24,6 @@ class UserRepository implements IUserRepository {
       final body = response.data;
 
       body.forEach((item) {
-        print(item);
         users.add(UserModel.fromMap(item));
       });
 
@@ -45,8 +44,6 @@ class UserRepository implements IUserRepository {
     } else if (response.statusCode == 404) {
       throw NotFoundException('Endpoint inválido');
     } else {
-      print(response.statusCode);
-      print(response.data);
       throw Exception('Erro no registro');
     }
   }
@@ -69,8 +66,6 @@ class UserRepository implements IUserRepository {
     } else if (response.statusCode == 404) {
       throw NotFoundException('Usuário não encontrado.');
     } else {
-      print(response.statusCode);
-      print(response.data);
       throw Exception('Erro ao atualizar o usuário.');
     }
   }
