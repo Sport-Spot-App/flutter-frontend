@@ -113,7 +113,6 @@ class _CourtPageState extends State<CourtsPage> {
         centerTitle: true,
         iconTheme: IconThemeData(color: Colors.white),
       ),
-      backgroundColor: AppColors.lightOrange,
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.all(20),
@@ -150,7 +149,7 @@ class _CourtPageState extends State<CourtsPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          
+          Navigator.of(context).push(MaterialPageRoute(builder: (_) => CreateCourtPage()));
         },
         backgroundColor: AppColors.darkOrange,
         child: Icon(Icons.add, size: 30, color: Colors.white),

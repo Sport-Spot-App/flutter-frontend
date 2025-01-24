@@ -6,6 +6,7 @@ import 'package:sport_spot/models/user_model.dart';
 import 'package:sport_spot/repositories/auth_repository.dart';
 import 'package:sport_spot/routes/routing_constants.dart';
 import 'package:sport_spot/screens/courts/favorites_page.dart';
+import 'package:sport_spot/screens/courts/courts_page.dart';
 import 'package:sport_spot/screens/profile/change_password_page.dart';
 import 'package:sport_spot/screens/profile/edit_profile_page.dart';
 import 'package:sport_spot/stores/auth_store.dart';
@@ -108,13 +109,34 @@ class _ProfilePageState extends State<ProfilePage> {
                   },
                 ),
                 ListTile(
-                  leading: const Icon(Icons.favorite, color: Colors.red),
-                  title: const Text("Favoritos"),
-
-                  
+                  leading: const Icon(Icons.sports_baseball),
+                  title: const Text("Minhas quadras"),
                   onTap: () {
-                    Navigator.of(context).push(MaterialPageRoute(builder: (_) => FavoritesPage()));
+                    Navigator.of(context).push(MaterialPageRoute(builder: (_) => CourtsPage()));
                   },
+                ),
+                Builder(
+                  builder: (_) {
+                    if (user == null) {
+                      return Container();
+                    } else if (user!.role == 2) {
+                      return ListTile(
+                        leading: const Icon(Icons.sports_baseball),
+                        title: const Text("Minhas quadras"),
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(builder: (_) => CourtsPage()));
+                        },
+                      );
+                    } else {
+                      return ListTile(
+                        leading: const Icon(Icons.favorite, color: Colors.red),
+                        title: const Text("Favoritos"),
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(builder: (_) => FavoritesPage()));
+                        },
+                      );
+                    }
+                  }
                 ),
                 ListTile(
                   leading: const Icon(Icons.lock, color: AppColors.charcoalBlue),
@@ -128,6 +150,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   title: const Text("Sair"),
                   onTap: () async {
                     await store.logout();
+                    await UserMap.removeUserMap();
                     Navigator.of(context).pushNamedAndRemoveUntil(onboarding, (route) => false);
                   },
                 ),
