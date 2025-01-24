@@ -44,5 +44,5 @@ app.*.map.json
 
 
 /linux/flutter/*
-/macos/flutter/*
+/macos/Flutter/*
 /windows/flutter/*
