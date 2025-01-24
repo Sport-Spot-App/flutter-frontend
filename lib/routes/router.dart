@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sport_spot/routes/routing_constants.dart';
+import 'package:sport_spot/screens/auth/confirm_register.dart';
 import 'package:sport_spot/screens/auth/login_page.dart';
 import 'package:sport_spot/screens/auth/onboarding_page.dart';
 import 'package:sport_spot/screens/auth/register_page.dart';
@@ -43,6 +44,9 @@ RouteFactory rotas() {
         break;
       case favorites:
         screen = FavoritesPage();
+        break;
+       case confirmRegister:
+        screen = RegistrationCompletedPage();
         break;
       default:
         screen = OnboardingPage();

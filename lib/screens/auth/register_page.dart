@@ -54,7 +54,7 @@ class RegisterPage extends StatelessWidget {
           content: Text('Usuário cadastrado com sucesso!'),
         ),
       );
-      Navigator.of(context).pushNamedAndRemoveUntil(onboarding, (route) => false);
+      Navigator.of(context).pushNamedAndRemoveUntil(confirmRegister, (route) => false);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

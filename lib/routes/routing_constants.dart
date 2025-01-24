@@ -15,3 +15,5 @@ const users = "usersPage";
 const profile = "profilePage";
 
 const favorites = "favoritesPage";
+
+const confirmRegister = "confirmRegisterPage";
