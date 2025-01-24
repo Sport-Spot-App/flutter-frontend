@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sport_spot/api/api.dart';
 import 'package:sport_spot/common/constants/app_colors.dart';
@@ -5,8 +6,8 @@ import 'package:sport_spot/common/utils/user_map.dart';
 import 'package:sport_spot/models/user_model.dart';
 import 'package:sport_spot/repositories/auth_repository.dart';
 import 'package:sport_spot/routes/routing_constants.dart';
-import 'package:sport_spot/screens/court/favorites_page.dart';
 import 'package:sport_spot/screens/court/courts_page.dart';
+
 import 'package:sport_spot/screens/profile/change_password_page.dart';
 import 'package:sport_spot/screens/profile/edit_profile_page.dart';
 import 'package:sport_spot/stores/auth_store.dart';
@@ -36,15 +37,15 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: AppColors.darkOrange,
-        elevation: 0,
-        centerTitle: true,
-        title: const Text(
-          "Perfil",
-          style: TextStyle(color: Colors.white),
-        ),
-      ),
+      // appBar: AppBar(
+      //   backgroundColor: AppColors.darkOrange,
+      //   elevation: 0,
+      //   centerTitle: true,
+      //   title: const Text(
+      //     "Perfil",
+      //     style: TextStyle(color: Colors.white),
+      //   ),
+      // ),
       body: Column(
         children: [
           // Gradient background with user photo
@@ -77,7 +78,7 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ],
           ),
-          const SizedBox(height: 60), // Espaço abaixo da foto
+          const SizedBox(height: 60),
           Text(
             user?.name ?? "",
             style: const TextStyle(
@@ -85,12 +86,12 @@ class _ProfilePageState extends State<ProfilePage> {
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: 4),
           Text(
            user?.email ?? "",
             style: const TextStyle(
               fontSize: 16,
-              color: AppColors.gray,
+              color: AppColors.green,
+              fontWeight: FontWeight.w500,
             ),
           ),
           const SizedBox(height: 40),
@@ -102,39 +103,33 @@ class _ProfilePageState extends State<ProfilePage> {
               shrinkWrap: true,
               children: [
                 ListTile(
-                  leading: const Icon(Icons.edit, color: AppColors.charcoalBlue),
+                  leading: const Icon(Icons.person, color: AppColors.charcoalBlue),
                   title: const Text("Editar perfil"),
                   onTap: () {
                     Navigator.of(context).push(MaterialPageRoute(builder: (_) => EditProfilePage(user!)));
                   },
                 ),
                 ListTile(
-                  leading: const Icon(Icons.sports_baseball, color: AppColors.charcoalBlue),
+                  leading: const Icon(CupertinoIcons.sportscourt_fill, color: AppColors.charcoalBlue),
                   title: const Text("Minhas quadras"),
                   onTap: () {
                     Navigator.of(context).push(MaterialPageRoute(builder: (_) => CourtsPage()));
                   },
-                ),
+             ),
                 Builder(
                   builder: (_) {
                     if (user == null) {
                       return Container();
                     } else if (user!.role == 2) {
                       return ListTile(
-                        leading: const Icon(Icons.sports_baseball),
+                        leading: const Icon(CupertinoIcons.sportscourt),
                         title: const Text("Minhas quadras"),
                         onTap: () {
                           Navigator.of(context).push(MaterialPageRoute(builder: (_) => CourtsPage()));
                         },
                       );
                     } else {
-                      return ListTile(
-                        leading: const Icon(Icons.favorite, color: Colors.red),
-                        title: const Text("Favoritos"),
-                        onTap: () {
-                          Navigator.of(context).push(MaterialPageRoute(builder: (_) => FavoritesPage()));
-                        },
-                      );
+                      return Container(); 
                     }
                   }
                 ),
