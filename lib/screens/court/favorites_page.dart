@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sport_spot/common/widgets/court_card.dart';
 
+
 class FavoritesPage extends StatelessWidget {
   FavoritesPage({super.key});
 
@@ -100,27 +101,9 @@ class FavoritesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   backgroundColor: AppColors.darkOrange,
-      //   title: const Text('Favoritos')
-      // ),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // Search Field
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: TextField(
-                decoration: InputDecoration(
-                  hintText: 'Pesquisar quadras',
-                  prefixIcon: const Icon(Icons.search),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-              ),
-            ),
-            // Court Card List
             ListView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
