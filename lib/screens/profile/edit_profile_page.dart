@@ -4,8 +4,10 @@ import 'package:sport_spot/common/constants/app_colors.dart';
 import 'package:sport_spot/common/widgets/input_field.dart';
 import 'package:sport_spot/models/user_model.dart';
 import 'package:sport_spot/repositories/auth_repository.dart';
+import 'package:sport_spot/repositories/user_repository.dart';
 import 'package:sport_spot/screens/profile/profile_page.dart';
 import 'package:sport_spot/stores/auth_store.dart';
+import 'package:sport_spot/stores/user_store.dart';
 
 class EditProfilePage extends StatefulWidget {
   final UserModel user;
@@ -17,12 +19,35 @@ class EditProfilePage extends StatefulWidget {
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
-final AuthStore store = AuthStore(repository: AuthRepository(Api()));
+final AuthStore authSstore = AuthStore(repository: AuthRepository(Api()));
+final UserStore userStore = UserStore(repository: UserRepository(Api()));
 
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController documentController = TextEditingController();
   final TextEditingController cellphoneController = TextEditingController();
+
+  void _handleUser(BuildContext context) async {
+    UserModel updateUser = widget.user.copyWith(
+      name: nameController.text.trim(),
+      email: emailController.text.trim(),
+      document: documentController.text.trim(),
+      cellphone: cellphoneController.text.trim()
+    );
+
+    await userStore.updateUser(updateUser);
+
+    if (userStore.erro.value.isNotEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(userStore.erro.value)),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Perfil editado com sucesso!')),
+      );
+      Navigator.of(context).pop();
+    }
+  }
 
   @override
   void initState() {
@@ -46,72 +71,74 @@ final AuthStore store = AuthStore(repository: AuthRepository(Api()));
         ),
         iconTheme: IconThemeData(color: Colors.white,),
       ),
-      body: Column(
-        children: [
-          Stack(
-            clipBehavior: Clip.none,
-            children: [
-              ClipPath(
-                clipper: HalfClipper(),
-                child: Container(
-                  width: double.infinity,
-                  height: 200,
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: AppColors.orangeGradient,
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Stack(
+              clipBehavior: Clip.none,
+              children: [
+                ClipPath(
+                  clipper: HalfClipper(),
+                  child: Container(
+                    width: double.infinity,
+                    height: 200,
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: AppColors.orangeGradient,
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                      ),
                     ),
                   ),
                 ),
-              ),
-              Positioned(
-                top: 110,
-                left: MediaQuery.of(context).size.width / 2 - 70,
-                child: CircleAvatar(
-                  radius: 70,
-                  backgroundImage: const AssetImage('assets/images/default_user.png') as ImageProvider,
-                ),
-              ),
-              Positioned(
-                top: 200,
-                left: MediaQuery.of(context).size.width / 2 + 40,
-                child: IconButton(
-                  style: IconButton.styleFrom(
-                    backgroundColor: AppColors.mediumOrange,
+                Positioned(
+                  top: 110,
+                  left: MediaQuery.of(context).size.width / 2 - 70,
+                  child: CircleAvatar(
+                    radius: 70,
+                    backgroundImage: const AssetImage('assets/images/default_user.png') as ImageProvider,
                   ),
-                  color: Colors.white,
-                  onPressed: () {
-                    // TODO: Selecionar foto
-                  },
-                  icon: Icon(Icons.photo_camera),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 100),
-          Padding(
-            padding: EdgeInsets.only(left: 20, right: 20),
-            child: Column(
-              children: [
-                InputField(label: "Nome", controller: nameController),
-                InputField(label: "Email", controller: emailController),
-                InputField(label: widget.user.role == 3 ?"CPF" : "CNPJ", controller: documentController),
-                InputField(label: "Celular", controller: cellphoneController),
-                ElevatedButton(
-                  onPressed: () {
-                    
-                  },
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: Size.fromHeight(50),
-                    backgroundColor: AppColors.darkOrange,
+                Positioned(
+                  top: 200,
+                  left: MediaQuery.of(context).size.width / 2 + 40,
+                  child: IconButton(
+                    style: IconButton.styleFrom(
+                      backgroundColor: AppColors.mediumOrange,
+                    ),
+                    color: Colors.white,
+                    onPressed: () {
+                      // TODO: Selecionar foto
+                    },
+                    icon: Icon(Icons.photo_camera),
                   ),
-                  child: Text("Salvar", style: TextStyle(fontSize: 20, color: Colors.white),)
                 ),
               ],
             ),
-          ),
-        ],
+            const SizedBox(height: 100),
+            Padding(
+              padding: EdgeInsets.only(left: 20, right: 20),
+              child: Column(
+                children: [
+                  InputField(label: "NOME", controller: nameController),
+                  InputField(label: "EMAIL", controller: emailController),
+                  InputField(label: widget.user.role == 3 ? "CPF" : "CNPJ", controller: documentController),
+                  InputField(label: "CELULAR", controller: cellphoneController),
+                  ElevatedButton(
+                    onPressed: () {
+                      _handleUser(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: Size.fromHeight(50),
+                      backgroundColor: AppColors.darkOrange,
+                    ),
+                    child: Text("Salvar", style: TextStyle(fontSize: 20, color: Colors.white),)
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -62,11 +62,7 @@ class UserRepository implements IUserRepository {
 
   @override
   Future<bool> updateUser(UserModel user) async {
-    final response = await dio.put(
-      '/users/${user.id}',
-      data: jsonEncode(user.toMap()),
-      options: Options(headers: {'Content-Type': 'application/json'})
-    );
+    final response = await dio.put('/users/${user.id}', data: jsonEncode(user.toMap()));
 
     if (response.statusCode == 200) {
       return true;
