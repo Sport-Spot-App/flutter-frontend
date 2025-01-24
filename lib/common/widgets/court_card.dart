@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:sport_spot/common/constants/app_text_styles.dart';
 
 class CourtCard extends StatefulWidget {
   final List<String> imageUrlList;
@@ -40,7 +41,7 @@ class _CourtCardState extends State<CourtCard> {
           CarouselSlider(
             carouselController: _controller,
             options: CarouselOptions(
-              aspectRatio: 2.0,
+              aspectRatio: 4/3, 
               enlargeCenterPage: true,
               scrollDirection: Axis.horizontal,
               onPageChanged:(index, reason) {
@@ -53,7 +54,12 @@ class _CourtCardState extends State<CourtCard> {
               margin: EdgeInsets.all(5.0),
               child: ClipRRect(
                 borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                child: Image.network(item, fit: BoxFit.cover, width: 1000.0),
+                child: Image.network(
+                  item,
+                  fit: BoxFit.cover,
+                  width: double.infinity, // Ensure the image takes full width
+                  height: double.infinity, // Ensure the image takes full height
+                ),
               ),
             )).toList(),
           ),
@@ -81,33 +87,14 @@ class _CourtCardState extends State<CourtCard> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  widget.name,
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: const Color.fromARGB(255, 0, 0, 0),
-                    height: 1,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  widget.type,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: const Color.fromARGB(255, 100, 100, 100),
-                    height: 1,
-                  ),
-                ),
-                const SizedBox(height: 8),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'R\$ ${widget.price}/hora',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Color.fromARGB(255, 0, 0, 0),
+                      widget.name,
+                      style: AppTextStyles.mediumText.copyWith(
+                        color: const Color.fromARGB(255, 0, 0, 0),
+                        height: 1,
                       ),
                     ),
                     IconButton(
@@ -115,6 +102,22 @@ class _CourtCardState extends State<CourtCard> {
                       onPressed: () {},
                     ),
                   ],
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  widget.type,
+                  style: AppTextStyles.smallText.copyWith(
+                    color: const Color.fromARGB(255, 100, 100, 100),
+                    height: 1,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'R\$${widget.price}/hora',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Color.fromARGB(255, 0, 0, 0),
+                  ),
                 ),
               ],
             ),
