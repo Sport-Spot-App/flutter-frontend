@@ -70,6 +70,8 @@ flutter:
      - "assets/images/logo-sportspot.png"
      - "assets/images/branding-sportspot.png"
      - "assets/images/default_user.png"
+     - "assets/images/sport-family-amico.png"
+     - "assets/images/background-circles.png"
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
