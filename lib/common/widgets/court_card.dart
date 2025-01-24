@@ -32,6 +32,7 @@ class _CourtCardState extends State<CourtCard> {
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: const Color.fromARGB(255, 243, 243, 243),
       elevation: 2,
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Column(
@@ -41,7 +42,8 @@ class _CourtCardState extends State<CourtCard> {
           CarouselSlider(
             carouselController: _controller,
             options: CarouselOptions(
-              aspectRatio: 4/3, 
+              viewportFraction: 1,
+              aspectRatio: 1, 
               enlargeCenterPage: true,
               scrollDirection: Axis.horizontal,
               onPageChanged:(index, reason) {
