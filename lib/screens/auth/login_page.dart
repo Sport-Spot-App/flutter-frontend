@@ -76,7 +76,7 @@ class _LoginPageState extends State<LoginPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Login realizado com sucesso!')),
       );
-      Navigator.of(context).pushNamedAndRemoveUntil(profile, (route) => false);
+      Navigator.of(context).pushNamedAndRemoveUntil(home, (route) => false);
     }
   }
 

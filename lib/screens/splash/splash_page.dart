@@ -22,7 +22,7 @@ class _SplashPageState extends State<SplashPage> {
       String? token = await tokenStorage.read();
       if (token != null) {
         await store.getAuthData();
-        Navigator.of(context).pushNamedAndRemoveUntil(profile, (route) => false);
+        Navigator.of(context).pushNamedAndRemoveUntil(home, (route) => false);
       } else {
         Navigator.of(context).pushNamedAndRemoveUntil(onboarding, (route) => false);
       }
