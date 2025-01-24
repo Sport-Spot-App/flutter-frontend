@@ -5,8 +5,8 @@ import 'package:sport_spot/common/utils/user_map.dart';
 import 'package:sport_spot/models/user_model.dart';
 import 'package:sport_spot/repositories/auth_repository.dart';
 import 'package:sport_spot/routes/routing_constants.dart';
-import 'package:sport_spot/screens/courts/favorites_page.dart';
-import 'package:sport_spot/screens/courts/courts_page.dart';
+import 'package:sport_spot/screens/court/favorites_page.dart';
+import 'package:sport_spot/screens/court/courts_page.dart';
 import 'package:sport_spot/screens/profile/change_password_page.dart';
 import 'package:sport_spot/screens/profile/edit_profile_page.dart';
 import 'package:sport_spot/stores/auth_store.dart';
@@ -102,14 +102,14 @@ class _ProfilePageState extends State<ProfilePage> {
               shrinkWrap: true,
               children: [
                 ListTile(
-                  leading: const Icon(Icons.person, color: AppColors.charcoalBlue),
+                  leading: const Icon(Icons.edit, color: AppColors.charcoalBlue),
                   title: const Text("Editar perfil"),
                   onTap: () {
                     Navigator.of(context).push(MaterialPageRoute(builder: (_) => EditProfilePage(user!)));
                   },
                 ),
                 ListTile(
-                  leading: const Icon(Icons.sports_baseball),
+                  leading: const Icon(Icons.sports_baseball, color: AppColors.charcoalBlue),
                   title: const Text("Minhas quadras"),
                   onTap: () {
                     Navigator.of(context).push(MaterialPageRoute(builder: (_) => CourtsPage()));
@@ -163,7 +163,6 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 }
 
-// Custom Clipper for the gradient header
 class HalfClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
