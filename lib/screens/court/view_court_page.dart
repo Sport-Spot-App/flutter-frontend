@@ -1,6 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:sport_spot/common/constants/app_colors.dart';
+import 'package:sport_spot/screens/court/court_map_page.dart';
 
 class ViewCourtPage extends StatefulWidget {
   final Map<String, dynamic> court;
@@ -104,7 +105,7 @@ class _ViewCourtPageState extends State<ViewCourtPage> {
                 minimumSize: Size(MediaQuery.of(context).size.width / 2 - 25, 50),
               ),
               onPressed: () {
-                // Ver no mapa
+                Navigator.of(context).push(MaterialPageRoute(builder: (_) => CourtMapPage()));
               },
               child: Text("Ver no mapa", style: TextStyle(color: Colors.white)),
             ),
