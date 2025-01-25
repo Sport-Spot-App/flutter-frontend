@@ -5,6 +5,7 @@ import 'package:sport_spot/screens/auth/login_page.dart';
 import 'package:sport_spot/screens/auth/onboarding_page.dart';
 import 'package:sport_spot/screens/auth/register_page.dart';
 import 'package:sport_spot/screens/court/favorites_page.dart';
+import 'package:sport_spot/screens/court/view_court_page.dart';
 import 'package:sport_spot/screens/home/home_page.dart';
 import 'package:sport_spot/screens/profile/court_owner.dart';
 import 'package:sport_spot/screens/profile/profile_page.dart';
@@ -21,9 +22,6 @@ RouteFactory rotas() {
       case splash:
         screen = SplashPage();
         break;
-      case home:
-        screen = HomePage();
-        break;
       case onboarding:
         screen = OnboardingPage();
         break;
@@ -37,17 +35,24 @@ RouteFactory rotas() {
         int role = (obj as Map<String, int>)["role"] ?? 0;
         screen = RegisterPage(role: role);
         break;
+      case confirmRegister:
+        screen = RegistrationCompletedPage();
+        break;
+      case home:
+        screen = HomePage();
+        break;
+      case favorites:
+        screen = FavoritesPage();
+        break;
       case profile:
         screen = ProfilePage();
         break;
       case users:
         screen = UserListPage();
         break;
-      case favorites:
-        screen = FavoritesPage();
-        break;
-       case confirmRegister:
-        screen = RegistrationCompletedPage();
+      case viewCourt:
+        Map<String, dynamic> court = (obj as Map<String, dynamic>);
+        screen = ViewCourtPage(court);
         break;
        case courtOwner:
         screen = CourtOwnerApprovalPage();
