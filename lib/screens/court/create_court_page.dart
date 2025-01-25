@@ -99,7 +99,9 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
       canPop: canExit,
       onPopInvokedWithResult: (pop, result) async {
         if (pass == 0) {
-          Navigator.of(context).pop();
+          if (mounted) {
+            Navigator.of(context).maybePop();
+          }
         } else {
           setState(() {
             pass--;
@@ -110,7 +112,8 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: AppColors.darkOrange,
-          title: Text("Cadastrar quadra", style: TextStyle(color: Colors.white)),
+          title:
+              Text("Cadastrar quadra", style: TextStyle(color: Colors.white)),
           centerTitle: true,
           iconTheme: IconThemeData(color: Colors.white),
           
@@ -120,13 +123,13 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
             padding: EdgeInsets.all(20),
             child: Builder(
               builder: (_) {
-                if (pass == 0) {
-                  return _buildDataCourtPage();
-                } else if (pass == 1) {
-                  return _buildAddressCourtPage();
-                } else {
-                  return _buildPhotosCourtPage();
-                }
+              if (pass == 0) {
+                return _buildDataCourtPage();
+              } else if (pass == 1) {
+                return _buildAddressCourtPage();
+              } else {
+                return _buildPhotosCourtPage();
+              }
               }
             ),
           ),
@@ -134,24 +137,24 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
         bottomNavigationBar: Padding(
           padding: const EdgeInsets.all(20),
           child: ElevatedButton(
-            onPressed: () {
-              if (pass == 2) {
-                // Salvar
-                print("Salvar quadra");
-                setState(() {
-                  canExit = true;
-                });
-              } else {
-                setState(() {
-                  pass++;
-                  canExit = false;
-                });
-              }
-            },
-            style: ElevatedButton.styleFrom(
-              minimumSize: Size.fromHeight(50),
-              backgroundColor: AppColors.darkOrange,
-            ),
+              onPressed: () {
+                if (pass == 2) {
+                  // Salvar
+                  print("Salvar quadra");
+                  setState(() {
+                    canExit = true;
+                  });
+                } else {
+                  setState(() {
+                    pass++;
+                    canExit = false;
+                  });
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                minimumSize: Size.fromHeight(50),
+                backgroundColor: AppColors.darkOrange,
+              ),
             child: Text(pass == 2 ? "Salvar" : "Continuar", style: TextStyle(fontSize: 20, color: Colors.white),)
           ),
         ),
@@ -205,7 +208,7 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
       ],
     );
   }
-  
+
   _buildAddressCourtPage() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
