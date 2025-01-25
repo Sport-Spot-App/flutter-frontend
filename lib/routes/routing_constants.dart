@@ -8,12 +8,14 @@ const registerRole = "registerRolePage";
 
 const registerForm = "registerFormPage";
 
+const confirmRegister = "confirmRegisterPage";
+
 const home = "homePage";
-
-const users = "usersPage";
-
-const profile = "profilePage";
 
 const favorites = "favoritesPage";
 
-const confirmRegister = "confirmRegisterPage";
+const profile = "profilePage";
+
+const viewCourt = "viewCourtPage";
+
+const users = "usersPage";
