@@ -77,18 +77,24 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-class HomePageContent extends StatelessWidget {
+class HomePageContent extends StatefulWidget {
   HomePageContent({super.key});
 
+  @override
+  _HomePageContentState createState() => _HomePageContentState();
+}
+
+class _HomePageContentState extends State<HomePageContent> {
   final List<Map<String, dynamic>> courts = [
     {
       'image': [
-        'https://media.istockphoto.com/id/183064576/pt/foto/voleibol-em-um-gin%C3%A1sio-vazio.jpg?s=2048x2048&w=is&k=20&c=JE_mua11rdrRk1WWgOpc6yHMdNPw9Iq6gK1PnWSJBXI=',
         'https://media.istockphoto.com/id/179072181/pt/foto/stadium.jpg?s=2048x2048&w=is&k=20&c=GWcYRBfQ15rizVR7NQJt7VGzVlO8qHJfgDHVyKQBBE8=',
+        'https://media.istockphoto.com/id/183064576/pt/foto/voleibol-em-um-gin%C3%A1sio-vazio.jpg?s=2048x2048&w=is&k=20&c=JE_mua11rdrRk1WWgOpc6yHMdNPw9Iq6gK1PnWSJBXI=',
         'https://media.istockphoto.com/id/183256716/pt/foto/bola-e-o-campo-de-basquetebol.jpg?s=2048x2048&w=is&k=20&c=pakFF7RO2wUGpJyDukM94kbBaJ4xxhcWyUuoXqu3slI='
       ],
       'name': 'Jardim Belvedere',
-      'description': "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book",
+      'description':
+          "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book",
       'type': 'Poliesportiva',
       'price': '60'
     },
@@ -99,7 +105,8 @@ class HomePageContent extends StatelessWidget {
         'https://media.istockphoto.com/id/183256716/pt/foto/bola-e-o-campo-de-basquetebol.jpg?s=2048x2048&w=is&k=20&c=pakFF7RO2wUGpJyDukM94kbBaJ4xxhcWyUuoXqu3slI='
       ],
       'name': 'Centro',
-      'description': "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book",
+      'description':
+          "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book",
       'type': 'Poliesportiva',
       'price': '60'
     },
@@ -110,7 +117,8 @@ class HomePageContent extends StatelessWidget {
         'https://media.istockphoto.com/id/183256716/pt/foto/bola-e-o-campo-de-basquetebol.jpg?s=2048x2048&w=is&k=20&c=pakFF7RO2wUGpJyDukM94kbBaJ4xxhcWyUuoXqu3slI='
       ],
       'name': 'Jardim São Paulo',
-      'description': "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book",
+      'description':
+          "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book",
       'type': 'Poliesportiva',
       'price': '60'
     },
@@ -121,7 +129,8 @@ class HomePageContent extends StatelessWidget {
         'https://media.istockphoto.com/id/183256716/pt/foto/bola-e-o-campo-de-basquetebol.jpg?s=2048x2048&w=is&k=20&c=pakFF7RO2wUGpJyDukM94kbBaJ4xxhcWyUuoXqu3slI='
       ],
       'name': 'Jardim Belvedere',
-      'description': "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book",
+      'description':
+          "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book",
       'type': 'Poliesportiva',
       'price': '60'
     },
@@ -132,7 +141,8 @@ class HomePageContent extends StatelessWidget {
         'https://media.istockphoto.com/id/183256716/pt/foto/bola-e-o-campo-de-basquetebol.jpg?s=2048x2048&w=is&k=20&c=pakFF7RO2wUGpJyDukM94kbBaJ4xxhcWyUuoXqu3slI='
       ],
       'name': 'Centro',
-      'description': "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book",
+      'description':
+          "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book",
       'type': 'Poliesportiva',
       'price': '60'
     },
@@ -143,7 +153,8 @@ class HomePageContent extends StatelessWidget {
         'https://media.istockphoto.com/id/183256716/pt/foto/bola-e-o-campo-de-basquetebol.jpg?s=2048x2048&w=is&k=20&c=pakFF7RO2wUGpJyDukM94kbBaJ4xxhcWyUuoXqu3slI='
       ],
       'name': 'Jardim São Paulo',
-      'description': "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book",
+      'description':
+          "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book",
       'type': 'Poliesportiva',
       'price': '60'
     },
@@ -154,7 +165,8 @@ class HomePageContent extends StatelessWidget {
         'https://media.istockphoto.com/id/183256716/pt/foto/bola-e-o-campo-de-basquetebol.jpg?s=2048x2048&w=is&k=20&c=pakFF7RO2wUGpJyDukM94kbBaJ4xxhcWyUuoXqu3slI='
       ],
       'name': 'Jardim Belvedere',
-      'description': "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book",
+      'description':
+          "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book",
       'type': 'Poliesportiva',
       'price': '60'
     },
@@ -165,7 +177,8 @@ class HomePageContent extends StatelessWidget {
         'https://media.istockphoto.com/id/183256716/pt/foto/bola-e-o-campo-de-basquetebol.jpg?s=2048x2048&w=is&k=20&c=pakFF7RO2wUGpJyDukM94kbBaJ4xxhcWyUuoXqu3slI='
       ],
       'name': 'Centro',
-      'description': "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book",
+      'description':
+          "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book",
       'type': 'Poliesportiva',
       'price': '60'
     },
@@ -176,11 +189,32 @@ class HomePageContent extends StatelessWidget {
         'https://media.istockphoto.com/id/183256716/pt/foto/bola-e-o-campo-de-basquetebol.jpg?s=2048x2048&w=is&k=20&c=pakFF7RO2wUGpJyDukM94kbBaJ4xxhcWyUuoXqu3slI='
       ],
       'name': 'Jardim São Paulo',
-      'description': "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book",
+      'description':
+          "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book",
       'type': 'Poliesportiva',
       'price': '60'
     },
   ];
+
+  List<Map<String, dynamic>> filteredCourts = [];
+
+  @override
+  void initState() {
+    super.initState();
+    filteredCourts = courts;
+  }
+
+  void _filterCourts(String query) {
+    final results = courts.where((court) {
+      final courtName = court['name']!.toLowerCase();
+      final input = query.toLowerCase();
+      return courtName.contains(input);
+    }).toList();
+
+    setState(() {
+      filteredCourts = results;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -204,9 +238,7 @@ class HomePageContent extends StatelessWidget {
                 padding: const EdgeInsets.all(16.0),
                 child: SearchField(
                   hintText: 'Pesquisar quadras',
-                  onChanged: (value) {
-                    // Handle search logic
-                  },
+                  onChanged: _filterCourts,
                 ),
               ),
               // Sports Icons Bar
@@ -239,9 +271,9 @@ class HomePageContent extends StatelessWidget {
         // Court Card List
         Expanded(
           child: ListView.builder(
-            itemCount: courts.length,
+            itemCount: filteredCourts.length,
             itemBuilder: (context, index) {
-              final court = courts[index];
+              final court = filteredCourts[index];
               return InkWell(
                 onTap: () {
                   Navigator.of(context).pushNamed(viewCourt, arguments: court);
