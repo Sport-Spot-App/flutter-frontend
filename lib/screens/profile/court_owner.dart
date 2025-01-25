@@ -59,18 +59,48 @@ class CourtOwnerApprovalPageState extends State<CourtOwnerApprovalPage> {
                 margin: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
                 child: Padding(
                   padding: EdgeInsets.all(15),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Image.asset('assets/images/user.png', width: 50),
-                      Text(owner.name),
-                      Text(owner.document),
-                      owner.is_approved
-                          ? Icon(Icons.check, color: Colors.green)
-                          : ElevatedButton(
-                              onPressed: () => approveOwner(owner.id),
-                              child: Text('Aprovar'),
-                            ),
+                      if (owner.is_approved)
+                        Text(
+                          'Aprovado',
+                          style: TextStyle(
+                            color: Colors.green,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        )
+                      else
+                        Text(
+                          'Aguardando aprovação',
+                          style: TextStyle(
+                            color: Colors.amber,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      Text(
+                        owner.name,
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 5),
+                      Text('Documento: ${owner.document}'),
+                      SizedBox(height: 5),
+                      Text('Telefone: ${owner.cellphone}'),
+                      SizedBox(height: 10),
+                      if (!owner.is_approved)
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.green,
+                          ),
+                          onPressed: () => approveOwner(owner.id),
+                          child: Text('Aprovar',
+                              style: TextStyle(
+                                  color: const Color.fromARGB(
+                                      255, 255, 255, 255))),
+                        ),
                     ],
                   ),
                 ),
