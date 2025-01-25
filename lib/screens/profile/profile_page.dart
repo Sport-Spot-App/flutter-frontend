@@ -7,13 +7,12 @@ import 'package:sport_spot/models/user_model.dart';
 import 'package:sport_spot/repositories/auth_repository.dart';
 import 'package:sport_spot/routes/routing_constants.dart';
 import 'package:sport_spot/screens/court/courts_page.dart';
-
 import 'package:sport_spot/screens/profile/change_password_page.dart';
+import 'package:sport_spot/screens/profile/court_owner.dart';
 import 'package:sport_spot/screens/profile/edit_profile_page.dart';
 import 'package:sport_spot/stores/auth_store.dart';
 
 class ProfilePage extends StatefulWidget {
-
   const ProfilePage({super.key});
 
   @override
@@ -73,7 +72,8 @@ class _ProfilePageState extends State<ProfilePage> {
                   radius: 70,
                   backgroundImage: user?.photo != null && user?.photo != ""
                       ? NetworkImage(user!.photo!)
-                      : const AssetImage('assets/images/default_user.png') as ImageProvider,
+                      : const AssetImage('assets/images/default_user.png')
+                          as ImageProvider,
                 ),
               ),
             ],
@@ -87,7 +87,7 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           ),
           Text(
-           user?.email ?? "",
+            user?.email ?? "",
             style: const TextStyle(
               fontSize: 16,
               color: AppColors.green,
@@ -99,43 +99,61 @@ class _ProfilePageState extends State<ProfilePage> {
           // Menu items
           Expanded(
             child: ListView(
-              padding: const EdgeInsets.only(left: 20, right: 20,),
+              padding: const EdgeInsets.only(
+                left: 20,
+                right: 20,
+              ),
               shrinkWrap: true,
               children: [
                 ListTile(
-                  leading: const Icon(Icons.person, color: AppColors.charcoalBlue),
+                  leading:
+                      const Icon(Icons.person, color: AppColors.charcoalBlue),
                   title: const Text("Editar perfil"),
                   onTap: () {
-                    Navigator.of(context).push(MaterialPageRoute(builder: (_) => EditProfilePage(user!)));
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (_) => EditProfilePage(user!)));
                   },
                 ),
                 ListTile(
-                  leading: const Icon(CupertinoIcons.sportscourt_fill, color: AppColors.charcoalBlue),
+                  leading: const Icon(CupertinoIcons.sportscourt_fill,
+                      color: AppColors.charcoalBlue),
                   title: const Text("Minhas quadras"),
                   onTap: () {
-                    Navigator.of(context).push(MaterialPageRoute(builder: (_) => CourtsPage()));
+                    Navigator.of(context)
+                        .push(MaterialPageRoute(builder: (_) => CourtsPage()));
                   },
                 ),
-                Builder(
-                  builder: (_) {
-                    if (user != null && user!.role == 2) {
-                      return ListTile(
-                        leading: const Icon(CupertinoIcons.sportscourt),
-                        title: const Text("Minhas quadras"),
-                        onTap: () {
-                          Navigator.of(context).push(MaterialPageRoute(builder: (_) => CourtsPage()));
-                        },
-                      );
-                    } else {
-                      return Container(); 
-                    }
+                Builder(builder: (_) {
+                  if (user != null && user!.role == 2) {
+                    return ListTile(
+                      leading: const Icon(CupertinoIcons.sportscourt),
+                      title: const Text("Minhas quadras"),
+                      onTap: () {
+                        Navigator.of(context).push(
+                            MaterialPageRoute(builder: (_) => CourtsPage()));
+                      },
+                    );
+                  } else {
+                    return Container();
                   }
-                ),
+                }),
+                if (user != null && user!.role == 1)
+                  ListTile(
+                    leading: const Icon(Icons.admin_panel_settings,
+                        color: AppColors.charcoalBlue),
+                    title: const Text("Aprovar proprietários"),
+                    onTap: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (_) => CourtOwnerApprovalPage()));
+                    },
+                  ),
                 ListTile(
-                  leading: const Icon(Icons.lock, color: AppColors.charcoalBlue),
+                  leading:
+                      const Icon(Icons.lock, color: AppColors.charcoalBlue),
                   title: const Text("Trocar senha"),
                   onTap: () {
-                    Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ChangePasswordPage()));
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (_) => const ChangePasswordPage()));
                   },
                 ),
                 ListTile(
@@ -144,7 +162,8 @@ class _ProfilePageState extends State<ProfilePage> {
                   onTap: () async {
                     await store.logout();
                     await UserMap.removeUserMap();
-                    Navigator.of(context).pushNamedAndRemoveUntil(onboarding, (route) => false);
+                    Navigator.of(context)
+                        .pushNamedAndRemoveUntil(onboarding, (route) => false);
                   },
                 ),
               ],

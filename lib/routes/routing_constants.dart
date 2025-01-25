@@ -17,3 +17,5 @@ const profile = "profilePage";
 const favorites = "favoritesPage";
 
 const confirmRegister = "confirmRegisterPage";
+
+const courtOwner = "courtOwnerPage";

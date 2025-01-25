@@ -6,6 +6,7 @@ import 'package:sport_spot/screens/auth/onboarding_page.dart';
 import 'package:sport_spot/screens/auth/register_page.dart';
 import 'package:sport_spot/screens/court/favorites_page.dart';
 import 'package:sport_spot/screens/home/home_page.dart';
+import 'package:sport_spot/screens/profile/court_owner.dart';
 import 'package:sport_spot/screens/profile/profile_page.dart';
 import 'package:sport_spot/screens/auth/role_page.dart';
 import 'package:sport_spot/screens/splash/splash_page.dart';
@@ -47,6 +48,9 @@ RouteFactory rotas() {
         break;
        case confirmRegister:
         screen = RegistrationCompletedPage();
+        break;
+       case courtOwner:
+        screen = CourtOwnerApprovalPage();
         break;
       default:
         screen = OnboardingPage();
