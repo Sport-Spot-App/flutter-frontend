@@ -115,12 +115,10 @@ class _ProfilePageState extends State<ProfilePage> {
                   onTap: () {
                     Navigator.of(context).push(MaterialPageRoute(builder: (_) => CourtsPage()));
                   },
-             ),
+                ),
                 Builder(
                   builder: (_) {
-                    if (user == null) {
-                      return Container();
-                    } else if (user!.role == 2) {
+                    if (user != null && user!.role == 2) {
                       return ListTile(
                         leading: const Icon(CupertinoIcons.sportscourt),
                         title: const Text("Minhas quadras"),

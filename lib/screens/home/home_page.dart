@@ -32,7 +32,7 @@ class _HomePageState extends State<HomePage> {
       case 0:
         return 'Sport Spot';
       case 1:
-        return 'Favorios';
+        return 'Favoritos';
       case 2:
         return 'Perfil';
       default:
