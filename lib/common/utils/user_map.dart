@@ -7,7 +7,7 @@ class UserMap {
     prefs.setInt('userId', user.id);
     prefs.setString('userName', user.name);
     prefs.setString('userEmail', user.email);
-    prefs.setInt('urlRole', user.role);
+    prefs.setInt('userRole', user.role);
     prefs.setString('userPhoto', user.photo ?? "");
     prefs.setString('userCellphone', user.cellphone);
     prefs.setString('userDocument', user.document);
@@ -20,9 +20,11 @@ class UserMap {
   static Future<UserModel> getUserMap() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     var auxCreate = prefs.getString("userCreateAt");
-    DateTime createAt = auxCreate == null ? DateTime.now() : DateTime.parse(auxCreate);
+    DateTime createAt =
+        auxCreate == null ? DateTime.now() : DateTime.parse(auxCreate);
     var auxUpdate = prefs.getString("userCreateAt");
-    DateTime updateAt = auxUpdate == null ? DateTime.now() : DateTime.parse(auxUpdate);
+    DateTime updateAt =
+        auxUpdate == null ? DateTime.now() : DateTime.parse(auxUpdate);
 
     return UserModel(
       id: prefs.getInt('userId') ?? 0,
