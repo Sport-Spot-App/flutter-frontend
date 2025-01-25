@@ -178,7 +178,7 @@ class HomePageContent extends StatelessWidget {
       children: [
         Container(
           decoration: const BoxDecoration(
-            color: const Color.fromARGB(255, 243, 243, 243),
+            color: Color.fromARGB(255, 243, 243, 243),
             boxShadow: [
               BoxShadow(
                 color: Colors.black12,
@@ -202,16 +202,23 @@ class HomePageContent extends StatelessWidget {
               // Sports Icons Bar
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                 child: Row(
                   children: const [
-                    IconWithLabel(icon: Icons.sports_volleyball, label: 'Vôlei'),
+                    IconWithLabel(
+                        icon: Icons.sports_volleyball, label: 'Vôlei'),
                     IconWithLabel(icon: Icons.sports_tennis, label: 'Tênis'),
                     IconWithLabel(icon: Icons.sports_soccer, label: 'Futebol'),
-                    IconWithLabel(icon: Icons.sports_basketball, label: 'Basquete'),
-                    IconWithLabel(icon: Icons.sports_handball, label: 'Handebol'),
-                    IconWithLabel(icon: Icons.sports_rugby, label: 'Futebol Americano'),
-                    IconWithLabel(icon: Icons.beach_access_outlined, label: 'Beach Tennis'),
+                    IconWithLabel(
+                        icon: Icons.sports_basketball, label: 'Basquete'),
+                    IconWithLabel(
+                        icon: Icons.sports_handball, label: 'Handebol'),
+                    IconWithLabel(
+                        icon: Icons.sports_rugby, label: 'Futebol Americano'),
+                    IconWithLabel(
+                        icon: Icons.beach_access_outlined,
+                        label: 'Beach Tennis'),
                   ],
                 ),
               ),
