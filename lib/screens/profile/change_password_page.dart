@@ -11,7 +11,7 @@ class ChangePasswordPage extends StatefulWidget {
 }
 
 class _ChangePasswordPageState extends State<ChangePasswordPage> {
- @override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -24,57 +24,63 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
         ),
         iconTheme: IconThemeData(color: Colors.white),
       ),
-      body: Column(
-        children: [
-          Stack(
-            clipBehavior: Clip.none,
-            children: [
-              ClipPath(
-                clipper: HalfClipper(),
-                child: Container(
-                  width: double.infinity,
-                  height: 200,
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: AppColors.orangeGradient,
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Stack(
+              clipBehavior: Clip.none,
+              children: [
+                ClipPath(
+                  clipper: HalfClipper(),
+                  child: Container(
+                    width: double.infinity,
+                    height: 200,
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: AppColors.orangeGradient,
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                      ),
                     ),
                   ),
                 ),
-              ),
-              Positioned(
-                top: 110,
-                left: MediaQuery.of(context).size.width / 2 - 70,
-                child: CircleAvatar(
-                  radius: 70,
-                  backgroundImage: const AssetImage('assets/images/default_user.png') as ImageProvider,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 100),
-          Padding(
-            padding: EdgeInsets.only(left: 20, right: 20),
-            child: Column(
-              children: [
-                InputField(label: "SENHA ATUAL"),
-                InputField(label: "NOVA SENHA"),
-                InputField(label: "CONFIRMAR NOVA SENHA"),
-                ElevatedButton(
-                  onPressed: () {
-                    // TODO: Alterar Senha
-                  },
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: Size.fromHeight(50),
-                    backgroundColor: AppColors.darkOrange,
+                Positioned(
+                  top: 110,
+                  left: MediaQuery.of(context).size.width / 2 - 70,
+                  child: CircleAvatar(
+                    radius: 70,
+                    backgroundImage:
+                        const AssetImage('assets/images/default_user.png')
+                            as ImageProvider,
                   ),
-                  child: Text("Alterar senha", style: TextStyle(fontSize: 20, color: Colors.white),)
                 ),
               ],
             ),
-          ),
-        ],
+            const SizedBox(height: 100),
+            Padding(
+              padding: EdgeInsets.only(left: 20, right: 20),
+              child: Column(
+                children: [
+                  InputField(label: "SENHA ATUAL"),
+                  InputField(label: "NOVA SENHA"),
+                  InputField(label: "CONFIRMAR NOVA SENHA"),
+                  ElevatedButton(
+                      onPressed: () {
+                        // TODO: Alterar Senha
+                      },
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: Size.fromHeight(50),
+                        backgroundColor: AppColors.darkOrange,
+                      ),
+                      child: Text(
+                        "Alterar senha",
+                        style: TextStyle(fontSize: 20, color: Colors.white),
+                      )),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
