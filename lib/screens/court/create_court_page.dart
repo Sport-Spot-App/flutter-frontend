@@ -7,13 +7,15 @@ import 'package:sport_spot/common/widgets/checkbox_field.dart';
 import 'package:sport_spot/common/widgets/input_field.dart';
 
 class CreateCourtPage extends StatefulWidget {
-  const CreateCourtPage({super.key});
+  final Map<String, dynamic>? court;
+  const CreateCourtPage({this.court = null, super.key});
 
   @override
   State<CreateCourtPage> createState() => _CreateCourtPageState();
 }
 
 class _CreateCourtPageState extends State<CreateCourtPage> {
+  int id = 0;
   bool canExit = true;
   ImagePicker picker = ImagePicker();
   int pass = 0;
@@ -94,15 +96,30 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
   }
 
   @override
+  void initState() {
+    if (widget.court != null) {
+      id = widget.court!["id"];
+      nameController.text = widget.court!["name"] ?? "";
+      valueController.text = widget.court!["price"] ?? "";
+      descriptionController.text = widget.court!["description"] ?? "";
+      hourController.text = widget.court!["hour"] ?? "";
+      addressController.text = widget.court!["address"] ?? "";
+      numberController.text = widget.court!["number"] ?? "";
+      complementController.text = widget.court!["complement"] ?? "";
+      neighborhoodController.text = widget.court!["neighborhood"] ?? "";
+      cityController.text = widget.court!["city"] ?? "";
+      stateController.text = widget.court!["state"] ?? "";
+      cepController.text = widget.court!["cep"] ?? "";
+    }
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return PopScope(
       canPop: canExit,
       onPopInvokedWithResult: (pop, result) async {
-        if (pass == 0) {
-          if (mounted) {
-            Navigator.of(context).maybePop();
-          }
-        } else {
+        if (pass != 0) {
           setState(() {
             pass--;
             canExit = pass == 0;
@@ -112,8 +129,7 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: AppColors.darkOrange,
-          title:
-              Text("Cadastrar quadra", style: TextStyle(color: Colors.white)),
+          title: Text("Cadastrar quadra", style: TextStyle(color: Colors.white)),
           centerTitle: true,
           iconTheme: IconThemeData(color: Colors.white),
           
@@ -139,11 +155,11 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
           child: ElevatedButton(
               onPressed: () {
                 if (pass == 2) {
-                  // Salvar
-                  print("Salvar quadra");
-                  setState(() {
-                    canExit = true;
-                  });
+                  if (id > 0) {
+                    print("Editar quadra");
+                  } else {
+                    print("Salvar quadra");
+                  }
                 } else {
                   setState(() {
                     pass++;
