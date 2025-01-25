@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sport_spot/api/api.dart';
 import 'package:sport_spot/common/constants/app_colors.dart';
 import 'package:sport_spot/common/widgets/input_field.dart';
+import 'package:sport_spot/common/widgets/primary_button.dart';
 import 'package:sport_spot/models/user_model.dart';
 import 'package:sport_spot/repositories/auth_repository.dart';
 import 'package:sport_spot/repositories/user_repository.dart';
@@ -19,8 +20,8 @@ class EditProfilePage extends StatefulWidget {
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
-final AuthStore authSstore = AuthStore(repository: AuthRepository(Api()));
-final UserStore userStore = UserStore(repository: UserRepository(Api()));
+  final AuthStore authSstore = AuthStore(repository: AuthRepository(Api()));
+  final UserStore userStore = UserStore(repository: UserRepository(Api()));
 
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
@@ -29,11 +30,10 @@ final UserStore userStore = UserStore(repository: UserRepository(Api()));
 
   void _handleUser(BuildContext context) async {
     UserModel updateUser = widget.user.copyWith(
-      name: nameController.text.trim(),
-      email: emailController.text.trim(),
-      document: documentController.text.trim(),
-      cellphone: cellphoneController.text.trim()
-    );
+        name: nameController.text.trim(),
+        email: emailController.text.trim(),
+        document: documentController.text.trim(),
+        cellphone: cellphoneController.text.trim());
 
     await userStore.updateUser(updateUser);
 
@@ -69,7 +69,9 @@ final UserStore userStore = UserStore(repository: UserRepository(Api()));
           "Editar Perfil",
           style: TextStyle(color: Colors.white),
         ),
-        iconTheme: IconThemeData(color: Colors.white,),
+        iconTheme: IconThemeData(
+          color: Colors.white,
+        ),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -96,7 +98,9 @@ final UserStore userStore = UserStore(repository: UserRepository(Api()));
                   left: MediaQuery.of(context).size.width / 2 - 70,
                   child: CircleAvatar(
                     radius: 70,
-                    backgroundImage: const AssetImage('assets/images/default_user.png') as ImageProvider,
+                    backgroundImage:
+                        const AssetImage('assets/images/default_user.png')
+                            as ImageProvider,
                   ),
                 ),
                 Positioned(
@@ -122,17 +126,15 @@ final UserStore userStore = UserStore(repository: UserRepository(Api()));
                 children: [
                   InputField(label: "NOME", controller: nameController),
                   InputField(label: "EMAIL", controller: emailController),
-                  InputField(label: widget.user.role == 3 ? "CPF" : "CNPJ", controller: documentController),
+                  InputField(
+                      label: widget.user.role == 3 ? "CPF" : "CNPJ",
+                      controller: documentController),
                   InputField(label: "CELULAR", controller: cellphoneController),
-                  ElevatedButton(
+                  PrimaryButton(
+                    text: "Salvar",
                     onPressed: () {
                       _handleUser(context);
                     },
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: Size.fromHeight(50),
-                      backgroundColor: AppColors.darkOrange,
-                    ),
-                    child: Text("Salvar", style: TextStyle(fontSize: 20, color: Colors.white),)
                   ),
                 ],
               ),
