@@ -45,13 +45,9 @@ class CourtOwnerApprovalPageState extends State<CourtOwnerApprovalPage> {
   }
 
   void approveOwner(int id) async {
-    // ignore: unused_local_variable
-    UserModel? owner =
-        userStore.state.value.firstWhere((user) => user.id == id);
-    // TODO: Aprovar usuário
-    // UserModel updatedOwner = owner.copyWith(is_approved: true);
-    // await userStore.updateUser(updatedOwner);
-    // setState(() {});
+    final owner = userStore.state.value.firstWhere((user) => user.id == id);
+    await userStore.approveUser(owner);
+    await _fetchCourtOwners();
   }
 
   @override

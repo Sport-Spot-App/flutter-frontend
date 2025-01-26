@@ -8,6 +8,7 @@ abstract class IUserRepository {
   Future<bool> registerUser(UserModel user);
   Future<void> deleteUser(int userId);
   Future<bool> updateUser(UserModel user);
+  Future<bool> approveUser(UserModel user);
 }
 
 class UserRepository implements IUserRepository {
@@ -37,7 +38,7 @@ class UserRepository implements IUserRepository {
 
   @override
   Future<bool> registerUser(UserModel user) async {
-    final response = await dio.post('/users',  data: jsonEncode(user.toMap()));
+    final response = await dio.post('/users', data: jsonEncode(user.toMap()));
 
     if (response.statusCode == 200 || response.statusCode == 201) {
       return true;
@@ -59,7 +60,8 @@ class UserRepository implements IUserRepository {
 
   @override
   Future<bool> updateUser(UserModel user) async {
-    final response = await dio.put('/users/${user.id}', data: jsonEncode(user.toMap()));
+    final response =
+        await dio.put('/users/${user.id}', data: jsonEncode(user.toMap()));
 
     if (response.statusCode == 200) {
       return true;
@@ -67,6 +69,18 @@ class UserRepository implements IUserRepository {
       throw NotFoundException('Usuário não encontrado.');
     } else {
       throw Exception('Erro ao atualizar o usuário.');
+    }
+  }
+
+  Future<bool> approveUser(UserModel user) async {
+    final response = await dio.put('/users/${user.id}/approve');
+
+    if (response.statusCode == 200) {
+      return true;
+    } else if (response.statusCode == 404) {
+      throw NotFoundException('Usuário não encontrado.');
+    } else {
+      throw Exception('Erro ao aprovar o usuário.');
     }
   }
 }

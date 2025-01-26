@@ -10,7 +10,8 @@ class UserStore {
   final ValueNotifier<bool> isLoading = ValueNotifier<bool>(false);
 
   // Variável reativa para o estado
-  final ValueNotifier<List<UserModel>> state = ValueNotifier<List<UserModel>>([]);
+  final ValueNotifier<List<UserModel>> state =
+      ValueNotifier<List<UserModel>>([]);
 
   // Variável reativa para erros
   final ValueNotifier<String> erro = ValueNotifier<String>('');
@@ -87,6 +88,26 @@ class UserStore {
         state.value = users;
       } else {
         erro.value = 'Falha ao atualizar o usuário';
+      }
+    } catch (e) {
+      erro.value = e.toString();
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  /// Método para aprovar um usuário
+  Future<void> approveUser(UserModel user) async {
+    isLoading.value = true;
+
+    try {
+      final response = await repository.approveUser(user);
+
+      if (response) {
+        erro.value = '';
+        await getUsers();
+      } else {
+        erro.value = 'Falha ao aprovar o usuário';
       }
     } catch (e) {
       erro.value = e.toString();
