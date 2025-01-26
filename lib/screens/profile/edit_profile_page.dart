@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:sport_spot/api/api.dart';
 import 'package:sport_spot/common/constants/app_colors.dart';
 import 'package:sport_spot/common/widgets/input_field.dart';
@@ -9,6 +10,8 @@ import 'package:sport_spot/repositories/user_repository.dart';
 import 'package:sport_spot/screens/profile/profile_page.dart';
 import 'package:sport_spot/stores/auth_store.dart';
 import 'package:sport_spot/stores/user_store.dart';
+import 'package:sport_spot/common/utils/user_map.dart';
+import 'dart:io';
 
 class EditProfilePage extends StatefulWidget {
   final UserModel user;
@@ -28,6 +31,18 @@ class _EditProfilePageState extends State<EditProfilePage> {
   final TextEditingController documentController = TextEditingController();
   final TextEditingController cellphoneController = TextEditingController();
 
+  File? _image;
+
+  Future<void> _pickImage() async {
+    final pickedFile =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _image = File(pickedFile.path);
+      });
+    }
+  }
+
   void _handleUser(BuildContext context) async {
     UserModel updateUser = widget.user.copyWith(
         name: nameController.text.trim(),
@@ -42,6 +57,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         SnackBar(content: Text(userStore.erro.value)),
       );
     } else {
+      await UserMap.setUserMap(updateUser);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Perfil editado com sucesso!')),
       );
@@ -96,25 +112,19 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 Positioned(
                   top: 110,
                   left: MediaQuery.of(context).size.width / 2 - 70,
-                  child: CircleAvatar(
-                    radius: 70,
-                    backgroundImage:
-                        const AssetImage('assets/images/default_user.png')
-                            as ImageProvider,
-                  ),
-                ),
-                Positioned(
-                  top: 200,
-                  left: MediaQuery.of(context).size.width / 2 + 40,
-                  child: IconButton(
-                    style: IconButton.styleFrom(
-                      backgroundColor: AppColors.mediumOrange,
+                  child: GestureDetector(
+                    onTap: _pickImage,
+                    child: CircleAvatar(
+                      radius: 70,
+                      backgroundImage: _image != null
+                          ? FileImage(_image!)
+                          : (widget.user.photo != null &&
+                                      widget.user.photo!.isNotEmpty
+                                  ? NetworkImage(widget.user.photo!)
+                                  : const AssetImage(
+                                      'assets/images/default_user.png'))
+                              as ImageProvider,
                     ),
-                    color: Colors.white,
-                    onPressed: () {
-                      // TODO: Selecionar foto
-                    },
-                    icon: Icon(Icons.photo_camera),
                   ),
                 ),
               ],

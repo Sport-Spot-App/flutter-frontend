@@ -77,10 +77,9 @@ class UserStore {
 
       if (response) {
         erro.value = '';
-        // Atualiza o usuário na lista de estado
         final users = state.value.map((user) {
           if (user.id == updatedUser.id) {
-            return updatedUser; // Substitui pelo usuário atualizado
+            return updatedUser;
           }
           return user;
         }).toList();

@@ -25,12 +25,15 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   void initState() {
-    UserMap.getUserMap().then((value) {
-      setState(() {
-        user = value;
-      });
-    });
+    _loadUser();
     super.initState();
+  }
+
+  Future<void> _loadUser() async {
+    final loadedUser = await UserMap.getUserMap();
+    setState(() {
+      user = loadedUser;
+    });
   }
 
   @override
@@ -109,9 +112,10 @@ class _ProfilePageState extends State<ProfilePage> {
                   leading:
                       const Icon(Icons.person, color: AppColors.charcoalBlue),
                   title: const Text("Editar perfil"),
-                  onTap: () {
-                    Navigator.of(context).push(MaterialPageRoute(
+                  onTap: () async {
+                    await Navigator.of(context).push(MaterialPageRoute(
                         builder: (_) => EditProfilePage(user!)));
+                    _loadUser();
                   },
                 ),
                 ListTile(
