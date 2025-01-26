@@ -1,0 +1,98 @@
+import 'package:flutter/material.dart';
+import 'package:sport_spot/http/exceptions.dart';
+import 'package:sport_spot/models/court_model.dart';
+import 'package:sport_spot/repositories/court_repository.dart';
+
+class CourtStore {
+  final ICourtRepository repository;
+
+  // Variável reativa para o loading
+  final ValueNotifier<bool> isLoading = ValueNotifier<bool>(false);
+
+  // Variável reativa para o estado
+  final ValueNotifier<List<CourtModel>> state = ValueNotifier<List<CourtModel>>([]);
+
+  // Variável reativa para erros
+  final ValueNotifier<String> erro = ValueNotifier<String>('');
+
+  CourtStore({required this.repository});
+
+  /// Método para buscar quadras da API
+  Future<void> getCourts() async {
+    isLoading.value = true;
+
+    try {
+      final result = await repository.getCourts();
+      state.value = result;
+    } on NotFoundException catch (e) {
+      erro.value = e.message;
+    } catch (e) {
+      erro.value = e.toString();
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  /// Método para realizar o registro de uma quadra na API
+  Future<void> registerCourt(CourtModel court) async {
+    isLoading.value = true;
+
+    try {
+      final response = await repository.registerCourt(court);
+
+      if (response) {
+        erro.value = '';
+      } else {
+        erro.value = 'Falha no registro';
+      }
+    } on NotFoundException catch (e) {
+      erro.value = e.message;
+    } catch (e) {
+      erro.value = e.toString();
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  /// Método para excluir uma quadra
+  Future<void> deleteCourt(int id) async {
+    isLoading.value = true;
+
+    try {
+      await repository.deleteCourt(id);
+      await getCourts(); // Atualiza a lista de quadras
+    } catch (e) {
+      erro.value = e.toString();
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  /// Método para atualizar uma quadra
+  Future<void> updateCourt(CourtModel updatedCourt) async {
+    isLoading.value = true;
+
+    try {
+      final response = await repository.updateCourt(updatedCourt);
+
+      if (response) {
+        erro.value = '';
+        // Atualiza a quadra na lista de estado
+        final courts = state.value.map((court) {
+          if (court.id == updatedCourt.id) {
+            return updatedCourt; // Substitui pela quadra atualizada
+          }
+          return court;
+        }).toList();
+
+        state.value = courts;
+      } else {
+        erro.value = 'Falha ao atualizar a quadra';
+      }
+    } catch (e) {
+      erro.value = e.toString();
+    } finally {
+      isLoading.value = false;
+    }
+  }
+}
