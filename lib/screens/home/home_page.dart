@@ -5,6 +5,9 @@ import 'package:sport_spot/common/widgets/search_field.dart';
 import 'package:sport_spot/routes/routing_constants.dart';
 import 'package:sport_spot/screens/court/favorites_page.dart';
 import 'package:sport_spot/screens/profile/profile_page.dart';
+import 'package:sport_spot/screens/user/adm_users.dart';
+import 'package:sport_spot/common/utils/user_map.dart';
+import 'package:sport_spot/models/user_model.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -15,12 +18,27 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
+  UserModel? user;
 
   static final List<Widget> _widgetOptions = <Widget>[
     HomePageContent(),
     FavoritesPage(),
     ProfilePage(),
+    AdmUsersScreen(),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUser();
+  }
+
+  Future<void> _loadUser() async {
+    final loadedUser = await UserMap.getUserMap();
+    setState(() {
+      user = loadedUser;
+    });
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -36,6 +54,8 @@ class _HomePageState extends State<HomePage> {
         return 'Favoritos';
       case 2:
         return 'Perfil';
+      case 3:
+        return 'Gerenciar Usuários';
       default:
         return 'Sport Spot';
     }
@@ -55,20 +75,26 @@ class _HomePageState extends State<HomePage> {
       ),
       body: _widgetOptions.elementAt(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
+        items: [
+          const BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
           ),
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: Icon(Icons.favorite),
             label: 'Favoritos',
           ),
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: Icon(Icons.person),
             label: 'Perfil',
           ),
+          if (user != null && user!.role == 1)
+            const BottomNavigationBarItem(
+              icon: Icon(Icons.admin_panel_settings),
+              label: 'Admin',
+            ),
         ],
+        unselectedItemColor: Colors.grey,
         currentIndex: _selectedIndex,
         selectedItemColor: AppColors.darkOrange,
         onTap: _onItemTapped,
