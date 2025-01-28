@@ -107,18 +107,18 @@ class _AdmUsersScreenState extends State<AdmUsersScreen> {
                       ),
                       IconWithLabel(
                         icon: Icons.admin_panel_settings,
-                        label: 'Administrador',
+                        label: 'Admin',
                         isSelected: selectedRole == 1,
                         onTap: () => _filterByRole(1),
                       ),
                       IconWithLabel(
-                        icon: Icons.sports_basketball,
+                        icon: Icons.sports,
                         label: 'Proprietário',
                         isSelected: selectedRole == 2,
                         onTap: () => _filterByRole(2),
                       ),
                       IconWithLabel(
-                        icon: Icons.sports,
+                        icon: Icons.sports_handball,
                         label: 'Atleta',
                         isSelected: selectedRole == 3,
                         onTap: () => _filterByRole(3),
@@ -147,19 +147,27 @@ class _AdmUsersScreenState extends State<AdmUsersScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                _getRoleName(user.role),
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppColors.charcoalBlue,
-                                ),
-                              ),
-                              if (user.role == 2)
-                                Text(
-                                  user.is_approved ? 'Aprovado' : 'Aguardando aprovação',
-                                  style: TextStyle(
+                               if (user.role == 2)
+                                Container(
+                                  decoration: BoxDecoration(
                                     color: user.is_approved ? Colors.green : Colors.amber,
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                  child: Text(
+                                    user.is_approved ? 'Aprovado' : 'Aguardando aprovação',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(height: 5),
+                              if (!user.status)
+                                Text(
+                                  "Desativado",
+                                  style: TextStyle(
+                                    color: const Color.fromARGB(255, 248, 50, 0),
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -168,6 +176,14 @@ class _AdmUsersScreenState extends State<AdmUsersScreen> {
                                 style: const TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Text(
+                                _getRoleName(user.role),
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.charcoalBlue,
                                 ),
                               ),
                               const SizedBox(height: 5),
