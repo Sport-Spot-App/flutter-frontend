@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sport_spot/common/widgets/input_field.dart';
 import 'package:sport_spot/common/widgets/primary_button.dart';
-import 'package:sport_spot/common/widgets/half_clipper.dart'; // Your custom clipper
+import 'package:sport_spot/common/widgets/half_clipper.dart';
 import 'package:sport_spot/models/user_model.dart';
 import 'package:sport_spot/stores/user_store.dart';
 import 'package:sport_spot/common/constants/app_colors.dart';
