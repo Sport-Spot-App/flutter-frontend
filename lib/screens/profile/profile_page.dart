@@ -39,15 +39,6 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   backgroundColor: AppColors.darkOrange,
-      //   elevation: 0,
-      //   centerTitle: true,
-      //   title: const Text(
-      //     "Perfil",
-      //     style: TextStyle(color: Colors.white),
-      //   ),
-      // ),
       body: Column(
         children: [
           // Gradient background with user photo

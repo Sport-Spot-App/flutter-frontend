@@ -115,4 +115,25 @@ class UserStore {
       isLoading.value = false;
     }
   }
+
+  Future<bool> changePassword(String currentPassword, String newPassword) async {
+    isLoading.value = true;
+
+    try {
+      final response = await repository.changePassword(currentPassword, newPassword);
+
+      if (response) {
+        erro.value = '';
+        return true;
+      } else {
+        erro.value = 'Falha ao alterar a senha';
+        return false;
+      }
+    } catch (e) {
+      erro.value = e.toString();
+      return false;
+    } finally {
+      isLoading.value = false;
+    }
+  }
 }

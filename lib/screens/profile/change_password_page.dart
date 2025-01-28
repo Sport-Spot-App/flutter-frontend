@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:sport_spot/api/api.dart';
 import 'package:sport_spot/common/constants/app_colors.dart';
 import 'package:sport_spot/common/widgets/input_field.dart';
-import 'package:sport_spot/screens/profile/profile_page.dart';
+import 'package:sport_spot/repositories/user_repository.dart';
+import 'package:sport_spot/stores/user_store.dart';
 
 class ChangePasswordPage extends StatefulWidget {
   const ChangePasswordPage({super.key});
@@ -11,6 +13,44 @@ class ChangePasswordPage extends StatefulWidget {
 }
 
 class _ChangePasswordPageState extends State<ChangePasswordPage> {
+  final UserStore store = UserStore(repository: UserRepository(Api()));
+  final TextEditingController _currentPasswordController = TextEditingController();
+  final TextEditingController _newPasswordController = TextEditingController();
+  final TextEditingController _confirmNewPasswordController = TextEditingController();
+
+  @override
+  void dispose() {
+    _currentPasswordController.dispose();
+    _newPasswordController.dispose();
+    _confirmNewPasswordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _changePassword() async {
+    final currentPassword = _currentPasswordController.text;
+    final newPassword = _newPasswordController.text;
+    final confirmNewPassword = _confirmNewPasswordController.text;
+
+    if (newPassword != confirmNewPassword) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('As novas senhas não coincidem')),
+      );
+      return;
+    }
+
+    final success = await store.changePassword(currentPassword, newPassword);
+    if (success) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Senha alterada com sucesso')),
+      );
+      Navigator.of(context).pop();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Erro ao alterar a senha')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,7 +62,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
           "Trocar senha",
           style: TextStyle(color: Colors.white),
         ),
-        iconTheme: IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -58,24 +98,35 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
             ),
             const SizedBox(height: 100),
             Padding(
-              padding: EdgeInsets.only(left: 20, right: 20),
+              padding: const EdgeInsets.only(left: 20, right: 20),
               child: Column(
                 children: [
-                  InputField(label: "SENHA ATUAL"),
-                  InputField(label: "NOVA SENHA"),
-                  InputField(label: "CONFIRMAR NOVA SENHA"),
+                  InputField(
+                    label: "SENHA ATUAL",
+                    controller: _currentPasswordController,
+                    isPassword: true,
+                  ),
+                  InputField(
+                    label: "NOVA SENHA",
+                    controller: _newPasswordController,
+                    isPassword: true,
+                  ),
+                  InputField(
+                    label: "CONFIRMAR NOVA SENHA",
+                    controller: _confirmNewPasswordController,
+                    isPassword: true,
+                  ),
                   ElevatedButton(
-                      onPressed: () {
-                        // TODO: Alterar Senha
-                      },
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: Size.fromHeight(50),
-                        backgroundColor: AppColors.darkOrange,
-                      ),
-                      child: Text(
-                        "Alterar senha",
-                        style: TextStyle(fontSize: 20, color: Colors.white),
-                      )),
+                    onPressed: _changePassword,
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: const Size.fromHeight(50),
+                      backgroundColor: AppColors.darkOrange,
+                    ),
+                    child: const Text(
+                      "Alterar senha",
+                      style: TextStyle(fontSize: 20, color: Colors.white),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -83,5 +134,27 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
         ),
       ),
     );
+  }
+}
+
+class HalfClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    final path = Path();
+    path.lineTo(0, size.height - 50);
+    path.quadraticBezierTo(
+      size.width / 2,
+      size.height,
+      size.width,
+      size.height - 50,
+    );
+    path.lineTo(size.width, 0);
+    path.close();
+    return path;
+  }
+
+  @override
+  bool shouldReclip(covariant CustomClipper<Path> oldClipper) {
+    return false;
   }
 }

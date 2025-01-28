@@ -9,6 +9,7 @@ abstract class IUserRepository {
   Future<void> deleteUser(int userId);
   Future<bool> updateUser(UserModel user);
   Future<bool> approveUser(UserModel user);
+  Future<bool> changePassword(String currentPassword, String newPassword);
 }
 
 class UserRepository implements IUserRepository {
@@ -72,6 +73,7 @@ class UserRepository implements IUserRepository {
     }
   }
 
+  @override
   Future<bool> approveUser(UserModel user) async {
     final response = await dio.put('/users/${user.id}/approve');
 
@@ -81,6 +83,23 @@ class UserRepository implements IUserRepository {
       throw NotFoundException('Usuário não encontrado.');
     } else {
       throw Exception('Erro ao aprovar o usuário.');
+    }
+  }
+
+  @override
+  Future<bool> changePassword(String currentPassword, String newPassword) async {
+    final response = await dio.put('/password/reset', data: {
+      'current_password': currentPassword,
+      'new_password': newPassword,
+    });
+    print(response.statusCode);
+
+    if (response.statusCode == 200) {
+      return true;
+    } else if (response.statusCode == 400) {
+      throw Exception('Senha atual incorreta.');
+    } else {
+      throw Exception('Erro ao alterar a senha.');
     }
   }
 }
