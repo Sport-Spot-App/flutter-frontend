@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sport_spot/common/constants/app_colors.dart';
 import 'package:sport_spot/common/widgets/court_card.dart';
@@ -90,8 +91,8 @@ class _HomePageState extends State<HomePage> {
           ),
           if (user != null && user!.role == 1)
             const BottomNavigationBarItem(
-              icon: Icon(Icons.admin_panel_settings),
-              label: 'Admin',
+              icon: Icon(CupertinoIcons.person_3_fill),
+              label: 'Usuários',
             ),
         ],
         unselectedItemColor: Colors.grey,
