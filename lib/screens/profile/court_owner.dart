@@ -28,7 +28,7 @@ class CourtOwnerApprovalPageState extends State<CourtOwnerApprovalPage> {
     await userStore.getUsers();
     setState(() {
       filteredCourtOwners =
-          userStore.state.value.where((user) => user.role == 2).toList();
+          userStore.state.value.where((user) => user.role == 2 && !user.is_approved).toList();
     });
   }
 
