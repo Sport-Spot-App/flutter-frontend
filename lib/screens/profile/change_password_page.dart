@@ -38,10 +38,10 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
       return;
     }
 
-    final success = await store.changePassword(currentPassword, newPassword);
+    final success = await store.changePassword(currentPassword, newPassword, confirmNewPassword);
     if (success) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Senha alterada com sucesso')),
+        const SnackBar(content: Text('Senha alterada com sucesso!')),
       );
       Navigator.of(context).pop();
     } else {

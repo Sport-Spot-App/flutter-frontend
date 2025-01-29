@@ -54,7 +54,7 @@ class AuthRepository implements IAuthRepository {
   }
 
   @override
-  Future<void> getAuthData() async {
+  Future getAuthData() async {
     try {
       final response = await dio.get('/user/auth');
 
@@ -62,6 +62,7 @@ class AuthRepository implements IAuthRepository {
         var data = response.data;
         UserModel user = UserModel.fromMap(data);
         await UserMap.setUserMap(user);
+        return user;
       } else {
         throw Exception('Erro inesperado ao buscar dados do usuário.');
       }

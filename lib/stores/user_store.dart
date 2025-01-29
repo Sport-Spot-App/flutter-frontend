@@ -116,12 +116,11 @@ class UserStore {
     }
   }
 
-  Future<bool> changePassword(String currentPassword, String newPassword) async {
+  Future<bool> changePassword(String currentPassword, String newPassword, String confirmNewPassword) async {
     isLoading.value = true;
 
     try {
-      final response = await repository.changePassword(currentPassword, newPassword);
-
+      final response = await repository.changePassword(currentPassword, newPassword, confirmNewPassword);
       if (response) {
         erro.value = '';
         return true;

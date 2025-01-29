@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:sport_spot/api/api.dart';
 import 'package:sport_spot/models/user_model.dart';
 import 'package:sport_spot/http/exceptions.dart';
+import 'package:sport_spot/repositories/auth_repository.dart';
 
 abstract class IUserRepository {
   Future<List<UserModel>> getUsers();
@@ -9,11 +11,13 @@ abstract class IUserRepository {
   Future<void> deleteUser(int userId);
   Future<bool> updateUser(UserModel user);
   Future<bool> approveUser(UserModel user);
-  Future<bool> changePassword(String currentPassword, String newPassword);
+  Future<bool> changePassword(String newPassword, String confirmNewPassword);
 }
 
 class UserRepository implements IUserRepository {
   final Dio dio;
+  final AuthRepository repository = AuthRepository(Api());
+
 
   UserRepository(this.dio);
 
@@ -87,12 +91,14 @@ class UserRepository implements IUserRepository {
   }
 
   @override
-  Future<bool> changePassword(String currentPassword, String newPassword) async {
-    final response = await dio.put('/password/reset', data: {
-      'current_password': currentPassword,
-      'new_password': newPassword,
-    });
-    print(response.statusCode);
+  Future<bool> changePassword(String currentPassword, String newPassword, String confirmNewPassword) async {
+    ;
+    final user = await repository.getAuthData();
+    final response = await dio.post('/reset-password', data: jsonEncode({
+      'email': user.email,
+      'password': newPassword,
+      'password_confirmation': confirmNewPassword,
+    }));
 
     if (response.statusCode == 200) {
       return true;
