@@ -11,13 +11,12 @@ abstract class IUserRepository {
   Future<void> deleteUser(int userId);
   Future<bool> updateUser(UserModel user);
   Future<bool> approveUser(UserModel user);
-  Future<bool> changePassword(String newPassword, String confirmNewPassword);
+  Future<bool> changePassword(String currentPassword, String newPassword, String confirmNewPassword);
 }
 
 class UserRepository implements IUserRepository {
   final Dio dio;
   final AuthRepository repository = AuthRepository(Api());
-
 
   UserRepository(this.dio);
 
@@ -92,20 +91,24 @@ class UserRepository implements IUserRepository {
 
   @override
   Future<bool> changePassword(String currentPassword, String newPassword, String confirmNewPassword) async {
-    ;
     final user = await repository.getAuthData();
-    final response = await dio.post('/reset-password', data: jsonEncode({
+    final login = await repository.login(user.email, currentPassword);
+    final token = login.token;
+
+    // Usar o token de redefinição de senha para alterar a senha
+    final response = await dio.post('/password-reset', data: {
       'email': user.email,
       'password': newPassword,
       'password_confirmation': confirmNewPassword,
-    }));
+      'token': token,
+    });
 
     if (response.statusCode == 200) {
       return true;
     } else if (response.statusCode == 400) {
       throw Exception('Senha atual incorreta.');
     } else {
-      throw Exception('Erro ao alterar a senha.');
+      throw Exception('Erro ao alterar senha.');
     }
   }
 }
