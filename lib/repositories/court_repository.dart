@@ -18,15 +18,14 @@ class CourtRepository implements ICourtRepository {
   @override
   Future<List<CourtModel>> getCourts() async {
     final response = await dio.get('/courts');
-    print(response.statusCode);
+
     if (response.statusCode == 200) {
       final List<CourtModel> courts = [];
       final body = response.data;
-      print(body);
-
-      body.forEach((item) {
-        courts.add(CourtModel.fromMap(item));
-      });
+      
+       body.forEach((item) {
+          courts.add(CourtModel.fromMap(item));
+        });
 
       return courts;
     } else if (response.statusCode == 404) {

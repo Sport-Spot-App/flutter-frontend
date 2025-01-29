@@ -95,4 +95,14 @@ class CourtStore {
       isLoading.value = false;
     }
   }
+  
+  void filterCourts(String query) {
+    final results = state.value.where((court) {
+      final courtName = court.name.toLowerCase();
+      final input = query.toLowerCase();
+      return courtName.contains(input);
+    }).toList();
+
+    state.value = results;
+  }
 }

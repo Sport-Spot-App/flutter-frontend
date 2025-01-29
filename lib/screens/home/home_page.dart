@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:sport_spot/api/api.dart';
 import 'package:sport_spot/common/constants/app_colors.dart';
 import 'package:sport_spot/common/widgets/court_card.dart';
 import 'package:sport_spot/common/widgets/search_field.dart';
@@ -10,6 +11,9 @@ import 'package:sport_spot/screens/profile/profile_page.dart';
 import 'package:sport_spot/screens/user/adm_users.dart';
 import 'package:sport_spot/common/utils/user_map.dart';
 import 'package:sport_spot/models/user_model.dart';
+import 'package:sport_spot/models/court_model.dart';
+import 'package:sport_spot/repositories/court_repository.dart';
+import 'package:sport_spot/stores/court_store.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -58,9 +62,14 @@ class _HomePageState extends State<HomePage> {
       case 2:
         return 'Favoritos';
       case 3:
-        return 'Perfil';
+        if (user != null && user!.role == 1){
+          return 'Gerenciar Usuários';
+        }else{
+          return 'Histórico';
+        }
       case 4:
-        return 'Gerenciar Usuários';
+        return 'Perfil';
+
       default:
         return 'Sport Spot';
     }
@@ -120,128 +129,27 @@ class HomePageContent extends StatefulWidget {
 }
 
 class _HomePageContentState extends State<HomePageContent> {
-  final List<Map<String, dynamic>> courts = [
-    {
-      'image': [
-        'https://media.istockphoto.com/id/179072181/pt/foto/stadium.jpg?s=2048x2048&w=is&k=20&c=GWcYRBfQ15rizVR7NQJt7VGzVlO8qHJfgDHVyKQBBE8=',
-        'https://media.istockphoto.com/id/183064576/pt/foto/voleibol-em-um-gin%C3%A1sio-vazio.jpg?s=2048x2048&w=is&k=20&c=JE_mua11rdrRk1WWgOpc6yHMdNPw9Iq6gK1PnWSJBXI=',
-        'https://media.istockphoto.com/id/183256716/pt/foto/bola-e-o-campo-de-basquetebol.jpg?s=2048x2048&w=is&k=20&c=pakFF7RO2wUGpJyDukM94kbBaJ4xxhcWyUuoXqu3slI='
-      ],
-      'name': 'Jardim Belvedere',
-      'description':
-          "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book",
-      'type': 'Poliesportiva',
-      'price': '60'
-    },
-    {
-      'image': [
-        'https://media.istockphoto.com/id/183064576/pt/foto/voleibol-em-um-gin%C3%A1sio-vazio.jpg?s=2048x2048&w=is&k=20&c=JE_mua11rdrRk1WWgOpc6yHMdNPw9Iq6gK1PnWSJBXI=',
-        'https://media.istockphoto.com/id/179072181/pt/foto/stadium.jpg?s=2048x2048&w=is&k=20&c=GWcYRBfQ15rizVR7NQJt7VGzVlO8qHJfgDHVyKQBBE8=',
-        'https://media.istockphoto.com/id/183256716/pt/foto/bola-e-o-campo-de-basquetebol.jpg?s=2048x2048&w=is&k=20&c=pakFF7RO2wUGpJyDukM94kbBaJ4xxhcWyUuoXqu3slI='
-      ],
-      'name': 'Centro',
-      'description':
-          "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book",
-      'type': 'Poliesportiva',
-      'price': '60'
-    },
-    {
-      'image': [
-        'https://media.istockphoto.com/id/183064576/pt/foto/voleibol-em-um-gin%C3%A1sio-vazio.jpg?s=2048x2048&w=is&k=20&c=JE_mua11rdrRk1WWgOpc6yHMdNPw9Iq6gK1PnWSJBXI=',
-        'https://media.istockphoto.com/id/179072181/pt/foto/stadium.jpg?s=2048x2048&w=is&k=20&c=GWcYRBfQ15rizVR7NQJt7VGzVlO8qHJfgDHVyKQBBE8=',
-        'https://media.istockphoto.com/id/183256716/pt/foto/bola-e-o-campo-de-basquetebol.jpg?s=2048x2048&w=is&k=20&c=pakFF7RO2wUGpJyDukM94kbBaJ4xxhcWyUuoXqu3slI='
-      ],
-      'name': 'Jardim São Paulo',
-      'description':
-          "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book",
-      'type': 'Poliesportiva',
-      'price': '60'
-    },
-    {
-      'image': [
-        'https://media.istockphoto.com/id/183064576/pt/foto/voleibol-em-um-gin%C3%A1sio-vazio.jpg?s=2048x2048&w=is&k=20&c=JE_mua11rdrRk1WWgOpc6yHMdNPw9Iq6gK1PnWSJBXI=',
-        'https://media.istockphoto.com/id/179072181/pt/foto/stadium.jpg?s=2048x2048&w=is&k=20&c=GWcYRBfQ15rizVR7NQJt7VGzVlO8qHJfgDHVyKQBBE8=',
-        'https://media.istockphoto.com/id/183256716/pt/foto/bola-e-o-campo-de-basquetebol.jpg?s=2048x2048&w=is&k=20&c=pakFF7RO2wUGpJyDukM94kbBaJ4xxhcWyUuoXqu3slI='
-      ],
-      'name': 'Jardim Belvedere',
-      'description':
-          "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book",
-      'type': 'Poliesportiva',
-      'price': '60'
-    },
-    {
-      'image': [
-        'https://media.istockphoto.com/id/183064576/pt/foto/voleibol-em-um-gin%C3%A1sio-vazio.jpg?s=2048x2048&w=is&k=20&c=JE_mua11rdrRk1WWgOpc6yHMdNPw9Iq6gK1PnWSJBXI=',
-        'https://media.istockphoto.com/id/179072181/pt/foto/stadium.jpg?s=2048x2048&w=is&k=20&c=GWcYRBfQ15rizVR7NQJt7VGzVlO8qHJfgDHVyKQBBE8=',
-        'https://media.istockphoto.com/id/183256716/pt/foto/bola-e-o-campo-de-basquetebol.jpg?s=2048x2048&w=is&k=20&c=pakFF7RO2wUGpJyDukM94kbBaJ4xxhcWyUuoXqu3slI='
-      ],
-      'name': 'Centro',
-      'description':
-          "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book",
-      'type': 'Poliesportiva',
-      'price': '60'
-    },
-    {
-      'image': [
-        'https://media.istockphoto.com/id/183064576/pt/foto/voleibol-em-um-gin%C3%A1sio-vazio.jpg?s=2048x2048&w=is&k=20&c=JE_mua11rdrRk1WWgOpc6yHMdNPw9Iq6gK1PnWSJBXI=',
-        'https://media.istockphoto.com/id/179072181/pt/foto/stadium.jpg?s=2048x2048&w=is&k=20&c=GWcYRBfQ15rizVR7NQJt7VGzVlO8qHJfgDHVyKQBBE8=',
-        'https://media.istockphoto.com/id/183256716/pt/foto/bola-e-o-campo-de-basquetebol.jpg?s=2048x2048&w=is&k=20&c=pakFF7RO2wUGpJyDukM94kbBaJ4xxhcWyUuoXqu3slI='
-      ],
-      'name': 'Jardim São Paulo',
-      'description':
-          "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book",
-      'type': 'Poliesportiva',
-      'price': '60'
-    },
-    {
-      'image': [
-        'https://media.istockphoto.com/id/183064576/pt/foto/voleibol-em-um-gin%C3%A1sio-vazio.jpg?s=2048x2048&w=is&k=20&c=JE_mua11rdrRk1WWgOpc6yHMdNPw9Iq6gK1PnWSJBXI=',
-        'https://media.istockphoto.com/id/179072181/pt/foto/stadium.jpg?s=2048x2048&w=is&k=20&c=GWcYRBfQ15rizVR7NQJt7VGzVlO8qHJfgDHVyKQBBE8=',
-        'https://media.istockphoto.com/id/183256716/pt/foto/bola-e-o-campo-de-basquetebol.jpg?s=2048x2048&w=is&k=20&c=pakFF7RO2wUGpJyDukM94kbBaJ4xxhcWyUuoXqu3slI='
-      ],
-      'name': 'Jardim Belvedere',
-      'description':
-          "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book",
-      'type': 'Poliesportiva',
-      'price': '60'
-    },
-    {
-      'image': [
-        'https://media.istockphoto.com/id/183064576/pt/foto/voleibol-em-um-gin%C3%A1sio-vazio.jpg?s=2048x2048&w=is&k=20&c=JE_mua11rdrRk1WWgOpc6yHMdNPw9Iq6gK1PnWSJBXI=',
-        'https://media.istockphoto.com/id/179072181/pt/foto/stadium.jpg?s=2048x2048&w=is&k=20&c=GWcYRBfQ15rizVR7NQJt7VGzVlO8qHJfgDHVyKQBBE8=',
-        'https://media.istockphoto.com/id/183256716/pt/foto/bola-e-o-campo-de-basquetebol.jpg?s=2048x2048&w=is&k=20&c=pakFF7RO2wUGpJyDukM94kbBaJ4xxhcWyUuoXqu3slI='
-      ],
-      'name': 'Centro',
-      'description':
-          "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book",
-      'type': 'Poliesportiva',
-      'price': '60'
-    },
-    {
-      'image': [
-        'https://media.istockphoto.com/id/183064576/pt/foto/voleibol-em-um-gin%C3%A1sio-vazio.jpg?s=2048x2048&w=is&k=20&c=JE_mua11rdrRk1WWgOpc6yHMdNPw9Iq6gK1PnWSJBXI=',
-        'https://media.istockphoto.com/id/179072181/pt/foto/stadium.jpg?s=2048x2048&w=is&k=20&c=GWcYRBfQ15rizVR7NQJt7VGzVlO8qHJfgDHVyKQBBE8=',
-        'https://media.istockphoto.com/id/183256716/pt/foto/bola-e-o-campo-de-basquetebol.jpg?s=2048x2048&w=is&k=20&c=pakFF7RO2wUGpJyDukM94kbBaJ4xxhcWyUuoXqu3slI='
-      ],
-      'name': 'Jardim São Paulo',
-      'description':
-          "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book",
-      'type': 'Poliesportiva',
-      'price': '60'
-    },
-  ];
-
-  List<Map<String, dynamic>> filteredCourts = [];
+  final CourtStore courtStore = CourtStore(repository: CourtRepository(Api()));
+  List<CourtModel> filteredCourts = [];
 
   @override
   void initState() {
     super.initState();
-    filteredCourts = courts;
+    _fetchCourts();
+  }
+
+  Future<void> _fetchCourts() async {
+    await courtStore.getCourts();
+    setState(() {
+      filteredCourts = courtStore.state.value;
+    });
+    print('Fetched courts: ${courtStore.state.value}');
+    print('Filtered courts after fetch: $filteredCourts');
   }
 
   void _filterCourts(String query) {
-    final results = courts.where((court) {
-      final courtName = court['name']!.toLowerCase();
+    final results = courtStore.state.value.where((court) {
+      final courtName = court.name.toLowerCase();
       final input = query.toLowerCase();
       return courtName.contains(input);
     }).toList();
@@ -249,6 +157,7 @@ class _HomePageContentState extends State<HomePageContent> {
     setState(() {
       filteredCourts = results;
     });
+    print('Filtered results: $filteredCourts');
   }
 
   @override
@@ -314,10 +223,10 @@ class _HomePageContentState extends State<HomePageContent> {
                   Navigator.of(context).pushNamed(viewCourt, arguments: court);
                 },
                 child: CourtCard(
-                  imageUrlList: court['image'],
-                  name: court['name']!,
-                  type: court['type']!,
-                  price: court['price']!,
+                  imageUrlList: court.photos,
+                  name: court.name,
+                  type: court.sports.join(', '),
+                  price: court.price_per_hour.toString(),
                 ),
               );
             },

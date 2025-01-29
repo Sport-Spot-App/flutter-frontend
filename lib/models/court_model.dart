@@ -3,15 +3,17 @@ class CourtModel {
   final String name;
   final String description;
   final String zip_code;
-  final double price_per_hour;
+  final String price_per_hour;
   final String street;
   final String number;
-  final double? coordinate_x;
-  final double? coordinate_y;
+  final String? coordinate_x;
+  final String? coordinate_y;
   final int user_id;
   final DateTime created_at;
   final DateTime updated_at;
   final DateTime? deleted_at;
+  final List<String> sports;
+  final List<String> photos;
 
   CourtModel({
     required this.id,
@@ -27,6 +29,8 @@ class CourtModel {
     required this.created_at,
     required this.updated_at,
     this.deleted_at,
+    required this.sports,
+    required this.photos,
   });
 
   factory CourtModel.fromMap(Map<String, dynamic> map) {
@@ -45,6 +49,8 @@ class CourtModel {
       updated_at: DateTime.parse(map['updated_at']),
       deleted_at:
           map['deleted_at'] != null ? DateTime.parse(map['deleted_at']) : null,
+      sports: List<String>.from(map['sports'] ?? []),
+      photos: List<String>.from(map['photos'] ?? []),
     );
   }
 
@@ -63,6 +69,8 @@ class CourtModel {
       'created_at': created_at.toIso8601String(),
       'updated_at': updated_at.toIso8601String(),
       'deleted_at': deleted_at?.toIso8601String(),
+      'sports': sports,
+      'photos': photos,
     };
   }
 }
