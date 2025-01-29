@@ -135,11 +135,13 @@ class _UserListState extends State<UserListPage> {
   Future<void> _deleteUser(int userId) async {
     try {
       await store.deleteUser(userId);
+      if(!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Usuário excluído com sucesso")),
       );
       store.getUsers(); // Atualiza a lista após a exclusão
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Erro ao excluir usuário")),
       );

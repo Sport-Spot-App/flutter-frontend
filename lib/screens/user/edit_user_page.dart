@@ -13,7 +13,7 @@ class EditUserPage extends StatefulWidget {
   const EditUserPage({super.key, required this.user, required this.userStore});
 
   @override
-  _EditUserPageState createState() => _EditUserPageState();
+  State<EditUserPage> createState() => _EditUserPageState();
 }
 
 class _EditUserPageState extends State<EditUserPage> {
@@ -57,11 +57,13 @@ class _EditUserPageState extends State<EditUserPage> {
       await widget.userStore.updateUser(updatedUser);
 
       if (widget.userStore.erro.value.isEmpty) {
+        if (!mounted) return;
         Navigator.pop(context); // Fecha a tela se tudo deu certo
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Usuário atualizado com sucesso!')),
         );
       } else {
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Erro: ${widget.userStore.erro.value}')),
         );

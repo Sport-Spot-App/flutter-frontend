@@ -53,11 +53,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
     await userStore.updateUser(updateUser);
 
     if (userStore.erro.value.isNotEmpty) {
+      if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(userStore.erro.value)),
       );
     } else {
       await UserMap.setUserMap(updateUser);
+      if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Perfil editado com sucesso!')),
       );

@@ -10,7 +10,7 @@ class AdmUsersScreen extends StatefulWidget {
   const AdmUsersScreen({super.key});
 
   @override
-  _AdmUsersScreenState createState() => _AdmUsersScreenState();
+  State<AdmUsersScreen> createState() => _AdmUsersScreenState();
 }
 
 class _AdmUsersScreenState extends State<AdmUsersScreen> {

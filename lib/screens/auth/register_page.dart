@@ -49,6 +49,7 @@ class RegisterPage extends StatelessWidget {
     await userStore.registerUser(user);
 
     if (userStore.erro.value.isEmpty) {
+      if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Usuário cadastrado com sucesso!'),
@@ -56,6 +57,7 @@ class RegisterPage extends StatelessWidget {
       );
       Navigator.of(context).pushNamedAndRemoveUntil(confirmRegister, (route) => false);
     } else {
+      if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(userStore.erro.value),

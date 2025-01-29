@@ -68,11 +68,13 @@ class _LoginPageState extends State<LoginPage> {
     await store.login(email, password);
 
     if (store.error.value.isNotEmpty) {
+      if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(store.error.value)),
       );
     } else {
       await store.getAuthData();
+      if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Login realizado com sucesso!')),
       );

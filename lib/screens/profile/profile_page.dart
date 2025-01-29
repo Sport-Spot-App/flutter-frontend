@@ -157,8 +157,8 @@ class _ProfilePageState extends State<ProfilePage> {
                   onTap: () async {
                     await store.logout();
                     await UserMap.removeUserMap();
-                    Navigator.of(context)
-                        .pushNamedAndRemoveUntil(onboarding, (route) => false);
+                    if (!context.mounted) return;
+                    Navigator.of(context).pushNamedAndRemoveUntil(onboarding, (route) => false);
                   },
                 ),
               ],
