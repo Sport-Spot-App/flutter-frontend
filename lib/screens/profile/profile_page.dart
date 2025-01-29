@@ -109,23 +109,15 @@ class _ProfilePageState extends State<ProfilePage> {
                     _loadUser();
                   },
                 ),
-                ListTile(
-                  leading: const Icon(CupertinoIcons.sportscourt_fill,
-                      color: AppColors.charcoalBlue),
-                  title: const Text("Minhas quadras"),
-                  onTap: () {
-                    Navigator.of(context)
-                        .push(MaterialPageRoute(builder: (_) => CourtsPage()));
-                  },
-                ),
                 Builder(builder: (_) {
-                  if (user != null && user!.role == 2) {
+                  if (user != null && user!.role == 2 && user!.is_approved) {
                     return ListTile(
-                      leading: const Icon(CupertinoIcons.sportscourt),
+                      leading: const Icon(CupertinoIcons.sportscourt_fill,
+                          color: AppColors.charcoalBlue),
                       title: const Text("Minhas quadras"),
                       onTap: () {
-                        Navigator.of(context).push(
-                            MaterialPageRoute(builder: (_) => CourtsPage()));
+                        Navigator.of(context)
+                            .push(MaterialPageRoute(builder: (_) => CourtsPage()));
                       },
                     );
                   } else {
