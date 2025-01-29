@@ -8,7 +8,7 @@ import 'package:sport_spot/common/widgets/input_field.dart';
 
 class CreateCourtPage extends StatefulWidget {
   final Map<String, dynamic>? court;
-  const CreateCourtPage({this.court = null, super.key});
+  const CreateCourtPage({this.court, super.key});
 
   @override
   State<CreateCourtPage> createState() => _CreateCourtPageState();

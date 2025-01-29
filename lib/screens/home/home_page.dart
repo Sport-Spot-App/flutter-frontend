@@ -4,6 +4,7 @@ import 'package:sport_spot/common/constants/app_colors.dart';
 import 'package:sport_spot/common/widgets/court_card.dart';
 import 'package:sport_spot/common/widgets/search_field.dart';
 import 'package:sport_spot/routes/routing_constants.dart';
+import 'package:sport_spot/screens/court/all_courts_map_page.dart';
 import 'package:sport_spot/screens/court/favorites_page.dart';
 import 'package:sport_spot/screens/profile/profile_page.dart';
 import 'package:sport_spot/screens/user/adm_users.dart';
@@ -14,7 +15,7 @@ class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   @override
-  _HomePageState createState() => _HomePageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
@@ -23,6 +24,7 @@ class _HomePageState extends State<HomePage> {
 
   static final List<Widget> _widgetOptions = <Widget>[
     HomePageContent(),
+    AllCourtsMapPage(),
     FavoritesPage(),
     ProfilePage(),
     AdmUsersScreen(),
@@ -52,10 +54,12 @@ class _HomePageState extends State<HomePage> {
       case 0:
         return 'Sport Spot';
       case 1:
-        return 'Favoritos';
+        return 'Mapa';
       case 2:
-        return 'Perfil';
+        return 'Favoritos';
       case 3:
+        return 'Perfil';
+      case 4:
         return 'Gerenciar Usuários';
       default:
         return 'Sport Spot';
@@ -82,6 +86,10 @@ class _HomePageState extends State<HomePage> {
             label: 'Home',
           ),
           const BottomNavigationBarItem(
+            icon: Icon(Icons.map_outlined),
+            label: 'Mapa',
+          ),
+          const BottomNavigationBarItem(
             icon: Icon(Icons.favorite),
             label: 'Favoritos',
           ),
@@ -105,10 +113,10 @@ class _HomePageState extends State<HomePage> {
 }
 
 class HomePageContent extends StatefulWidget {
-  HomePageContent({super.key});
+  const HomePageContent({super.key});
 
   @override
-  _HomePageContentState createState() => _HomePageContentState();
+  State<HomePageContent> createState() => _HomePageContentState();
 }
 
 class _HomePageContentState extends State<HomePageContent> {
