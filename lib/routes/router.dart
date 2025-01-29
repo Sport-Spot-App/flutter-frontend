@@ -11,7 +11,6 @@ import 'package:sport_spot/screens/profile/court_owner.dart';
 import 'package:sport_spot/screens/profile/profile_page.dart';
 import 'package:sport_spot/screens/auth/role_page.dart';
 import 'package:sport_spot/screens/splash/splash_page.dart';
-import 'package:sport_spot/screens/user/user_page.dart';
 import 'package:sport_spot/screens/user/adm_users.dart';
 
 RouteFactory rotas() {
@@ -47,9 +46,6 @@ RouteFactory rotas() {
         break;
       case profile:
         screen = ProfilePage();
-        break;
-      case users:
-        screen = UserListPage();
         break;
       case viewCourt:
         Map<String, dynamic> court = (obj as Map<String, dynamic>);
