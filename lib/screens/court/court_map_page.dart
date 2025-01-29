@@ -52,7 +52,7 @@ class _CourtMapPageState extends State<CourtMapPage> {
             padding: EdgeInsets.all(20),
             color: Colors.white,
             width: MediaQuery.of(context).size.width,
-            height: 150,
+            height: 160,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
