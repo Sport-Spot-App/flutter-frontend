@@ -62,13 +62,9 @@ class _HomePageState extends State<HomePage> {
       case 2:
         return 'Favoritos';
       case 3:
-        if (user != null && user!.role == 1){
-          return 'Gerenciar Usuários';
-        }else{
-          return 'Histórico';
-        }
+          return 'Perfil';
       case 4:
-        return 'Perfil';
+        return 'Gerenciar Usuários';
 
       default:
         return 'Sport Spot';
