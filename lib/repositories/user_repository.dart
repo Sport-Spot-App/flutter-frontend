@@ -100,11 +100,7 @@ class UserRepository implements IUserRepository {
       'password_confirmation': confirmNewPassword,
     };
 
-    print('Request Data: $requestData');
-
     final response = await dio.patch('/reset-password', data: requestData);
-
-    print("Response: ${response.statusCode} - ${response.data}");
 
     if (response.statusCode == 200) {
       return true;

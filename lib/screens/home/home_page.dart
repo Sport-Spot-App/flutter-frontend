@@ -143,8 +143,6 @@ class _HomePageContentState extends State<HomePageContent> {
     setState(() {
       filteredCourts = courtStore.state.value;
     });
-    print('Fetched courts: ${courtStore.state.value}');
-    print('Filtered courts after fetch: $filteredCourts');
   }
 
   void _filterCourts(String query) {
