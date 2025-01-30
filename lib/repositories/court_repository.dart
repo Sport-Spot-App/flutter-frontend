@@ -8,6 +8,7 @@ abstract class ICourtRepository {
   Future<bool> registerCourt(CourtModel court);
   Future<void> deleteCourt(int courtId);
   Future<bool> updateCourt(CourtModel court);
+  Future<List<CourtModel>> getUserCourts();
 }
 
 class CourtRepository implements ICourtRepository {
@@ -69,5 +70,20 @@ class CourtRepository implements ICourtRepository {
     } else {
       throw Exception('Erro ao atualizar a quadra.');
     }
+  }
+
+  @override
+  Future<List<CourtModel>> getUserCourts() async {
+	print("entrou");
+    final response = await dio.get('/owner/courts');
+	
+      final List<CourtModel> courts = [];
+      final body = response.data;
+
+      body.forEach((item) {
+        courts.add(CourtModel.fromMap(item));
+      });
+
+      return courts;    
   }
 }

@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:sport_spot/api/api.dart';
 import 'package:sport_spot/common/constants/app_colors.dart';
 import 'package:sport_spot/common/widgets/court_owner_card.dart';
+import 'package:sport_spot/repositories/auth_repository.dart';
+import 'package:sport_spot/repositories/court_repository.dart';
+import 'package:sport_spot/repositories/user_repository.dart';
 import 'package:sport_spot/screens/court/create_court_page.dart';
+import 'package:sport_spot/stores/court_store.dart';
+import 'package:sport_spot/stores/user_store.dart';
+import 'package:flutter/cupertino.dart';
 
 class CourtsPage extends StatefulWidget {
   const CourtsPage({super.key});
@@ -11,110 +18,97 @@ class CourtsPage extends StatefulWidget {
 }
 
 class _CourtPageState extends State<CourtsPage> {
-  final List<Map<String, dynamic>> myCourts = [
-    {
-      'id': 1,
-      'image': [
-        'https://media.istockphoto.com/id/183064576/pt/foto/voleibol-em-um-gin%C3%A1sio-vazio.jpg?s=2048x2048&w=is&k=20&c=JE_mua11rdrRk1WWgOpc6yHMdNPw9Iq6gK1PnWSJBXI=',
-      ],
-      'name': 'Jardim Belvedere',
-      'type': 'Poliesportiva',
-      'price': '60'
-    },
-    {
-      'id': 2,
-      'image': [
-        'https://media.istockphoto.com/id/179072181/pt/foto/stadium.jpg?s=2048x2048&w=is&k=20&c=GWcYRBfQ15rizVR7NQJt7VGzVlO8qHJfgDHVyKQBBE8=',
-      ],
-      'name': 'Centro',
-      'type': 'Poliesportiva',
-      'price': '60'
-    },
-    {
-      'id': 3,
-      'image': [
-        'https://media.istockphoto.com/id/183256716/pt/foto/bola-e-o-campo-de-basquetebol.jpg?s=2048x2048&w=is&k=20&c=pakFF7RO2wUGpJyDukM94kbBaJ4xxhcWyUuoXqu3slI='
-      ],
-      'name': 'Jardim São Paulo',
-      'type': 'Poliesportiva',
-      'price': '60'
-    },
-    {
-      'id': 4,
-      'image': [
-        'https://media.istockphoto.com/id/183064576/pt/foto/voleibol-em-um-gin%C3%A1sio-vazio.jpg?s=2048x2048&w=is&k=20&c=JE_mua11rdrRk1WWgOpc6yHMdNPw9Iq6gK1PnWSJBXI=',
-      ],
-      'name': 'Jardim Belvedere',
-      'type': 'Poliesportiva',
-      'price': '60'
-    },
-    {
-      'id': 5,
-      'image': [
-        'https://media.istockphoto.com/id/179072181/pt/foto/stadium.jpg?s=2048x2048&w=is&k=20&c=GWcYRBfQ15rizVR7NQJt7VGzVlO8qHJfgDHVyKQBBE8=',
-      ],
-      'name': 'Centro',
-      'type': 'Poliesportiva',
-      'price': '60'
-    },
-    {
-      'id': 6,
-      'image': [
-        'https://media.istockphoto.com/id/183256716/pt/foto/bola-e-o-campo-de-basquetebol.jpg?s=2048x2048&w=is&k=20&c=pakFF7RO2wUGpJyDukM94kbBaJ4xxhcWyUuoXqu3slI='
-      ],
-      'name': 'Jardim São Paulo',
-      'type': 'Poliesportiva',
-      'price': '60'
-    },
-  ];
+  final UserStore store = UserStore(repository: UserRepository(Api()));
+  final CourtStore storeCourt = CourtStore(repository: CourtRepository(Api()));
+  final AuthRepository authRepository = AuthRepository(Api());
+  List<Map<String, dynamic>> myCourts = [];
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserCourts();
+  }
+
+  Future<void> _fetchUserCourts() async {
+    try {
+      final courts = await storeCourt.repository.getUserCourts();
+      setState(() {
+        myCourts = courts.map((court) => court.toMap()).toList();
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erro ao buscar quadras: $e')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.darkOrange,
-        title: Text("Minhas quadras", style: TextStyle(color: Colors.white)),
+        title: const Text("Minhas quadras", style: TextStyle(color: Colors.white)),
         centerTitle: true,
-        iconTheme: IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       backgroundColor: Colors.grey[200],
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.all(10),
-          child: Builder(
-            builder: (_) {
-              if (myCourts.isNotEmpty) {
-                return Column(
-                  children: [
-                    ListView.separated(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      separatorBuilder: (context, index) => SizedBox(height: 10),
-                      itemCount: myCourts.length,
-                      itemBuilder: (context, index) {
-                        final court = myCourts[index];
-
-                        return CourtOwnerCard(court);
-                      },
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(10),
+                child: Builder(
+                  builder: (_) {
+                    if (myCourts.isNotEmpty) {
+                      return Column(
+                        children: [
+                          ListView.separated(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            separatorBuilder: (context, index) => const SizedBox(height: 10),
+                            itemCount: myCourts.length,
+                            itemBuilder: (context, index) {
+                              final court = myCourts[index];
+                              return CourtOwnerCard(court);
+                            },
+                          ),
+                          const SizedBox(height: 55),
+                        ],
+                      );
+                    }
+                    return SizedBox(
+                    height: MediaQuery.of(context).size.height,
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: const [
+                          Icon(CupertinoIcons.doc_text_search, size: 50, color: Colors.grey),
+                          SizedBox(height: 10),
+                          Text(
+                            "Você não tem nenhuma quadra cadastrada, cadastre uma agora!",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: 16, color: Colors.grey),
+                          ),
+                        ],
+                      ),
                     ),
-                    SizedBox(height: 55),
-                  ],
-                );
-              }
-              
-              return Center(
-                child: Text("Nenhuma quadra cadastrada!"),
-              );
-            },
-          ),
-        ),
-      ),
+                    );
+                  },
+                ),
+              ),
+            ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.of(context).push(MaterialPageRoute(builder: (_) => CreateCourtPage()));
+          Navigator.of(context).push(MaterialPageRoute(builder: (_) => const CreateCourtPage()));
         },
         backgroundColor: AppColors.darkOrange,
-        child: Icon(Icons.add, size: 30, color: Colors.white),
+        child: const Icon(Icons.add, size: 30, color: Colors.white),
       ),
     );
   }

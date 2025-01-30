@@ -105,4 +105,24 @@ class CourtStore {
 
     state.value = results;
   }
+
+  void resetFilter() {
+    getCourts();
+  }
+
+  // Método para pegar as quadras por usuário
+  Future<void> getUserCourts() async {
+    isLoading.value = true;
+
+    try {
+      final result = await repository.getUserCourts();
+      state.value = result;
+    } on NotFoundException catch (e) {
+      erro.value = e.message;
+    } catch (e) {
+      erro.value = e.toString();
+    } finally {
+      isLoading.value = false;
+    }
+  }
 }

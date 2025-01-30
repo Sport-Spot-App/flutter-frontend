@@ -18,17 +18,19 @@ class _CourtOwnerCardState extends State<CourtOwnerCard> {
     return Card(
       child: ListTile(
         leading: ClipRRect(
-          borderRadius: BorderRadius.all(Radius.circular(5)),
-          child: Image.network(widget.court["image"][0]),
+          borderRadius: const BorderRadius.all(Radius.circular(5)),
+          child: widget.court["image"] != null && widget.court["image"].isNotEmpty
+              ? Image.network(widget.court["image"][0])
+              : const Icon(Icons.image_not_supported),
         ),
         title: Center(
           child: Text(widget.court["name"]),
         ),
-        titleTextStyle: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+        titleTextStyle: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         subtitle: Column(
           children: [
-            Text("Futebol, Volêi, Handebol, Basquete"),
-            Text("Nome da rua, 660"),
+            const Text("Futebol, Volêi, Handebol, Basquete"),
+            const Text("Nome da rua, 660"),
             Text("R\$ ${widget.court["price"]} / hora"),
           ],
         ),
