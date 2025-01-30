@@ -9,6 +9,8 @@ abstract class ICourtRepository {
   Future<void> deleteCourt(int courtId);
   Future<bool> updateCourt(CourtModel court);
   Future<List<CourtModel>> getUserCourts();
+  Future<void> favoriteCourt(int courtId);
+  Future<List<CourtModel>> getFavoriteCourts();
 }
 
 class CourtRepository implements ICourtRepository {
@@ -85,5 +87,32 @@ class CourtRepository implements ICourtRepository {
       });
 
       return courts;    
+  }
+
+  @override
+  Future<void> favoriteCourt(int courtId) async {
+    final response = await dio.post('/courts/favorite/$courtId');
+
+    if (response.statusCode != 200) {
+      throw Exception('Erro ao favoritar quadra');
+    }
+  }
+
+  @override
+  Future<List<CourtModel>> getFavoriteCourts() async {
+    final response = await dio.get('/favorite');
+
+    if (response.statusCode == 200) {
+      final List<CourtModel> courts = [];
+      final body = response.data;
+
+      body.forEach((item) {
+        courts.add(CourtModel.fromMap(item));
+      });
+
+      return courts;
+    } else {
+      throw Exception('Erro ao buscar quadras favoritas');
+    }
   }
 }

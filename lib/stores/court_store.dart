@@ -60,7 +60,7 @@ class CourtStore {
 
     try {
       await repository.deleteCourt(id);
-      await getCourts(); // Atualiza a lista de quadras
+      await getCourts(); 
     } catch (e) {
       erro.value = e.toString();
     } finally {
@@ -116,6 +116,36 @@ class CourtStore {
 
     try {
       final result = await repository.getUserCourts();
+      state.value = result;
+    } on NotFoundException catch (e) {
+      erro.value = e.message;
+    } catch (e) {
+      erro.value = e.toString();
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  // Método para favoritar/desfavoritar uma quadra
+  Future<void> favoriteCourt(int courtId) async {
+    isLoading.value = true;
+
+    try {
+      await repository.favoriteCourt(courtId);
+      await getCourts();
+    } catch (e) {
+      erro.value = e.toString();
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  // Método para pegar as quadras favoritas
+  Future<void> getFavoriteCourts() async {
+    isLoading.value = true;
+
+    try {
+      final result = await repository.getFavoriteCourts();
       state.value = result;
     } on NotFoundException catch (e) {
       erro.value = e.message;
