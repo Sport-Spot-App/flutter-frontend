@@ -6,6 +6,8 @@ import 'package:sport_spot/http/exceptions.dart';
 import 'package:sport_spot/repositories/auth_repository.dart';
 
 abstract class IUserRepository {
+  get dio => null;
+
   Future<List<UserModel>> getUsers();
   Future<bool> registerUser(UserModel user);
   Future<void> deleteUser(int userId);
@@ -91,17 +93,18 @@ class UserRepository implements IUserRepository {
 
   @override
   Future<bool> changePassword(String currentPassword, String newPassword, String confirmNewPassword) async {
-    final user = await repository.getAuthData();
-    final login = await repository.login(user.email, currentPassword);
-    final token = login.token;
 
-    // Usar o token de redefinição de senha para alterar a senha
-    final response = await dio.post('/password-reset', data: {
-      'email': user.email,
+    final requestData = {
+      'current_password': currentPassword,
       'password': newPassword,
       'password_confirmation': confirmNewPassword,
-      'token': token,
-    });
+    };
+
+    print('Request Data: $requestData');
+
+    final response = await dio.patch('/reset-password', data: requestData);
+
+    print("Response: ${response.statusCode} - ${response.data}");
 
     if (response.statusCode == 200) {
       return true;

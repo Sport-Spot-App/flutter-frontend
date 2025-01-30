@@ -121,13 +121,7 @@ class UserStore {
 
     try {
       final response = await repository.changePassword(currentPassword, newPassword, confirmNewPassword);
-      if (response) {
-        erro.value = '';
-        return true;
-      } else {
-        erro.value = 'Falha ao alterar a senha';
-        return false;
-      }
+      return response;
     } catch (e) {
       erro.value = e.toString();
       return false;
