@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:sport_spot/models/court_model.dart';
 import 'package:sport_spot/http/exceptions.dart';
+import 'package:sport_spot/models/sport_model.dart';
 
 abstract class ICourtRepository {
   Future<List<CourtModel>> getCourts();
@@ -11,6 +12,8 @@ abstract class ICourtRepository {
   Future<List<CourtModel>> getUserCourts();
   Future<void> favoriteCourt(int courtId);
   Future<List<CourtModel>> getFavoriteCourts();
+  Future<List<SportModel>> getSports();
+  Future<void> findCep(String cep);
 }
 
 class CourtRepository implements ICourtRepository {
@@ -109,6 +112,38 @@ class CourtRepository implements ICourtRepository {
       });
 
       return courts;
+    } else {
+      throw Exception('Erro ao buscar quadras favoritas');
+    }
+  }
+  
+  @override
+  Future<List<SportModel>> getSports() async {
+    final response = await dio.get('/sports');
+
+    if (response.statusCode == 200) {
+      final List<SportModel> sports = [];
+      final body = response.data;
+      
+       body.forEach((item) {
+          sports.add(SportModel.fromMap(item));
+        });
+
+      return sports;
+    } else if (response.statusCode == 404) {
+      throw NotFoundException('A URL informada não é válida');
+    } else {
+      throw Exception('Erro ao buscar esportes');
+    }
+  }
+
+  @override
+  Future<void> findCep(String cep) async {
+    final response = await dio.get('/cep/$cep');
+
+    if (response.statusCode == 200) {
+      final body = response.data;
+      print(body);
     } else {
       throw Exception('Erro ao buscar quadras favoritas');
     }
