@@ -147,7 +147,7 @@ class _HomePageContentState extends State<HomePageContent> {
   Future<void> _fetchFavoriteCourts() async {
     await courtStore.getFavoriteCourts();
     setState(() {
-      favoriteCourtIds = courtStore.favoriteCourtIds.value;
+      favoriteCourtIds = courtStore.state.value.map((court) => court.id).toList();
     });
   }
 

@@ -1,12 +1,13 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:sport_spot/common/constants/app_colors.dart';
+import 'package:sport_spot/models/court_model.dart';
 import 'package:sport_spot/screens/court/court_map_page.dart';
 
 class ViewCourtPage extends StatefulWidget {
-  final Map<String, dynamic> court;
+  final CourtModel court;
 
-  const ViewCourtPage(this.court, {super.key});
+  const ViewCourtPage({required this.court, super.key});
 
   @override
   State<ViewCourtPage> createState() => _ViewCourtPageState();
@@ -32,7 +33,6 @@ class _ViewCourtPageState extends State<ViewCourtPage> {
                 options: CarouselOptions(
                   viewportFraction: 1,
                   aspectRatio: 1.5, 
-                  // enlargeCenterPage: true,
                   scrollDirection: Axis.horizontal,
                   onPageChanged:(index, reason) {
                     setState(() {
@@ -50,7 +50,7 @@ class _ViewCourtPageState extends State<ViewCourtPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    widget.court["name"],
+                    widget.court.name,
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -67,7 +67,7 @@ class _ViewCourtPageState extends State<ViewCourtPage> {
               Row(
                 children: [
                   Text(
-                    "R\$ ${widget.court["price"]}",
+                    "R\$ ${widget.court.price_per_hour}",
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -78,18 +78,18 @@ class _ViewCourtPageState extends State<ViewCourtPage> {
                   ),
                 ],
               ),
-              Text(widget.court["description"]),
+              Text(widget.court.description),
               SizedBox(height: 10),
               Divider(),
               SizedBox(height: 10),
               Text("Esportes:", style: TextStyle(fontWeight: FontWeight.bold)),
-              Text("Futebol, vôlei e handebol"),
+              Text(widget.court.sports.join(', ')),
               SizedBox(height: 20),
               Text("Horário de funcionamento:", style: TextStyle(fontWeight: FontWeight.bold)),
               Text("De segunda à sexta\nDas 14h às 16h"),
               SizedBox(height: 20),
               Text("Endereço:", style: TextStyle(fontWeight: FontWeight.bold)),
-              Text("Rua Guaraquecaba, 300, Jd Belvedere\nFoz do Iguaçu"),
+              Text(widget.court.street),
             ],
           ),
         ),
@@ -128,7 +128,7 @@ class _ViewCourtPageState extends State<ViewCourtPage> {
   _getListImages() {
     List<Widget> listImages = [];
 
-    for (var image in widget.court["image"]) {
+    for (var image in widget.court.photos) {
       Widget wdgt = ClipRRect(
         borderRadius: BorderRadius.all(Radius.circular(20)),
         child: Image.network(
@@ -146,7 +146,7 @@ class _ViewCourtPageState extends State<ViewCourtPage> {
   _getIndicatorImages() {
     List<Widget> indicators = [];
 
-    var length = widget.court["image"].length;
+    var length = widget.court.photos.length;
     for (var i = 0; i < length; i++) {
 
       Widget wdgt = Container(
