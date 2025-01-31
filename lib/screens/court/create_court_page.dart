@@ -5,9 +5,11 @@ import 'package:image_picker/image_picker.dart';
 import 'package:sport_spot/common/constants/app_colors.dart';
 import 'package:sport_spot/common/widgets/checkbox_field.dart';
 import 'package:sport_spot/common/widgets/input_field.dart';
+import 'package:sport_spot/models/court_model.dart';
+import 'package:sport_spot/models/sport_model.dart';
 
 class CreateCourtPage extends StatefulWidget {
-  final Map<String, dynamic>? court;
+  final CourtModel? court;
   const CreateCourtPage({this.court, super.key});
 
   @override
@@ -26,64 +28,22 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
   TextEditingController valueController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
   TextEditingController hourController = TextEditingController();
+  TextEditingController cepController = TextEditingController();
   TextEditingController addressController = TextEditingController();
   TextEditingController numberController = TextEditingController();
   TextEditingController complementController = TextEditingController();
   TextEditingController neighborhoodController = TextEditingController();
   TextEditingController cityController = TextEditingController();
   TextEditingController stateController = TextEditingController();
-  TextEditingController cepController = TextEditingController();
 
-  List<Map<String, dynamic>> sportList = [
-    {
-      "id": 1,
-      "name": "Futsal",
-      "photo": "https://sportspott.tech/assets/images/sports/futsal.png",
-      "created_at": null,
-      "updated_at": null
-    },
-    {
-      "id": 2,
-      "name": "Futebol",
-      "photo": "https://sportspott.tech/assets/images/sports/futebol.png",
-      "created_at": null,
-      "updated_at": null
-    },
-    {
-      "id": 3,
-      "name": "Vôlei",
-      "photo": "https://sportspott.tech/assets/images/sports/volei.png",
-      "created_at": null,
-      "updated_at": null
-    },
-    {
-      "id": 4,
-      "name": "Beach Tênis",
-      "photo": "https://sportspott.tech/assets/images/sports/beach-tenis.png",
-      "created_at": null,
-      "updated_at": null
-    },
-    {
-      "id": 5,
-      "name": "Tênis",
-      "photo": "https://sportspott.tech/assets/images/sports/tenis.png",
-      "created_at": null,
-      "updated_at": null
-    },
-    {
-      "id": 6,
-      "name": "Handebol",
-      "photo": "https://sportspott.tech/assets/images/sports/handebol.png",
-      "created_at": null,
-      "updated_at": null
-    },
-    {
-      "id": 7,
-      "name": "Basquete",
-      "photo": "https://sportspott.tech/assets/images/sports/basquete.png",
-      "created_at": null,
-      "updated_at": null
-    }
+  List<SportModel> sportList = [
+    SportModel(id: 1, name: "Futsal"),
+    SportModel(id: 2, name: "Futebol"),
+    SportModel(id: 3, name: "Vôlei"),
+    SportModel(id: 4, name: "Beach Tênis"),
+    SportModel(id: 5, name: "Tênis"),
+    SportModel(id: 6, name: "Handebol"),
+    SportModel(id: 7, name: "Basquete"),
   ];
 
   Future<void> _pickImage() async {
@@ -98,18 +58,18 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
   @override
   void initState() {
     if (widget.court != null) {
-      id = widget.court!["id"];
-      nameController.text = widget.court!["name"] ?? "";
-      valueController.text = widget.court!["price"] ?? "";
-      descriptionController.text = widget.court!["description"] ?? "";
-      hourController.text = widget.court!["hour"] ?? "";
-      addressController.text = widget.court!["address"] ?? "";
-      numberController.text = widget.court!["number"] ?? "";
-      complementController.text = widget.court!["complement"] ?? "";
-      neighborhoodController.text = widget.court!["neighborhood"] ?? "";
-      cityController.text = widget.court!["city"] ?? "";
-      stateController.text = widget.court!["state"] ?? "";
-      cepController.text = widget.court!["cep"] ?? "";
+      id = widget.court!.id;
+      nameController.text = widget.court!.name;
+      valueController.text = widget.court!.price_per_hour;
+      descriptionController.text = widget.court!.description;
+      // hourController.text = widget.court!.hour ?? "";
+      // cepController.text = widget.court!.cep ?? "";
+      addressController.text = widget.court!.street;
+      numberController.text = widget.court!.number;
+      // complementController.text = widget.court!.complement ?? "";
+      // neighborhoodController.text = widget.court!.neighborhood ?? "";
+      // cityController.text = widget.court!.city ?? "";
+      // stateController.text = widget.court!.state ?? "";
     }
     super.initState();
   }
@@ -182,8 +142,8 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
     List<Widget> checkboxList = [];
 
     for (var sport in sportList) {
-      int sportId = sport["id"];
-      String sportName = sport["name"];
+      int sportId = sport.id;
+      String sportName = sport.name;
 
       Widget wdgt = CheckboxField(sportId, sportName, sportsCourt);
       checkboxList.add(wdgt);
@@ -236,13 +196,13 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
             fontWeight: FontWeight.bold),
         ),
         SizedBox(height: 20),
+        InputField(label: "CEP", controller: cepController),
         InputField(label: "LOGRADOURO", controller: addressController),
         InputField(label: "NÚMERO", controller: numberController),
         InputField(label: "COMPLEMENTO", controller: complementController),
         InputField(label: "BAIRRO", controller: neighborhoodController),
         InputField(label: "CIDADE", controller: cityController),
         InputField(label: "ESTADO", controller: stateController),
-        InputField(label: "CEP", controller: cepController),
       ],
     );
   }

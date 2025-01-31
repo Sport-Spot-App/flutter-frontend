@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sport_spot/api/api.dart';
 import 'package:sport_spot/common/constants/app_colors.dart';
 import 'package:sport_spot/common/widgets/court_owner_card.dart';
+import 'package:sport_spot/models/court_model.dart';
 import 'package:sport_spot/repositories/auth_repository.dart';
 import 'package:sport_spot/repositories/court_repository.dart';
 import 'package:sport_spot/repositories/user_repository.dart';
@@ -21,7 +22,7 @@ class _CourtPageState extends State<CourtsPage> {
   final UserStore store = UserStore(repository: UserRepository(Api()));
   final CourtStore storeCourt = CourtStore(repository: CourtRepository(Api()));
   final AuthRepository authRepository = AuthRepository(Api());
-  List<Map<String, dynamic>> myCourts = [];
+  List<CourtModel> myCourts = [];
   bool isLoading = true;
 
   @override
@@ -34,13 +35,14 @@ class _CourtPageState extends State<CourtsPage> {
     try {
       final courts = await storeCourt.repository.getUserCourts();
       setState(() {
-        myCourts = courts.map((court) => court.toMap()).toList();
+        myCourts = courts;
         isLoading = false;
       });
     } catch (e) {
       setState(() {
         isLoading = false;
       });
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Erro ao buscar quadras: $e')),
       );

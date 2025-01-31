@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:sport_spot/common/constants/app_colors.dart';
+import 'package:sport_spot/models/court_model.dart';
 
 class CourtMapPage extends StatefulWidget {
-  const CourtMapPage({super.key});
+  final CourtModel court;
+
+  const CourtMapPage(this.court, {super.key});
 
   @override
   State<CourtMapPage> createState() => _CourtMapPageState();
@@ -25,7 +28,10 @@ class _CourtMapPageState extends State<CourtMapPage> {
           Expanded(
             child: FlutterMap(
               options: MapOptions(
-                initialCenter: LatLng(-25.518243922290036, -54.554903249502345),
+                initialCenter: LatLng(
+                  double.parse(widget.court.coordinate_x!),
+                  double.parse(widget.court.coordinate_y!),
+                ),
                 initialZoom: 17,
               ),
               children: [
@@ -36,7 +42,10 @@ class _CourtMapPageState extends State<CourtMapPage> {
                 MarkerLayer(
                   markers: [
                     Marker(
-                      point: LatLng(-25.518243922290036, -54.554903249502345),
+                      point: LatLng(
+                        double.parse(widget.court.coordinate_x!),
+                        double.parse(widget.court.coordinate_y!),
+                      ),
                       child: Icon(
                         Icons.location_on,
                         size: 30,
@@ -71,7 +80,7 @@ class _CourtMapPageState extends State<CourtMapPage> {
                 ),
                 SizedBox(height: 20),
                 Text(
-                  "Nome da quadra",
+                  widget.court.name,
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -79,7 +88,7 @@ class _CourtMapPageState extends State<CourtMapPage> {
                 ),
                 Row(
                   children: [
-                    Text("Nome da rua"),
+                    Text(widget.court.street),
                     Text(" • Foz do Iguaçu, Paraná", style: TextStyle(color: AppColors.darkOrange)),
                   ],
                 ),

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:sport_spot/models/court_model.dart';
 import 'package:sport_spot/screens/court/create_court_page.dart';
 
 class CourtOwnerCard extends StatefulWidget {
-  final Map<String, dynamic> court;
+  final CourtModel court;
 
   const CourtOwnerCard(this.court, {super.key});
   
@@ -19,19 +20,19 @@ class _CourtOwnerCardState extends State<CourtOwnerCard> {
       child: ListTile(
         leading: ClipRRect(
           borderRadius: const BorderRadius.all(Radius.circular(5)),
-          child: widget.court["image"] != null && widget.court["image"].isNotEmpty
-              ? Image.network(widget.court["image"][0])
+          child: widget.court.photos.isNotEmpty
+              ? Image.network(widget.court.photos[0])
               : const Icon(Icons.image_not_supported),
         ),
         title: Center(
-          child: Text(widget.court["name"]),
+          child: Text(widget.court.name),
         ),
         titleTextStyle: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         subtitle: Column(
           children: [
-            const Text("Futebol, Volêi, Handebol, Basquete"),
-            const Text("Nome da rua, 660"),
-            Text("R\$ ${widget.court["price"]} / hora"),
+            Text(widget.court.sports.join(', ')),
+            Text("${widget.court.street}, ${widget.court.number}"),
+            Text("R\$ ${widget.court.price_per_hour} / hora"),
           ],
         ),
         onTap: () {
