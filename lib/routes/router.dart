@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:sport_spot/models/court_model.dart';
 import 'package:sport_spot/routes/routing_constants.dart';
 import 'package:sport_spot/screens/auth/confirm_register.dart';
 import 'package:sport_spot/screens/auth/login_page.dart';
 import 'package:sport_spot/screens/auth/onboarding_page.dart';
 import 'package:sport_spot/screens/auth/register_page.dart';
+import 'package:sport_spot/screens/court/court_schedule.dart';
 import 'package:sport_spot/screens/court/favorites_page.dart';
 import 'package:sport_spot/screens/court/view_court_page.dart';
 import 'package:sport_spot/screens/home/home_page.dart';
@@ -48,14 +50,17 @@ RouteFactory rotas() {
         screen = ProfilePage();
         break;
       case viewCourt:
-        Map<String, dynamic> court = (obj as Map<String, dynamic>);
-        screen = ViewCourtPage(court);
+        final court = obj as CourtModel;
+        screen = ViewCourtPage(court: court);
         break;
       case courtOwner:
         screen = CourtOwnerApprovalPage();
         break;
       case 'admUsers':
         screen = AdmUsersScreen();
+        break;
+      case courtSchedule:
+        screen = CadastroHorariosPage();
         break;
       default:
         screen = OnboardingPage();
