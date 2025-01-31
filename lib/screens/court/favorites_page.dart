@@ -1,125 +1,66 @@
 import 'package:flutter/material.dart';
+import 'package:sport_spot/api/api.dart';
 import 'package:sport_spot/common/widgets/court_card.dart';
+import 'package:sport_spot/models/court_model.dart';
+import 'package:sport_spot/repositories/court_repository.dart';
+import 'package:sport_spot/routes/routing_constants.dart';
+import 'package:sport_spot/stores/court_store.dart';
 
+class FavoritesPage extends StatefulWidget {
+  const FavoritesPage({super.key});
 
-class FavoritesPage extends StatelessWidget {
-  FavoritesPage({super.key});
+  @override
+  State<FavoritesPage> createState() => _FavoritesPageState();
+}
 
-  final List<Map<String, dynamic>> courts = [
-    {
-      'image': [
-        'https://media.istockphoto.com/id/183064576/pt/foto/voleibol-em-um-gin%C3%A1sio-vazio.jpg?s=2048x2048&w=is&k=20&c=JE_mua11rdrRk1WWgOpc6yHMdNPw9Iq6gK1PnWSJBXI=',
-        'https://media.istockphoto.com/id/179072181/pt/foto/stadium.jpg?s=2048x2048&w=is&k=20&c=GWcYRBfQ15rizVR7NQJt7VGzVlO8qHJfgDHVyKQBBE8=',
-        'https://media.istockphoto.com/id/183256716/pt/foto/bola-e-o-campo-de-basquetebol.jpg?s=2048x2048&w=is&k=20&c=pakFF7RO2wUGpJyDukM94kbBaJ4xxhcWyUuoXqu3slI='
-      ],
-      'name': 'Jardim Belvedere',
-      'type': 'Poliesportiva',
-      'price': '60'
-    },
-    {
-      'image': [
-        'https://media.istockphoto.com/id/183064576/pt/foto/voleibol-em-um-gin%C3%A1sio-vazio.jpg?s=2048x2048&w=is&k=20&c=JE_mua11rdrRk1WWgOpc6yHMdNPw9Iq6gK1PnWSJBXI=',
-        'https://media.istockphoto.com/id/179072181/pt/foto/stadium.jpg?s=2048x2048&w=is&k=20&c=GWcYRBfQ15rizVR7NQJt7VGzVlO8qHJfgDHVyKQBBE8=',
-        'https://media.istockphoto.com/id/183256716/pt/foto/bola-e-o-campo-de-basquetebol.jpg?s=2048x2048&w=is&k=20&c=pakFF7RO2wUGpJyDukM94kbBaJ4xxhcWyUuoXqu3slI='
-      ],
-      'name': 'Centro',
-      'type': 'Poliesportiva',
-      'price': '60'
-    },
-    {
-      'image': [
-        'https://media.istockphoto.com/id/183064576/pt/foto/voleibol-em-um-gin%C3%A1sio-vazio.jpg?s=2048x2048&w=is&k=20&c=JE_mua11rdrRk1WWgOpc6yHMdNPw9Iq6gK1PnWSJBXI=',
-        'https://media.istockphoto.com/id/179072181/pt/foto/stadium.jpg?s=2048x2048&w=is&k=20&c=GWcYRBfQ15rizVR7NQJt7VGzVlO8qHJfgDHVyKQBBE8=',
-        'https://media.istockphoto.com/id/183256716/pt/foto/bola-e-o-campo-de-basquetebol.jpg?s=2048x2048&w=is&k=20&c=pakFF7RO2wUGpJyDukM94kbBaJ4xxhcWyUuoXqu3slI='
-      ],
-      'name': 'Jardim São Paulo',
-      'type': 'Poliesportiva',
-      'price': '60'
-    },
-    {
-      'image': [
-        'https://media.istockphoto.com/id/183064576/pt/foto/voleibol-em-um-gin%C3%A1sio-vazio.jpg?s=2048x2048&w=is&k=20&c=JE_mua11rdrRk1WWgOpc6yHMdNPw9Iq6gK1PnWSJBXI=',
-        'https://media.istockphoto.com/id/179072181/pt/foto/stadium.jpg?s=2048x2048&w=is&k=20&c=GWcYRBfQ15rizVR7NQJt7VGzVlO8qHJfgDHVyKQBBE8=',
-        'https://media.istockphoto.com/id/183256716/pt/foto/bola-e-o-campo-de-basquetebol.jpg?s=2048x2048&w=is&k=20&c=pakFF7RO2wUGpJyDukM94kbBaJ4xxhcWyUuoXqu3slI='
-      ],
-      'name': 'Jardim Belvedere',
-      'type': 'Poliesportiva',
-      'price': '60'
-    },
-    {
-      'image': [
-        'https://media.istockphoto.com/id/183064576/pt/foto/voleibol-em-um-gin%C3%A1sio-vazio.jpg?s=2048x2048&w=is&k=20&c=JE_mua11rdrRk1WWgOpc6yHMdNPw9Iq6gK1PnWSJBXI=',
-        'https://media.istockphoto.com/id/179072181/pt/foto/stadium.jpg?s=2048x2048&w=is&k=20&c=GWcYRBfQ15rizVR7NQJt7VGzVlO8qHJfgDHVyKQBBE8=',
-        'https://media.istockphoto.com/id/183256716/pt/foto/bola-e-o-campo-de-basquetebol.jpg?s=2048x2048&w=is&k=20&c=pakFF7RO2wUGpJyDukM94kbBaJ4xxhcWyUuoXqu3slI='
-      ],
-      'name': 'Centro',
-      'type': 'Poliesportiva',
-      'price': '60'
-    },
-    {
-      'image': [
-        'https://media.istockphoto.com/id/183064576/pt/foto/voleibol-em-um-gin%C3%A1sio-vazio.jpg?s=2048x2048&w=is&k=20&c=JE_mua11rdrRk1WWgOpc6yHMdNPw9Iq6gK1PnWSJBXI=',
-        'https://media.istockphoto.com/id/179072181/pt/foto/stadium.jpg?s=2048x2048&w=is&k=20&c=GWcYRBfQ15rizVR7NQJt7VGzVlO8qHJfgDHVyKQBBE8=',
-        'https://media.istockphoto.com/id/183256716/pt/foto/bola-e-o-campo-de-basquetebol.jpg?s=2048x2048&w=is&k=20&c=pakFF7RO2wUGpJyDukM94kbBaJ4xxhcWyUuoXqu3slI='
-      ],
-      'name': 'Jardim São Paulo',
-      'type': 'Poliesportiva',
-      'price': '60'
-    },
-    {
-      'image': [
-        'https://media.istockphoto.com/id/183064576/pt/foto/voleibol-em-um-gin%C3%A1sio-vazio.jpg?s=2048x2048&w=is&k=20&c=JE_mua11rdrRk1WWgOpc6yHMdNPw9Iq6gK1PnWSJBXI=',
-        'https://media.istockphoto.com/id/179072181/pt/foto/stadium.jpg?s=2048x2048&w=is&k=20&c=GWcYRBfQ15rizVR7NQJt7VGzVlO8qHJfgDHVyKQBBE8=',
-        'https://media.istockphoto.com/id/183256716/pt/foto/bola-e-o-campo-de-basquetebol.jpg?s=2048x2048&w=is&k=20&c=pakFF7RO2wUGpJyDukM94kbBaJ4xxhcWyUuoXqu3slI='
-      ],
-      'name': 'Jardim Belvedere',
-      'type': 'Poliesportiva',
-      'price': '60'
-    },
-    {
-      'image': [
-        'https://media.istockphoto.com/id/183064576/pt/foto/voleibol-em-um-gin%C3%A1sio-vazio.jpg?s=2048x2048&w=is&k=20&c=JE_mua11rdrRk1WWgOpc6yHMdNPw9Iq6gK1PnWSJBXI=',
-        'https://media.istockphoto.com/id/179072181/pt/foto/stadium.jpg?s=2048x2048&w=is&k=20&c=GWcYRBfQ15rizVR7NQJt7VGzVlO8qHJfgDHVyKQBBE8=',
-        'https://media.istockphoto.com/id/183256716/pt/foto/bola-e-o-campo-de-basquetebol.jpg?s=2048x2048&w=is&k=20&c=pakFF7RO2wUGpJyDukM94kbBaJ4xxhcWyUuoXqu3slI='
-      ],
-      'name': 'Centro',
-      'type': 'Poliesportiva',
-      'price': '60'
-    },
-    {
-      'image': [
-        'https://media.istockphoto.com/id/183064576/pt/foto/voleibol-em-um-gin%C3%A1sio-vazio.jpg?s=2048x2048&w=is&k=20&c=JE_mua11rdrRk1WWgOpc6yHMdNPw9Iq6gK1PnWSJBXI=',
-        'https://media.istockphoto.com/id/179072181/pt/foto/stadium.jpg?s=2048x2048&w=is&k=20&c=GWcYRBfQ15rizVR7NQJt7VGzVlO8qHJfgDHVyKQBBE8=',
-        'https://media.istockphoto.com/id/183256716/pt/foto/bola-e-o-campo-de-basquetebol.jpg?s=2048x2048&w=is&k=20&c=pakFF7RO2wUGpJyDukM94kbBaJ4xxhcWyUuoXqu3slI='
-      ],
-      'name': 'Jardim São Paulo',
-      'type': 'Poliesportiva',
-      'price': '60'
-    },
-  ];
+class _FavoritesPageState extends State<FavoritesPage> {
+  final CourtStore courtStore = CourtStore(repository: CourtRepository(Api()));
+  List<CourtModel> favoriteCourts = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchFavoriteCourts();
+  }
+
+  Future<void> _fetchFavoriteCourts() async {
+    await courtStore.getFavoriteCourts();
+    setState(() {
+      favoriteCourts = courtStore.state.value;
+    });
+  }
+
+  Future<void> _toggleFavorite(int courtId) async {
+    await courtStore.favoriteCourt(courtId);
+    _fetchFavoriteCourts();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: courts.length,
-              itemBuilder: (context, index) {
-                final court = courts[index];
-                return CourtCard(
-                  imageUrlList: court['image'],
-                  name: court['name']!,
-                  type: court['type']!,
-                  price: court['price']!,
-                );
-              },
+      body: ListView.builder(
+        itemCount: favoriteCourts.length,
+        itemBuilder: (context, index) {
+          final court = favoriteCourts[index];
+          return InkWell(
+            onTap: () {
+              Navigator.of(context).pushNamed(viewCourt, arguments: court);
+            },
+            child: CourtCard(
+              imageUrlList: court.photos,
+              name: court.name,
+              type: court.sports.join(', '),
+              price: court.price_per_hour.toString(),
+              favoriteIcon: IconButton(
+                icon: Icon(
+                  Icons.favorite,
+                  color: Colors.red,
+                ),
+                onPressed: () => _toggleFavorite(court.id),
+              ),
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }

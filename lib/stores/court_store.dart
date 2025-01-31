@@ -15,6 +15,9 @@ class CourtStore {
   // Variável reativa para erros
   final ValueNotifier<String> erro = ValueNotifier<String>('');
 
+  // Variável reativa para IDs de quadras favoritas
+  final ValueNotifier<List<int>> favoriteCourtIds = ValueNotifier<List<int>>([]);
+
   CourtStore({required this.repository});
 
   /// Método para buscar quadras da API
@@ -132,7 +135,7 @@ class CourtStore {
 
     try {
       await repository.favoriteCourt(courtId);
-      await getCourts();
+      await getFavoriteCourts();
     } catch (e) {
       erro.value = e.toString();
     } finally {
@@ -145,8 +148,9 @@ class CourtStore {
     isLoading.value = true;
 
     try {
-      final result = await repository.getFavoriteCourts();
+      final result = await repository.getFavoriteCourts(); 
       state.value = result;
+      favoriteCourtIds.value = result.map((court) => court.id).toList();
     } on NotFoundException catch (e) {
       erro.value = e.message;
     } catch (e) {

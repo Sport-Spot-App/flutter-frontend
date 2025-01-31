@@ -25,6 +25,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
   UserModel? user;
+  final CourtStore courtStore = CourtStore(repository: CourtRepository(Api()));
 
   static final List<Widget> _widgetOptions = <Widget>[
     HomePageContent(),
@@ -127,17 +128,26 @@ class HomePageContent extends StatefulWidget {
 class _HomePageContentState extends State<HomePageContent> {
   final CourtStore courtStore = CourtStore(repository: CourtRepository(Api()));
   List<CourtModel> filteredCourts = [];
+  List<int> favoriteCourtIds = [];
 
   @override
   void initState() {
     super.initState();
     _fetchCourts();
+    _fetchFavoriteCourts();
   }
 
   Future<void> _fetchCourts() async {
     await courtStore.getCourts();
     setState(() {
       filteredCourts = courtStore.state.value;
+    });
+  }
+
+  Future<void> _fetchFavoriteCourts() async {
+    await courtStore.getFavoriteCourts();
+    setState(() {
+      favoriteCourtIds = courtStore.favoriteCourtIds.value;
     });
   }
 
@@ -151,7 +161,10 @@ class _HomePageContentState extends State<HomePageContent> {
     setState(() {
       filteredCourts = results;
     });
-    print('Filtered results: $filteredCourts');
+  }
+
+  Future<void> _toggleFavorite(int courtId) async {
+    await courtStore.favoriteCourt(courtId);
   }
 
   @override
@@ -208,20 +221,37 @@ class _HomePageContentState extends State<HomePageContent> {
         const SizedBox(height: 16),
         // Court Card List
         Expanded(
-          child: ListView.builder(
-            itemCount: filteredCourts.length,
-            itemBuilder: (context, index) {
-              final court = filteredCourts[index];
-              return InkWell(
-                onTap: () {
-                  Navigator.of(context).pushNamed(viewCourt, arguments: court);
+          child: ValueListenableBuilder<List<int>>(
+            valueListenable: courtStore.favoriteCourtIds,
+            builder: (context, favoriteIds, child) {
+              return ListView.builder(
+                itemCount: filteredCourts.length,
+                itemBuilder: (context, index) {
+                  final court = filteredCourts[index];
+                  var isFavorite = favoriteIds.contains(court.id);
+                  return InkWell(
+                    onTap: () {
+                      Navigator.of(context).pushNamed(viewCourt, arguments: court);
+                    },
+                    child: CourtCard(
+                      imageUrlList: court.photos,
+                      name: court.name,
+                      type: court.sports.join(', '),
+                      price: court.price_per_hour.toString(),
+                      favoriteIcon: IconButton(
+                        icon: Icon(
+                          isFavorite ? Icons.favorite : Icons.favorite_border,
+                          color: isFavorite ? Colors.red : Colors.grey,
+                        ),
+                        onPressed: () {
+                          isFavorite = !isFavorite;
+                          _toggleFavorite(court.id);
+                          
+                        }
+                      ),
+                    ),
+                  );
                 },
-                child: CourtCard(
-                  imageUrlList: court.photos,
-                  name: court.name,
-                  type: court.sports.join(', '),
-                  price: court.price_per_hour.toString(),
-                ),
               );
             },
           ),

@@ -7,6 +7,7 @@ class CourtCard extends StatefulWidget {
   final String name;
   final String type;
   final String price;
+  final Widget favoriteIcon; // Add this line
 
   const CourtCard({
     super.key,
@@ -14,6 +15,7 @@ class CourtCard extends StatefulWidget {
     required this.name,
     required this.type,
     required this.price,
+    required this.favoriteIcon, // Add this line
   });
   
   @override
@@ -99,10 +101,7 @@ class _CourtCardState extends State<CourtCard> {
                         height: 1,
                       ),
                     ),
-                    IconButton(
-                      icon: const Icon(Icons.favorite, color: Colors.red),
-                      onPressed: () {},
-                    ),
+                    widget.favoriteIcon, 
                   ],
                 ),
                 const SizedBox(height: 4),

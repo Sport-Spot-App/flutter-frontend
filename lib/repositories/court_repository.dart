@@ -76,7 +76,6 @@ class CourtRepository implements ICourtRepository {
 
   @override
   Future<List<CourtModel>> getUserCourts() async {
-	print("entrou");
     final response = await dio.get('/owner/courts');
 	
       final List<CourtModel> courts = [];
@@ -100,8 +99,7 @@ class CourtRepository implements ICourtRepository {
 
   @override
   Future<List<CourtModel>> getFavoriteCourts() async {
-    final response = await dio.get('/favorite');
-
+    final response = await dio.get('/favorites');
     if (response.statusCode == 200) {
       final List<CourtModel> courts = [];
       final body = response.data;
