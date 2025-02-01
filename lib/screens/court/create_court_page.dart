@@ -2,11 +2,18 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:sport_spot/api/api.dart';
 import 'package:sport_spot/common/constants/app_colors.dart';
+import 'package:sport_spot/common/widgets/cep_field.dart';
 import 'package:sport_spot/common/widgets/checkbox_field.dart';
 import 'package:sport_spot/common/widgets/input_field.dart';
+import 'package:sport_spot/models/cep_model.dart';
 import 'package:sport_spot/models/court_model.dart';
 import 'package:sport_spot/models/sport_model.dart';
+import 'package:sport_spot/repositories/cep_repository.dart';
+import 'package:sport_spot/repositories/sport_repository.dart';
+import 'package:sport_spot/stores/cep_store.dart';
+import 'package:sport_spot/stores/sport_store.dart';
 
 class CreateCourtPage extends StatefulWidget {
   final CourtModel? court;
@@ -17,12 +24,12 @@ class CreateCourtPage extends StatefulWidget {
 }
 
 class _CreateCourtPageState extends State<CreateCourtPage> {
-  int id = 0;
+  final CepStore cepStore = CepStore(repository: CepRepository(Api()));
+  final SportStore courtStore = SportStore(repository: SportRepository(Api()));
+  List<SportModel> sportList = [];
   bool canExit = true;
-  ImagePicker picker = ImagePicker();
   int pass = 0;
-  List<int> sportsCourt = [];
-  List<File> photos = [];
+  bool isEditing = false;
 
   TextEditingController nameController = TextEditingController();
   TextEditingController valueController = TextEditingController();
@@ -35,19 +42,11 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
   TextEditingController neighborhoodController = TextEditingController();
   TextEditingController cityController = TextEditingController();
   TextEditingController stateController = TextEditingController();
-
-  List<SportModel> sportList = [
-    SportModel(id: 1, name: "Futsal"),
-    SportModel(id: 2, name: "Futebol"),
-    SportModel(id: 3, name: "Vôlei"),
-    SportModel(id: 4, name: "Beach Tênis"),
-    SportModel(id: 5, name: "Tênis"),
-    SportModel(id: 6, name: "Handebol"),
-    SportModel(id: 7, name: "Basquete"),
-  ];
+  List<int> sportsSelected = [];
+  List<File> photos = [];
 
   Future<void> _pickImage() async {
-    List<XFile> pickedFiles = await picker.pickMultiImage();
+    List<XFile> pickedFiles = await ImagePicker().pickMultiImage();
     if (pickedFiles.isNotEmpty) {
       setState(() {
         photos.addAll(pickedFiles.map((file) => File(file.path)));
@@ -57,8 +56,9 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
 
   @override
   void initState() {
+    _fetchSports();
     if (widget.court != null) {
-      id = widget.court!.id;
+      isEditing = true;
       nameController.text = widget.court!.name;
       valueController.text = widget.court!.price_per_hour;
       descriptionController.text = widget.court!.description;
@@ -72,6 +72,30 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
       // stateController.text = widget.court!.state ?? "";
     }
     super.initState();
+  }
+
+  Future<void> _fetchSports() async {
+    await courtStore.getSports();
+    setState(() {
+      sportList = courtStore.state.value;
+    });
+  }
+
+  Future<void> _fetchCEP(String cep) async {
+    if (cep.length > 8)  {
+      await cepStore.findCep(cep);
+      CepModel? cepLocation = cepStore.state.value;
+      if (cepLocation != null) {
+        setState(() {
+          cepController.text = cepLocation.cep;
+          addressController.text = cepLocation.logradouro;
+          complementController.text = cepLocation.complemento;
+          neighborhoodController.text = cepLocation.bairro;
+          cityController.text = cepLocation.localidade;
+          stateController.text = cepLocation.estado;
+        });
+      }
+    }
   }
 
   @override
@@ -115,7 +139,7 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
           child: ElevatedButton(
               onPressed: () {
                 if (pass == 2) {
-                  if (id > 0) {
+                  if (isEditing) {
                     print("Editar quadra");
                   } else {
                     print("Salvar quadra");
@@ -145,7 +169,7 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
       int sportId = sport.id;
       String sportName = sport.name;
 
-      Widget wdgt = CheckboxField(sportId, sportName, sportsCourt);
+      Widget wdgt = CheckboxField(sportId, sportName, sportsSelected);
       checkboxList.add(wdgt);
     }
 
@@ -164,9 +188,9 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
         ),
         SizedBox(height: 20),
         InputField(label: "NOME", controller: nameController),
-        InputField(label: "VALOR POR HORA", controller: valueController),
         InputField(label: "DESCRIÇÃo", controller: descriptionController),
         InputField(label: "HORÁRIO DE FUNCIONAMENTO", controller: hourController),
+        InputField(label: "VALOR POR HORA", controller: valueController),
         SizedBox(height: 10),
         Text(
           "Esportes",
@@ -193,10 +217,11 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
           "Endereço da quadra",
           style: TextStyle(
             fontSize:18,
-            fontWeight: FontWeight.bold),
+            fontWeight: FontWeight.bold,
+          ),
         ),
         SizedBox(height: 20),
-        InputField(label: "CEP", controller: cepController),
+        CepField(onChanged: _fetchCEP),
         InputField(label: "LOGRADOURO", controller: addressController),
         InputField(label: "NÚMERO", controller: numberController),
         InputField(label: "COMPLEMENTO", controller: complementController),
@@ -251,6 +276,7 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
                 crossAxisSpacing: 10,
                 mainAxisSpacing: 10,
               ),
+              shrinkWrap: true,
               itemCount: photos.length,
               itemBuilder: (context, index) {
                 return ClipRRect(
