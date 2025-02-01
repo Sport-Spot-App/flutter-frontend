@@ -13,7 +13,7 @@ class CepRepository implements ICepRepository {
   
   @override
   Future<CepModel> findCep(String cep) async {
-    final response = await dio.get('/ceps/$cep');
+    final response = await dio.get('/cep/$cep');
 
     if (response.statusCode == 200) {
       final body = response.data;
