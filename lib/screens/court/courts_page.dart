@@ -84,22 +84,22 @@ class _CourtPageState extends State<CourtsPage> {
                       );
                     }
                     return SizedBox(
-                    height: MediaQuery.of(context).size.height,
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: const [
-                          Icon(CupertinoIcons.doc_text_search, size: 50, color: Colors.grey),
-                          SizedBox(height: 10),
-                          Text(
-                            "Você não tem nenhuma quadra cadastrada, cadastre uma agora!",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 16, color: Colors.grey),
-                          ),
-                        ],
+                      height: MediaQuery.of(context).size.height,
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: const [
+                            Icon(CupertinoIcons.doc_text_search, size: 50, color: Colors.grey),
+                            SizedBox(height: 10),
+                            Text(
+                              "Você não tem nenhuma quadra cadastrada.\nCadastre uma agora!",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(fontSize: 16, color: Colors.grey),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
                     );
                   },
                 ),
