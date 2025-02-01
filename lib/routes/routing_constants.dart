@@ -10,6 +10,8 @@ const registerForm = "registerFormPage";
 
 const confirmRegister = "confirmRegisterPage";
 
+const appNavigation = "appNavigation";
+
 const home = "homePage";
 
 const favorites = "favoritesPage";
