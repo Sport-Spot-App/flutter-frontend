@@ -20,8 +20,7 @@ class _ViewCourtPageState extends State<ViewCourtPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-      ),
+      appBar: AppBar(),
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.only(left: 20, right: 20),
@@ -32,9 +31,9 @@ class _ViewCourtPageState extends State<ViewCourtPage> {
                 carouselController: _controller,
                 options: CarouselOptions(
                   viewportFraction: 1,
-                  aspectRatio: 1.5, 
+                  aspectRatio: 1.5,
                   scrollDirection: Axis.horizontal,
-                  onPageChanged:(index, reason) {
+                  onPageChanged: (index, reason) {
                     setState(() {
                       currentIndex = index;
                     });
@@ -57,9 +56,7 @@ class _ViewCourtPageState extends State<ViewCourtPage> {
                     ),
                   ),
                   IconButton(
-                    onPressed: () {
-
-                    },
+                    onPressed: () {},
                     icon: Icon(Icons.favorite_outline),
                   ),
                 ],
@@ -73,9 +70,7 @@ class _ViewCourtPageState extends State<ViewCourtPage> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  Text(
-                    " / hora"
-                  ),
+                  Text(" / hora"),
                 ],
               ),
               Text(widget.court.description),
@@ -87,7 +82,8 @@ class _ViewCourtPageState extends State<ViewCourtPage> {
               Text(widget.court.sports.join(', ')),
               Text(widget.court.sports.join(', ')),
               SizedBox(height: 20),
-              Text("Horário de funcionamento:", style: TextStyle(fontWeight: FontWeight.bold)),
+              Text("Horário de funcionamento:",
+                  style: TextStyle(fontWeight: FontWeight.bold)),
               Text("De segunda à sexta\nDas 14h às 16h"),
               SizedBox(height: 20),
               Text("Endereço:", style: TextStyle(fontWeight: FontWeight.bold)),
@@ -104,17 +100,20 @@ class _ViewCourtPageState extends State<ViewCourtPage> {
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.black,
-                minimumSize: Size(MediaQuery.of(context).size.width / 2 - 25, 50),
+                minimumSize:
+                    Size(MediaQuery.of(context).size.width / 2 - 25, 50),
               ),
               onPressed: () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (_) => CourtMapPage(widget.court)));
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (_) => CourtMapPage(widget.court)));
               },
               child: Text("Ver no mapa", style: TextStyle(color: Colors.white)),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.darkOrange,
-                minimumSize: Size(MediaQuery.of(context).size.width / 2 - 25, 50),
+                minimumSize:
+                    Size(MediaQuery.of(context).size.width / 2 - 25, 50),
               ),
               onPressed: () {
                 // Reservar
@@ -155,7 +154,6 @@ class _ViewCourtPageState extends State<ViewCourtPage> {
                 color: Colors.grey,
                 size: 200,
               ),
-              Text('Nenhuma imagem cadastrada!'),
             ],
           ),
         ),
@@ -172,18 +170,16 @@ class _ViewCourtPageState extends State<ViewCourtPage> {
 
     var length = widget.court.photos.length;
     for (var i = 0; i < length; i++) {
-
       Widget wdgt = Container(
         width: 6.0,
         height: 6.0,
         margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: (
-            Theme.of(context).brightness == Brightness.dark
-              ? Colors.white
-              : Colors.black
-          ).withOpacity(currentIndex == i ? 0.9 : 0.4),
+          color: (Theme.of(context).brightness == Brightness.dark
+                  ? Colors.white
+                  : Colors.black)
+              .withOpacity(currentIndex == i ? 0.9 : 0.4),
         ),
       );
 

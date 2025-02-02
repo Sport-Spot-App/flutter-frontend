@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/services.dart';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -32,7 +33,8 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
   bool isEditing = false;
 
   TextEditingController nameController = TextEditingController();
-  TextEditingController valueController = TextEditingController();
+  TextEditingController valueController =
+  TextEditingController(text: "R\$ 0,00");
   TextEditingController descriptionController = TextEditingController();
   TextEditingController hourController = TextEditingController();
   TextEditingController cepController = TextEditingController();
@@ -42,14 +44,40 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
   TextEditingController neighborhoodController = TextEditingController();
   TextEditingController cityController = TextEditingController();
   TextEditingController stateController = TextEditingController();
+  TextEditingController startHourController = TextEditingController();
+  TextEditingController endHourController = TextEditingController();
   List<int> sportsSelected = [];
   List<File> photos = [];
+  final List<String> daysOfWeek = [
+    'Segunda',
+    'Terça',
+    'Quarta',
+    'Quinta',
+    'Sexta',
+    'Sábado',
+    'Domingo'
+  ];
+  String? startDay;
+  String? endDay;
 
   Future<void> _pickImage() async {
     List<XFile> pickedFiles = await ImagePicker().pickMultiImage();
     if (pickedFiles.isNotEmpty) {
       setState(() {
         photos.addAll(pickedFiles.map((file) => File(file.path)));
+      });
+    }
+  }
+
+  Future<void> _selectTime(
+      BuildContext context, TextEditingController controller) async {
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+    if (picked != null) {
+      setState(() {
+        controller.text = picked.format(context);
       });
     }
   }
@@ -62,14 +90,15 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
       nameController.text = widget.court!.name;
       valueController.text = widget.court!.price_per_hour;
       descriptionController.text = widget.court!.description;
-      // hourController.text = widget.court!.hour ?? "";
-      // cepController.text = widget.court!.cep ?? "";
+      cepController.text = widget.court!.zip_code;
       addressController.text = widget.court!.street;
       numberController.text = widget.court!.number;
-      // complementController.text = widget.court!.complement ?? "";
-      // neighborhoodController.text = widget.court!.neighborhood ?? "";
-      // cityController.text = widget.court!.city ?? "";
-      // stateController.text = widget.court!.state ?? "";
+      complementController.text = widget.court!.complement ?? "";
+      neighborhoodController.text = widget.court!.neighborhood;
+      cityController.text = widget.court!.city;
+      stateController.text = widget.court!.state;
+      startHourController.text = widget.court!.starthour;
+      endHourController.text = widget.court!.endhour;
     }
     super.initState();
   }
@@ -82,7 +111,7 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
   }
 
   Future<void> _fetchCEP(String cep) async {
-    if (cep.length > 8)  {
+    if (cep.length > 8) {
       await cepStore.findCep(cep);
       CepModel? cepLocation = cepStore.state.value;
       if (cepLocation != null) {
@@ -113,16 +142,15 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: AppColors.darkOrange,
-          title: Text("Cadastrar quadra", style: TextStyle(color: Colors.white)),
+          title:
+              Text("Cadastrar quadra", style: TextStyle(color: Colors.white)),
           centerTitle: true,
           iconTheme: IconThemeData(color: Colors.white),
-          
         ),
         body: SingleChildScrollView(
           child: Padding(
             padding: EdgeInsets.all(20),
-            child: Builder(
-              builder: (_) {
+            child: Builder(builder: (_) {
               if (pass == 0) {
                 return _buildDataCourtPage();
               } else if (pass == 1) {
@@ -130,8 +158,7 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
               } else {
                 return _buildPhotosCourtPage();
               }
-              }
-            ),
+            }),
           ),
         ),
         bottomNavigationBar: Padding(
@@ -155,8 +182,10 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
                 minimumSize: Size.fromHeight(50),
                 backgroundColor: AppColors.darkOrange,
               ),
-            child: Text(pass == 2 ? "Salvar" : "Continuar", style: TextStyle(fontSize: 20, color: Colors.white),)
-          ),
+              child: Text(
+                pass == 2 ? "Salvar" : "Continuar",
+                style: TextStyle(fontSize: 20, color: Colors.white),
+              )),
         ),
       ),
     );
@@ -182,20 +211,160 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
       children: [
         Text(
           "Dados da quadra",
-          style: TextStyle(
-            fontSize:18,
-            fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         SizedBox(height: 20),
         InputField(label: "NOME", controller: nameController),
-        InputField(label: "DESCRIÇÃo", controller: descriptionController),
-        InputField(label: "HORÁRIO DE FUNCIONAMENTO", controller: hourController),
-        InputField(label: "VALOR POR HORA", controller: valueController),
-        SizedBox(height: 10),
+        InputField(label: "DESCRIÇÃO", controller: descriptionController),
+        InputField(
+          label: "VALOR POR HORA",
+          controller: valueController,
+          inputFormatters: [
+            FilteringTextInputFormatter.digitsOnly,
+            TextInputFormatter.withFunction((oldValue, newValue) {
+              String newText = newValue.text;
+              if (newText.isEmpty) {
+                return newValue.copyWith(text: "R\$ 0,00");
+              }
+              newText = newText.replaceAll(RegExp(r'[^\d]'), '');
+              double value = double.parse(newText) / 100;
+              String formattedValue =
+                  "R\$ ${value.toStringAsFixed(2).replaceAll('.', ',')}";
+              return newValue.copyWith(
+                text: formattedValue,
+                selection:
+                    TextSelection.collapsed(offset: formattedValue.length),
+              );
+            }),
+          ],
+        ),
+        Text(
+          "Horário de funcionamento",
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        SizedBox(height: 20),
+        Row(
+          children: [
+            Expanded(
+              child: Column(
+                children: [
+                  GestureDetector(
+                    onTap: () => _selectTime(context, startHourController),
+                    child: AbsorbPointer(
+                      child: InputField(
+                          label: "HORÁRIO DE INÍCIO",
+                          controller: startHourController),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(width: 20),
+            Expanded(
+              child: Column(
+                children: [
+                  GestureDetector(
+                    onTap: () => _selectTime(context, endHourController),
+                    child: AbsorbPointer(
+                      child: InputField(
+                          label: "HORÁRIO DE FIM",
+                          controller: endHourController),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        Row(
+          children: [
+            Expanded(
+              child: Column(
+                children: [
+                  DropdownButtonFormField<String>(
+                    decoration: InputDecoration(
+                      labelText: "DE",
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide:
+                            const BorderSide(color: AppColors.charcoalBlue),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide:
+                            const BorderSide(color: AppColors.charcoalBlue),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide:
+                            const BorderSide(color: AppColors.darkOrange),
+                      ),
+                    ),
+                    value: startDay,
+                    items: daysOfWeek.map((String day) {
+                      return DropdownMenuItem<String>(
+                        value: day,
+                        child: Text(day),
+                      );
+                    }).toList(),
+                    onChanged: (newValue) {
+                      setState(() {
+                        startDay = newValue;
+                      });
+                    },
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(width: 20),
+            Expanded(
+              child: Column(
+                children: [
+                  DropdownButtonFormField<String>(
+                    decoration: InputDecoration(
+                      labelText: "ATÉ",
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide:
+                            const BorderSide(color: AppColors.charcoalBlue),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide:
+                            const BorderSide(color: AppColors.charcoalBlue),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide:
+                            const BorderSide(color: AppColors.darkOrange),
+                      ),
+                    ),
+                    value: endDay,
+                    items: daysOfWeek.map((String day) {
+                      return DropdownMenuItem<String>(
+                        value: day,
+                        child: Text(day),
+                      );
+                    }).toList(),
+                    onChanged: (newValue) {
+                      setState(() {
+                        endDay = newValue;
+                      });
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: 20),
         Text(
           "Esportes",
           style: TextStyle(
-            fontSize: 20,
+            fontSize: 18,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -216,7 +385,7 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
         Text(
           "Endereço da quadra",
           style: TextStyle(
-            fontSize:18,
+            fontSize: 18,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -240,14 +409,11 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
           children: [
             Text(
               "Fotos da quadra",
-              style: TextStyle(
-                fontSize:18,
-                fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.darkOrange
-              ),
+                  backgroundColor: AppColors.darkOrange),
               onPressed: () {
                 _pickImage();
               },

@@ -14,6 +14,14 @@ class CourtModel {
   final DateTime? deleted_at;
   final List<String> sports;
   final List<String> photos;
+  final String neighborhood;
+  final String city;
+  final String state;
+  final DateTime startdate;
+  final DateTime endday;
+  final String starthour;
+  final String endhour;
+  final String? complement;
 
   CourtModel({
     required this.id,
@@ -31,6 +39,14 @@ class CourtModel {
     this.deleted_at,
     required this.sports,
     required this.photos,
+    required this.neighborhood,
+    required this.city,
+    required this.state,
+    required this.startdate,
+    required this.endday,
+    required this.starthour,
+    required this.endhour,
+    this.complement,
   });
 
   factory CourtModel.fromMap(Map<String, dynamic> map) {
@@ -51,6 +67,14 @@ class CourtModel {
           map['deleted_at'] != null ? DateTime.parse(map['deleted_at']) : null,
       sports: List<String>.from(map['sports'] ?? []),
       photos: List<String>.from(map['photos'] ?? []),
+      neighborhood: map['neighborhood'],
+      city: map['city'],
+      state: map['state'],
+      startdate: DateTime.parse(map['startdate']),
+      endday: DateTime.parse(map['endday']),
+      starthour: map['starthour'],
+      endhour: map['endhour'],
+      complement: map['complement'],
     );
   }
 
@@ -71,6 +95,14 @@ class CourtModel {
       'deleted_at': deleted_at?.toIso8601String(),
       'sports': sports,
       'photos': photos,
+      'neighborhood': neighborhood,
+      'city': city,
+      'state': state,
+      'startdate': startdate.toIso8601String(),
+      'endday': endday.toIso8601String(),
+      'starthour': starthour,
+      'endhour': endhour,
+      'complement': complement,
     };
   }
 }

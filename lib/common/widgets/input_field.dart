@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sport_spot/common/constants/app_colors.dart';
+import 'package:flutter/services.dart';
 
 class InputField extends StatefulWidget {
   final String label;
@@ -7,7 +8,8 @@ class InputField extends StatefulWidget {
   final TextEditingController? controller;
   final bool isPassword;
   final ValueChanged<String>? onChanged;
-  final String? errorText; // Suporte para exibir mensagem de erro
+  final String? errorText;
+  final List<TextInputFormatter>? inputFormatters;
 
   const InputField({
     super.key,
@@ -17,6 +19,7 @@ class InputField extends StatefulWidget {
     this.onChanged,
     this.isPassword = false,
     this.errorText,
+    this.inputFormatters,
   });
 
   @override
@@ -35,6 +38,7 @@ class _InputFieldState extends State<InputField> {
           controller: widget.controller,
           onChanged: widget.onChanged,
           obscureText: widget.isPassword ? _obscureText : false,
+          inputFormatters: widget.inputFormatters, // Apply inputFormatters
           decoration: InputDecoration(
             labelText: widget.label,
             labelStyle: const TextStyle(
