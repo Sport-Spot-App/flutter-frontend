@@ -11,6 +11,7 @@ import 'package:sport_spot/screens/home/home_page.dart';
 import 'package:sport_spot/screens/profile/profile_page.dart';
 import 'package:sport_spot/screens/user/adm_users.dart';
 import 'package:sport_spot/stores/court_store.dart';
+import 'package:sport_spot/screens/booking/booking_history_page.dart';
 
 class AppNavigation extends StatefulWidget {
   const AppNavigation({super.key});
@@ -24,12 +25,27 @@ class _AppNavigationState extends State<AppNavigation> {
   UserModel? user;
   final CourtStore courtStore = CourtStore(repository: CourtRepository(Api()));
 
-  static final List<Widget> _widgetOptions = <Widget>[
+  static final List<Widget> _adminOptions = <Widget>[
     HomePage(),
     AllCourtsMapPage(),
     FavoritesPage(),
     ProfilePage(),
     AdmUsersScreen(),
+  ];
+
+  static final List<Widget> _ownerAthleteOptions = <Widget>[
+    HomePage(),
+    AllCourtsMapPage(),
+    FavoritesPage(),
+    ProfilePage(),
+    BookingHistoryPage(),
+  ];
+
+  static final List<Widget> _defaultOptions = <Widget>[
+    HomePage(),
+    AllCourtsMapPage(),
+    FavoritesPage(),
+    ProfilePage(),
   ];
 
   @override
@@ -60,9 +76,14 @@ class _AppNavigationState extends State<AppNavigation> {
       case 2:
         return 'Favoritos';
       case 3:
-          return 'Perfil';
+        return 'Perfil';
       case 4:
-        return 'Gerenciar Usuários';
+        if (user != null && user!.role == 1) {
+          return 'Gerenciar Usuários';
+        } else if (user != null && (user!.role == 2 || user!.role == 3)) {
+          return 'Histórico de Reservas';
+        }
+        return 'Sport Spot';
       default:
         return 'Sport Spot';
     }
@@ -70,6 +91,50 @@ class _AppNavigationState extends State<AppNavigation> {
 
   @override
   Widget build(BuildContext context) {
+    List<Widget> _widgetOptions;
+    List<BottomNavigationBarItem> _bottomNavItems = [
+      const BottomNavigationBarItem(
+        icon: Icon(Icons.home),
+        label: 'Home',
+      ),
+      const BottomNavigationBarItem(
+        icon: Icon(Icons.map_outlined),
+        label: 'Mapa',
+      ),
+      const BottomNavigationBarItem(
+        icon: Icon(Icons.favorite),
+        label: 'Favoritos',
+      ),
+      const BottomNavigationBarItem(
+        icon: Icon(Icons.person),
+        label: 'Perfil',
+      ),
+    ];
+
+    if (user != null) {
+      if (user!.role == 1) {
+        _widgetOptions = _adminOptions;
+        _bottomNavItems.add(
+          const BottomNavigationBarItem(
+            icon: Icon(CupertinoIcons.person_3_fill),
+            label: 'Usuários',
+          ),
+        );
+      } else if (user!.role == 2 || user!.role == 3) {
+        _widgetOptions = _ownerAthleteOptions;
+        _bottomNavItems.add(
+          const BottomNavigationBarItem(
+            icon: Icon(Icons.history),
+            label: 'Histórico',
+          ),
+        );
+      } else {
+        _widgetOptions = _defaultOptions;
+      }
+    } else {
+      _widgetOptions = _defaultOptions;
+    }
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.darkOrange,
@@ -82,29 +147,7 @@ class _AppNavigationState extends State<AppNavigation> {
       ),
       body: _widgetOptions.elementAt(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(
-        items: [
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.map_outlined),
-            label: 'Mapa',
-          ),
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.favorite),
-            label: 'Favoritos',
-          ),
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Perfil',
-          ),
-          if (user != null && user!.role == 1)
-            const BottomNavigationBarItem(
-              icon: Icon(CupertinoIcons.person_3_fill),
-              label: 'Usuários',
-            ),
-        ],
+        items: _bottomNavItems,
         unselectedItemColor: Colors.grey,
         currentIndex: _selectedIndex,
         selectedItemColor: AppColors.darkOrange,
