@@ -25,3 +25,5 @@ const users = "usersPage";
 const courtOwner = "courtOwnerPage";
 
 const courtSchedule = "courtSchedulePage";
+
+const courtCallendar = "courtCallendarPage";
