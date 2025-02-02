@@ -2,7 +2,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:sport_spot/common/constants/app_colors.dart';
 import 'package:sport_spot/models/court_model.dart';
-import 'package:sport_spot/screens/court/court_map_page.dart';
+import 'package:sport_spot/screens/map/court_map_page.dart';
 
 class ViewCourtPage extends StatefulWidget {
   final CourtModel court;
@@ -130,12 +130,34 @@ class _ViewCourtPageState extends State<ViewCourtPage> {
   _getListImages() {
     List<Widget> listImages = [];
 
-    for (var image in widget.court.photos) {
-      Widget wdgt = ClipRRect(
-        borderRadius: BorderRadius.all(Radius.circular(20)),
-        child: Image.network(
-          image,
-          width: double.infinity,
+    if (widget.court.photos.isNotEmpty) {
+      for (var image in widget.court.photos) {
+        Widget wdgt = ClipRRect(
+          borderRadius: BorderRadius.all(Radius.circular(20)),
+          child: Image.network(
+            image,
+            width: double.infinity,
+          ),
+        );
+
+        listImages.add(wdgt);
+      }
+    } else {
+      Widget wdgt = Container(
+        margin: EdgeInsets.all(5.0),
+        child: ClipRRect(
+          borderRadius: BorderRadius.all(Radius.circular(5.0)),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.image_not_supported_outlined,
+                color: Colors.grey,
+                size: 200,
+              ),
+              Text('Nenhuma imagem cadastrada!'),
+            ],
+          ),
         ),
       );
 

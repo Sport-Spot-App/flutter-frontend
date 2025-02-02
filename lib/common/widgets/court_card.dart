@@ -54,18 +54,38 @@ class _CourtCardState extends State<CourtCard> {
                 });
               },
             ),
-            items: widget.imageUrlList.map((item) => Container(
-              margin: EdgeInsets.all(5.0),
-              child: ClipRRect(
-                borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                child: Image.network(
-                  item,
-                  fit: BoxFit.cover,
-                  width: double.infinity, // Ensure the image takes full width
-                  height: double.infinity, // Ensure the image takes full height
-                ),
-              ),
-            )).toList(),
+            items: widget.imageUrlList.isNotEmpty
+              ? widget.imageUrlList.map((item) => Container(
+                  margin: EdgeInsets.all(5.0),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                    child: Image.network(
+                      item,
+                      fit: BoxFit.cover,
+                      width: double.infinity, // Ensure the image takes full width
+                      height: double.infinity, // Ensure the image takes full height
+                    ),
+                  ),
+                )).toList()
+              : [
+                  Container(
+                    margin: EdgeInsets.all(5.0),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.image_not_supported_outlined,
+                            color: Colors.grey,
+                            size: 250,
+                          ),
+                          Text('Nenhuma imagem cadastrada!'),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
