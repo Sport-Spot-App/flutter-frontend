@@ -45,21 +45,8 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
   TextEditingController neighborhoodController = TextEditingController();
   TextEditingController cityController = TextEditingController();
   TextEditingController stateController = TextEditingController();
-  TextEditingController startHourController = TextEditingController();
-  TextEditingController endHourController = TextEditingController();
   List<int> sportsSelected = [];
   List<File> photos = [];
-  final List<String> daysOfWeek = [
-    'Segunda',
-    'Terça',
-    'Quarta',
-    'Quinta',
-    'Sexta',
-    'Sábado',
-    'Domingo'
-  ];
-  String? startDay;
-  String? endDay;
 
   Future<void> _pickImage() async {
     List<XFile> pickedFiles = await ImagePicker().pickMultiImage();
@@ -98,8 +85,6 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
       neighborhoodController.text = widget.court!.cep.bairro;
       cityController.text = widget.court!.cep.localidade;
       stateController.text = widget.court!.cep.estado;
-      startHourController.text = widget.court!.starthour;
-      endHourController.text = widget.court!.endhour;
     }
     super.initState();
   }
