@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sport_spot/api/api.dart';
+import 'package:sport_spot/common/constants/app_colors.dart';
 import 'package:sport_spot/common/widgets/court_card.dart';
 import 'package:sport_spot/models/court_model.dart';
 import 'package:sport_spot/repositories/court_repository.dart';
@@ -16,6 +17,7 @@ class FavoritesPage extends StatefulWidget {
 class _FavoritesPageState extends State<FavoritesPage> {
   final CourtStore courtStore = CourtStore(repository: CourtRepository(Api()));
   List<CourtModel> favoriteCourts = [];
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -25,9 +27,12 @@ class _FavoritesPageState extends State<FavoritesPage> {
 
   Future<void> _fetchFavoriteCourts() async {
     await courtStore.getFavoriteCourts();
-    setState(() {
-      favoriteCourts = courtStore.state.value;
-    });
+    if (mounted) {
+      setState(() {
+        favoriteCourts = courtStore.state.value;
+        isLoading = false;
+      });
+    }
   }
 
   Future<void> _toggleFavorite(int courtId) async {
@@ -38,30 +43,32 @@ class _FavoritesPageState extends State<FavoritesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView.builder(
-        itemCount: favoriteCourts.length,
-        itemBuilder: (context, index) {
-          final court = favoriteCourts[index];
-          return InkWell(
-            onTap: () {
-              Navigator.of(context).pushNamed(viewCourt, arguments: court);
-            },
-            child: CourtCard(
-              imageUrlList: court.photos,
-              name: court.name,
-              type: court.sports.join(', '),
-              price: court.price_per_hour.toString(),
-              favoriteIcon: IconButton(
-                icon: Icon(
-                  Icons.favorite,
-                  color: Colors.red,
-                ),
-                onPressed: () => _toggleFavorite(court.id),
-              ),
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator(color:AppColors.darkOrange))
+          : ListView.builder(
+              itemCount: favoriteCourts.length,
+              itemBuilder: (context, index) {
+                final court = favoriteCourts[index];
+                return InkWell(
+                  onTap: () {
+                    Navigator.of(context).pushNamed(viewCourt, arguments: court);
+                  },
+                  child: CourtCard(
+                    imageUrlList: court.photos,
+                    name: court.name,
+                    type: court.sports.join(', '),
+                    price: court.price_per_hour.toString(),
+                    favoriteIcon: IconButton(
+                      icon: const Icon(
+                        Icons.favorite,
+                        color: Colors.red,
+                      ),
+                      onPressed: () => _toggleFavorite(court.id),
+                    ),
+                  ),
+                );
+              },
             ),
-          );
-        },
-      ),
     );
   }
 }

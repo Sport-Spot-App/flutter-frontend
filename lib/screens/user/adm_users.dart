@@ -17,6 +17,7 @@ class _AdmUsersScreenState extends State<AdmUsersScreen> {
   final UserStore userStore = UserStore(repository: UserRepository(Api()));
   List<UserModel> filteredUsers = [];
   int? selectedRole;
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -29,6 +30,7 @@ class _AdmUsersScreenState extends State<AdmUsersScreen> {
     if (mounted) {
       setState(() {
         filteredUsers = userStore.state.value;
+        isLoading = false;
       });
     }
   }
@@ -37,7 +39,8 @@ class _AdmUsersScreenState extends State<AdmUsersScreen> {
     final results = userStore.state.value.where((user) {
       final userName = user.name.toLowerCase();
       final input = query.toLowerCase();
-      return userName.contains(input) && (selectedRole == null || user.role == selectedRole);
+      return userName.contains(input) &&
+          (selectedRole == null || user.role == selectedRole);
     }).toList();
 
     if (mounted) {
@@ -96,7 +99,8 @@ class _AdmUsersScreenState extends State<AdmUsersScreen> {
                 // Role Icons Bar
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0, vertical: 8.0),
                   child: Row(
                     children: [
                       IconWithLabel(
@@ -130,76 +134,89 @@ class _AdmUsersScreenState extends State<AdmUsersScreen> {
             ),
           ),
           Expanded(
-            child: ValueListenableBuilder<List<UserModel>>(
-              valueListenable: userStore.state,
-              builder: (context, users, _) {
-                return ListView.builder(
-                  itemCount: filteredUsers.length,
-                  itemBuilder: (context, index) {
-                    final user = filteredUsers[index];
-                    return InkWell(
-                      onTap: () => _showUserOptions(context, user),
-                      child: Card(
-                        color: user.status ? Colors.white : Colors.grey[300],
-                        margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                        child: Padding(
-                          padding: const EdgeInsets.all(15),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                               if (user.role == 2)
-                                Container(
-                                  decoration: BoxDecoration(
-                                    color: user.is_approved ? Colors.green : Colors.amber,
-                                    borderRadius: BorderRadius.circular(5),
-                                  ),
-                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                  child: Text(
-                                    user.is_approved ? 'Aprovado' : 'Aguardando aprovação',
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
+            child: isLoading
+                ? const Center(
+                    child:
+                        CircularProgressIndicator(color: AppColors.darkOrange))
+                : ValueListenableBuilder<List<UserModel>>(
+                    valueListenable: userStore.state,
+                    builder: (context, users, _) {
+                      return ListView.builder(
+                        itemCount: filteredUsers.length,
+                        itemBuilder: (context, index) {
+                          final user = filteredUsers[index];
+                          return InkWell(
+                            onTap: () => _showUserOptions(context, user),
+                            child: Card(
+                              color:
+                                  user.status ? Colors.white : Colors.grey[300],
+                              margin: const EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 15),
+                              child: Padding(
+                                padding: const EdgeInsets.all(15),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    if (user.role == 2)
+                                      Container(
+                                        decoration: BoxDecoration(
+                                          color: user.is_approved
+                                              ? Colors.green
+                                              : Colors.amber,
+                                          borderRadius:
+                                              BorderRadius.circular(5),
+                                        ),
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8, vertical: 4),
+                                        child: Text(
+                                          user.is_approved
+                                              ? 'Aprovado'
+                                              : 'Aguardando aprovação',
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    SizedBox(height: 5),
+                                    if (!user.status)
+                                      Text(
+                                        "Desativado",
+                                        style: TextStyle(
+                                          color: const Color.fromARGB(
+                                              255, 248, 50, 0),
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    Text(
+                                      user.name,
+                                      style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
-                                  ),
-                                ),
-                                SizedBox(height: 5),
-                              if (!user.status)
-                                Text(
-                                  "Desativado",
-                                  style: TextStyle(
-                                    color: const Color.fromARGB(255, 248, 50, 0),
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              Text(
-                                user.name,
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
+                                    Text(
+                                      _getRoleName(user.role),
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColors.charcoalBlue,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 5),
+                                    Text('Documento: ${user.document}'),
+                                    const SizedBox(height: 5),
+                                    Text('Telefone: ${user.cellphone}'),
+                                    const SizedBox(height: 10),
+                                  ],
                                 ),
                               ),
-                              Text(
-                                _getRoleName(user.role),
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppColors.charcoalBlue,
-                                ),
-                              ),
-                              const SizedBox(height: 5),
-                              Text('Documento: ${user.document}'),
-                              const SizedBox(height: 5),
-                              Text('Telefone: ${user.cellphone}'),
-                              const SizedBox(height: 10),
-                            ],
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                );
-              },
-            ),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
           ),
         ],
       ),
@@ -214,14 +231,16 @@ class _AdmUsersScreenState extends State<AdmUsersScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             if (user.role == 2)
-            ListTile(
-              leading: Icon(user.is_approved ? Icons.close : Icons.check),
-              title: Text(user.is_approved ? 'Desaprovar Proprietário' : 'Aprovar Proprietário'),
-              onTap: () {
-                Navigator.pop(context);
-                _toggleApproval(user);
-              },
-            ),
+              ListTile(
+                leading: Icon(user.is_approved ? Icons.close : Icons.check),
+                title: Text(user.is_approved
+                    ? 'Desaprovar Proprietário'
+                    : 'Aprovar Proprietário'),
+                onTap: () {
+                  Navigator.pop(context);
+                  _toggleApproval(user);
+                },
+              ),
             ListTile(
               leading: const Icon(Icons.block),
               title: Text(user.status ? 'Desativar Usuário' : 'Ativar Usuário'),
@@ -230,15 +249,15 @@ class _AdmUsersScreenState extends State<AdmUsersScreen> {
                 _toggleStatus(user);
               },
             ),
-             if (user.role != 1)
-            ListTile(
-              leading: const Icon(Icons.admin_panel_settings),
-              title: const Text('Tornar Administrador'),
-              onTap: () {
-                Navigator.pop(context);
-                _becomeAdm(user);
-              },
-            ),
+            if (user.role != 1)
+              ListTile(
+                leading: const Icon(Icons.admin_panel_settings),
+                title: const Text('Tornar Administrador'),
+                onTap: () {
+                  Navigator.pop(context);
+                  _becomeAdm(user);
+                },
+              ),
             ListTile(
               leading: const Icon(Icons.delete),
               title: const Text('Excluir Usuário'),
@@ -300,7 +319,8 @@ class IconWithLabel extends StatelessWidget {
             const SizedBox(height: 4),
             Text(
               label,
-              style: TextStyle(color: isSelected ? AppColors.darkOrange : Colors.grey),
+              style: TextStyle(
+                  color: isSelected ? AppColors.darkOrange : Colors.grey),
             ),
           ],
         ),
@@ -308,4 +328,3 @@ class IconWithLabel extends StatelessWidget {
     );
   }
 }
-

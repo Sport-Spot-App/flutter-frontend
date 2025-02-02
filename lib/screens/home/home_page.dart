@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sport_spot/api/api.dart';
+import 'package:sport_spot/common/constants/app_colors.dart';
 import 'package:sport_spot/common/widgets/court_card.dart';
 import 'package:sport_spot/common/widgets/icon_label.dart';
 import 'package:sport_spot/common/widgets/search_field.dart';
@@ -19,6 +20,7 @@ class _HomePageState extends State<HomePage> {
   final CourtStore courtStore = CourtStore(repository: CourtRepository(Api()));
   List<CourtModel> filteredCourts = [];
   List<int> favoriteCourtIds = [];
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -31,6 +33,7 @@ class _HomePageState extends State<HomePage> {
     await courtStore.getCourts();
     setState(() {
       filteredCourts = courtStore.state.value;
+      isLoading = false;
     });
   }
 
@@ -104,39 +107,41 @@ class _HomePageState extends State<HomePage> {
         const SizedBox(height: 16),
         // Court Card List
         Expanded(
-          child: ValueListenableBuilder<List<int>>(
-            valueListenable: courtStore.favoriteCourtIds,
-            builder: (context, favoriteIds, child) {
-              return ListView.builder(
-                itemCount: filteredCourts.length,
-                itemBuilder: (context, index) {
-                  final court = filteredCourts[index];
-                  var isFavorite = favoriteIds.contains(court.id);
-                  return InkWell(
-                    onTap: () {
-                      Navigator.of(context).pushNamed(viewCourt, arguments: court);
-                    },
-                    child: CourtCard(
-                      imageUrlList: court.photos,
-                      name: court.name,
-                      type: court.sports.join(', '),
-                      price: court.price_per_hour.toString(),
-                      favoriteIcon: IconButton(
-                        icon: Icon(
-                          isFavorite ? Icons.favorite : Icons.favorite_border,
-                          color: isFavorite ? Colors.red : Colors.grey,
-                        ),
-                        onPressed: () {
-                          isFavorite = !isFavorite;
-                          _toggleFavorite(court.id);
-                        }
-                      ),
-                    ),
-                  );
-                },
-              );
-            },
-          ),
+          child: isLoading
+              ? const Center(child: CircularProgressIndicator(color: AppColors.darkOrange))
+              : ValueListenableBuilder<List<int>>(
+                  valueListenable: courtStore.favoriteCourtIds,
+                  builder: (context, favoriteIds, child) {
+                    return ListView.builder(
+                      itemCount: filteredCourts.length,
+                      itemBuilder: (context, index) {
+                        final court = filteredCourts[index];
+                        var isFavorite = favoriteIds.contains(court.id);
+                        return InkWell(
+                          onTap: () {
+                            Navigator.of(context).pushNamed(viewCourt, arguments: court);
+                          },
+                          child: CourtCard(
+                            imageUrlList: court.photos,
+                            name: court.name,
+                            type: court.sports.join(', '),
+                            price: court.price_per_hour.toString(),
+                            favoriteIcon: IconButton(
+                              icon: Icon(
+                                isFavorite ? Icons.favorite : Icons.favorite_border,
+                                color: isFavorite ? Colors.red : Colors.grey,
+                              ),
+                              onPressed: () {
+                                isFavorite = !isFavorite;
+                                _toggleFavorite(court.id);
+                              },
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
         ),
       ],
     );

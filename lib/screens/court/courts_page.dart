@@ -54,7 +54,8 @@ class _CourtPageState extends State<CourtsPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.darkOrange,
-        title: const Text("Minhas quadras", style: TextStyle(color: Colors.white)),
+        title:
+            const Text("Minhas quadras", style: TextStyle(color: Colors.white)),
         centerTitle: true,
         iconTheme: const IconThemeData(color: Colors.white),
       ),
@@ -72,7 +73,8 @@ class _CourtPageState extends State<CourtsPage> {
                           ListView.separated(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
-                            separatorBuilder: (context, index) => const SizedBox(height: 10),
+                            separatorBuilder: (context, index) =>
+                                const SizedBox(height: 10),
                             itemCount: myCourts.length,
                             itemBuilder: (context, index) {
                               final court = myCourts[index];
@@ -90,12 +92,14 @@ class _CourtPageState extends State<CourtsPage> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: const [
-                            Icon(CupertinoIcons.doc_text_search, size: 50, color: Colors.grey),
+                            Icon(CupertinoIcons.doc_text_search,
+                                size: 50, color: Colors.grey),
                             SizedBox(height: 10),
                             Text(
                               "Você não tem nenhuma quadra cadastrada.\nCadastre uma agora!",
                               textAlign: TextAlign.center,
-                              style: TextStyle(fontSize: 16, color: Colors.grey),
+                              style:
+                                  TextStyle(fontSize: 16, color: Colors.grey),
                             ),
                           ],
                         ),
@@ -107,7 +111,8 @@ class _CourtPageState extends State<CourtsPage> {
             ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.of(context).push(MaterialPageRoute(builder: (_) => const CreateCourtPage()));
+          Navigator.of(context)
+              .push(MaterialPageRoute(builder: (_) => const CreateCourtPage()));
         },
         backgroundColor: AppColors.darkOrange,
         child: const Icon(Icons.add, size: 30, color: Colors.white),
