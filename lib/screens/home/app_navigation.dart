@@ -5,7 +5,7 @@ import 'package:sport_spot/common/constants/app_colors.dart';
 import 'package:sport_spot/common/utils/user_map.dart';
 import 'package:sport_spot/models/user_model.dart';
 import 'package:sport_spot/repositories/court_repository.dart';
-import 'package:sport_spot/screens/court/all_courts_map_page.dart';
+import 'package:sport_spot/screens/map/all_courts_map_page.dart';
 import 'package:sport_spot/screens/court/favorites_page.dart';
 import 'package:sport_spot/screens/home/home_page.dart';
 import 'package:sport_spot/screens/profile/profile_page.dart';
