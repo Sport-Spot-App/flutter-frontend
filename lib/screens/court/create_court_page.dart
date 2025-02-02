@@ -13,6 +13,7 @@ import 'package:sport_spot/models/court_model.dart';
 import 'package:sport_spot/models/sport_model.dart';
 import 'package:sport_spot/repositories/cep_repository.dart';
 import 'package:sport_spot/repositories/sport_repository.dart';
+import 'package:sport_spot/routes/routing_constants.dart';
 import 'package:sport_spot/stores/cep_store.dart';
 import 'package:sport_spot/stores/sport_store.dart';
 
@@ -34,7 +35,7 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
 
   TextEditingController nameController = TextEditingController();
   TextEditingController valueController =
-  TextEditingController(text: "R\$ 0,00");
+      TextEditingController(text: "R\$ 0,00");
   TextEditingController descriptionController = TextEditingController();
   TextEditingController hourController = TextEditingController();
   TextEditingController cepController = TextEditingController();
@@ -93,10 +94,10 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
       cepController.text = widget.court!.zip_code;
       addressController.text = widget.court!.street;
       numberController.text = widget.court!.number;
-      complementController.text = widget.court!.complement ?? "";
-      neighborhoodController.text = widget.court!.neighborhood;
-      cityController.text = widget.court!.city;
-      stateController.text = widget.court!.state;
+      complementController.text = widget.court!.cep.complemento;
+      neighborhoodController.text = widget.court!.cep.bairro;
+      cityController.text = widget.court!.cep.localidade;
+      stateController.text = widget.court!.cep.estado;
       startHourController.text = widget.court!.starthour;
       endHourController.text = widget.court!.endhour;
     }
@@ -169,7 +170,7 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
                   if (isEditing) {
                     print("Editar quadra");
                   } else {
-                    print("Salvar quadra");
+                    Navigator.of(context).pushNamed(courtSchedule);
                   }
                 } else {
                   setState(() {
@@ -236,128 +237,6 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
                     TextSelection.collapsed(offset: formattedValue.length),
               );
             }),
-          ],
-        ),
-        Text(
-          "Horário de funcionamento",
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        SizedBox(height: 20),
-        Row(
-          children: [
-            Expanded(
-              child: Column(
-                children: [
-                  GestureDetector(
-                    onTap: () => _selectTime(context, startHourController),
-                    child: AbsorbPointer(
-                      child: InputField(
-                          label: "HORÁRIO DE INÍCIO",
-                          controller: startHourController),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(width: 20),
-            Expanded(
-              child: Column(
-                children: [
-                  GestureDetector(
-                    onTap: () => _selectTime(context, endHourController),
-                    child: AbsorbPointer(
-                      child: InputField(
-                          label: "HORÁRIO DE FIM",
-                          controller: endHourController),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-        Row(
-          children: [
-            Expanded(
-              child: Column(
-                children: [
-                  DropdownButtonFormField<String>(
-                    decoration: InputDecoration(
-                      labelText: "DE",
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide:
-                            const BorderSide(color: AppColors.charcoalBlue),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide:
-                            const BorderSide(color: AppColors.charcoalBlue),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide:
-                            const BorderSide(color: AppColors.darkOrange),
-                      ),
-                    ),
-                    value: startDay,
-                    items: daysOfWeek.map((String day) {
-                      return DropdownMenuItem<String>(
-                        value: day,
-                        child: Text(day),
-                      );
-                    }).toList(),
-                    onChanged: (newValue) {
-                      setState(() {
-                        startDay = newValue;
-                      });
-                    },
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(width: 20),
-            Expanded(
-              child: Column(
-                children: [
-                  DropdownButtonFormField<String>(
-                    decoration: InputDecoration(
-                      labelText: "ATÉ",
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide:
-                            const BorderSide(color: AppColors.charcoalBlue),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide:
-                            const BorderSide(color: AppColors.charcoalBlue),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide:
-                            const BorderSide(color: AppColors.darkOrange),
-                      ),
-                    ),
-                    value: endDay,
-                    items: daysOfWeek.map((String day) {
-                      return DropdownMenuItem<String>(
-                        value: day,
-                        child: Text(day),
-                      );
-                    }).toList(),
-                    onChanged: (newValue) {
-                      setState(() {
-                        endDay = newValue;
-                      });
-                    },
-                  ),
-                ],
-              ),
-            ),
           ],
         ),
         SizedBox(height: 20),
