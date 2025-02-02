@@ -16,10 +16,6 @@ class CourtModel {
   final DateTime? deleted_at;
   final List<String> sports;
   final List<String> photos;
-  final DateTime startdate;
-  final DateTime endday;
-  final String starthour;
-  final String endhour;
   final CepModel cep;
 
   CourtModel({
@@ -38,10 +34,6 @@ class CourtModel {
     this.deleted_at,
     required this.sports,
     required this.photos,
-    required this.startdate,
-    required this.endday,
-    required this.starthour,
-    required this.endhour,
     required this.cep,
   });
 
@@ -63,10 +55,6 @@ class CourtModel {
           map['deleted_at'] != null ? DateTime.parse(map['deleted_at']) : null,
       sports: List<String>.from(map['sports'] ?? []),
       photos: List<String>.from(map['photos'] ?? []),
-      startdate: DateTime.parse(map['startdate']),
-      endday: DateTime.parse(map['endday']),
-      starthour: map['starthour'],
-      endhour: map['endhour'],
       cep: CepModel.fromMap(map),
     );
   }
@@ -88,10 +76,6 @@ class CourtModel {
       'deleted_at': deleted_at?.toIso8601String(),
       'sports': sports,
       'photos': photos,
-      'startdate': startdate.toIso8601String(),
-      'endday': endday.toIso8601String(),
-      'starthour': starthour,
-      'endhour': endhour,
       'cep': cep.toMap(),
     };
   }
