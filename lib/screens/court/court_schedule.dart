@@ -4,8 +4,11 @@ import 'package:sport_spot/common/constants/app_text_styles.dart';
 import 'package:sport_spot/common/widgets/primary_button.dart';
 
 class CadastroHorariosPage extends StatefulWidget {
+
+  const CadastroHorariosPage({super.key});
+
   @override
-  _CadastroHorariosPageState createState() => _CadastroHorariosPageState();
+  State<CadastroHorariosPage> createState() => _CadastroHorariosPageState();
 }
 
 class _CadastroHorariosPageState extends State<CadastroHorariosPage> {
