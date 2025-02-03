@@ -27,13 +27,13 @@ class CourtRepository implements ICourtRepository {
 
     if (response.statusCode == 200) {
       final List<CourtModel> courts = [];
-      final body = response.data;
+      final body = response.data as List<dynamic>;
       try {
-        body.forEach((item) {
-          courts.add(CourtModel.fromMap(item));
-        });
+        for (var item in body) {
+          courts.add(CourtModel.fromMap(item as Map<String, dynamic>));
+        }
       } catch (e) {
-        throw Exception('Erro ao buscar quadras');
+        throw Exception('Erro ao buscar quadras: $e');
       }
       return courts;
     } else if (response.statusCode == 404) {
@@ -45,16 +45,28 @@ class CourtRepository implements ICourtRepository {
 
   @override
   Future<bool> registerCourt(CourtModel court) async {
-    final formData = FormData.fromMap(court.toMap());
+    final formData = FormData();
+    formData.fields.add(MapEntry('name', court.name));
+    formData.fields.add(MapEntry('price_per_hour', court.price_per_hour));
+    formData.fields.add(MapEntry('description', court.description));
+    formData.fields.add(MapEntry('zip_code', court.zip_code));
+    formData.fields.add(MapEntry('street', court.street));
+    formData.fields.add(MapEntry('number', court.number));
+    for (var sport in court.sports) {
+      formData.fields.add(MapEntry('sports[]', sport.id.toString()));
+    }
+    formData.fields.add(MapEntry('cep', jsonEncode(court.cep?.toMap())));
+    formData.fields.add(MapEntry('schedules', jsonEncode(court.schedules.map((schedule) => schedule.toMap()).toList())));
+
     if (court.photos != null) {
       for (var i = 0; i < court.photos!.length; i++) {
         formData.files.add(MapEntry(
           'photos[$i]',
-          await MultipartFile.fromFile(court.photos![i].path,
-              filename: "image_$i.png"),
+          await MultipartFile.fromFile(court.photos![i].path, filename: "image_$i.png"),
         ));
       }
     }
+
     final response = await dio.post(
       '/courts',
       data: formData,
@@ -169,7 +181,7 @@ class CourtRepository implements ICourtRepository {
     if (response.statusCode == 200) {
       final body = response.data;
     } else {
-      throw Exception('Erro ao buscar quadras favoritas');
+      throw Exception('Erro ao buscar quadras');
     }
   }
 }
