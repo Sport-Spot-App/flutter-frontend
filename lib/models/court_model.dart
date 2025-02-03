@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:http/http.dart';
 import 'package:sport_spot/models/cep_model.dart';
 import 'package:sport_spot/models/court_schedules_model.dart';
 
