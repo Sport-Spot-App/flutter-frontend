@@ -1,3 +1,4 @@
+import 'dart:ffi' as ffi;
 import 'dart:io';
 import 'package:flutter/services.dart';
 
@@ -12,9 +13,12 @@ import 'package:sport_spot/models/cep_model.dart';
 import 'package:sport_spot/models/court_model.dart';
 import 'package:sport_spot/models/sport_model.dart';
 import 'package:sport_spot/repositories/cep_repository.dart';
+import 'package:sport_spot/repositories/court_repository.dart';
 import 'package:sport_spot/repositories/sport_repository.dart';
 import 'package:sport_spot/routes/routing_constants.dart';
+import 'package:sport_spot/screens/court/courts_page.dart';
 import 'package:sport_spot/stores/cep_store.dart';
+import 'package:sport_spot/stores/court_store.dart';
 import 'package:sport_spot/stores/sport_store.dart';
 
 class CreateCourtPage extends StatefulWidget {
@@ -27,15 +31,15 @@ class CreateCourtPage extends StatefulWidget {
 
 class _CreateCourtPageState extends State<CreateCourtPage> {
   final CepStore cepStore = CepStore(repository: CepRepository(Api()));
-  final SportStore courtStore = SportStore(repository: SportRepository(Api()));
+  final SportStore sportStore = SportStore(repository: SportRepository(Api()));
+  final CourtStore courtStore = CourtStore(repository: CourtRepository(Api()));
   List<SportModel> sportList = [];
   bool canExit = true;
   int pass = 0;
   bool isEditing = false;
 
   TextEditingController nameController = TextEditingController();
-  TextEditingController valueController =
-      TextEditingController(text: "R\$ 0,00");
+  TextEditingController valueController = TextEditingController(text: "0,00");
   TextEditingController descriptionController = TextEditingController();
   TextEditingController hourController = TextEditingController();
   TextEditingController cepController = TextEditingController();
@@ -47,6 +51,46 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
   TextEditingController stateController = TextEditingController();
   List<int> sportsSelected = [];
   List<File> photos = [];
+
+  Map<String, bool> diasSelecionados = {
+    'Segunda': false,
+    'Terça': false,
+    'Quarta': false,
+    'Quinta': false,
+    'Sexta': false,
+    'Sábado': false,
+    'Domingo': false,
+  };
+  Map<String, TimeOfDay?> horariosInicio = {};
+  Map<String, TimeOfDay?> horariosFim = {};
+
+  //Método para criar quadra
+  Future<void> _createCourt() async {
+    CepModel cep = CepModel(
+      cep: cepController.text,
+      logradouro: addressController.text,
+      complemento: complementController.text,
+      bairro: neighborhoodController.text,
+      localidade: cityController.text,
+      estado: stateController.text,
+    );
+
+    CourtModel court = CourtModel(
+      name: nameController.text,
+      price_per_hour: valueController.text,
+      description: descriptionController.text,
+      zip_code: cep.cep,
+      street: cep.logradouro,
+      number: numberController.text,
+      sports: sportsSelected,
+      photos: photos,
+      cep: cep,
+      schedules: [],
+    );
+
+    await courtStore.registerCourt(court);
+    Navigator.of(context).pushNamedAndRemoveUntil(courtPage, (route) => false);
+  }
 
   Future<void> _pickImage() async {
     List<XFile> pickedFiles = await ImagePicker().pickMultiImage();
@@ -70,6 +114,24 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
     }
   }
 
+  Future<void> _selecionarHorario(
+      BuildContext context, Function(TimeOfDay) onSelected) async {
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+      builder: (BuildContext context, Widget? child) {
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+          child: child!,
+        );
+      },
+    );
+    if (picked != null) {
+      final roundedTime = TimeOfDay(hour: picked.hour, minute: 0);
+      onSelected(roundedTime);
+    }
+  }
+
   @override
   void initState() {
     _fetchSports();
@@ -81,18 +143,18 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
       cepController.text = widget.court!.zip_code;
       addressController.text = widget.court!.street;
       numberController.text = widget.court!.number;
-      complementController.text = widget.court!.cep.complemento;
-      neighborhoodController.text = widget.court!.cep.bairro;
-      cityController.text = widget.court!.cep.localidade;
-      stateController.text = widget.court!.cep.estado;
+      complementController.text = widget.court!.cep!.complemento;
+      neighborhoodController.text = widget.court!.cep!.bairro;
+      cityController.text = widget.court!.cep!.localidade;
+      stateController.text = widget.court!.cep!.estado;
     }
     super.initState();
   }
 
   Future<void> _fetchSports() async {
-    await courtStore.getSports();
+    await sportStore.getSports();
     setState(() {
-      sportList = courtStore.state.value;
+      sportList = sportStore.state.value;
     });
   }
 
@@ -141,8 +203,10 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
                 return _buildDataCourtPage();
               } else if (pass == 1) {
                 return _buildAddressCourtPage();
-              } else {
+              } else if (pass == 2) {
                 return _buildPhotosCourtPage();
+              } else {
+                return _buildCourtSchedulePage();
               }
             }),
           ),
@@ -151,11 +215,11 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
           padding: const EdgeInsets.all(20),
           child: ElevatedButton(
               onPressed: () {
-                if (pass == 2) {
+                if (pass == 3) {
                   if (isEditing) {
                     print("Editar quadra");
                   } else {
-                    Navigator.of(context).pushNamed(courtSchedule);
+                    _createCourt();
                   }
                 } else {
                   setState(() {
@@ -169,9 +233,81 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
                 backgroundColor: AppColors.darkOrange,
               ),
               child: Text(
-                pass == 2 ? "Salvar" : "Continuar",
+                pass == 3 ? "Salvar" : "Continuar",
                 style: TextStyle(fontSize: 20, color: Colors.white),
               )),
+        ),
+      ),
+    );
+  }
+
+  _buildCourtSchedulePage() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "Horários de Funcionamento",
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        SizedBox(height: 20),
+        ...diasSelecionados.keys.map((dia) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Checkbox(
+                      value: diasSelecionados[dia],
+                      onChanged: (value) => setState(
+                          () => diasSelecionados[dia] = value ?? false),
+                      activeColor: Colors.green,
+                    ),
+                    Text(dia),
+                  ],
+                ),
+                Row(
+                  children: [
+                    _horarioButton(
+                        'Início',
+                        horariosInicio[dia],
+                        (value) => setState(() => horariosInicio[dia] = value),
+                        diasSelecionados[dia] == true),
+                    SizedBox(width: 10),
+                    _horarioButton(
+                        'Fim',
+                        horariosFim[dia],
+                        (value) => setState(() => horariosFim[dia] = value),
+                        diasSelecionados[dia] == true),
+                  ],
+                ),
+              ],
+            ),
+          );
+        }).toList(),
+      ],
+    );
+  }
+
+  Widget _horarioButton(String label, TimeOfDay? horario,
+      Function(TimeOfDay) onSelected, bool isEnabled) {
+    return SizedBox(
+      width: 100,
+      child: GestureDetector(
+        onTap: isEnabled ? () => _selecionarHorario(context, onSelected) : null,
+        child: Container(
+          padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+          decoration: BoxDecoration(
+            border: Border.all(
+                color: isEnabled ? Colors.grey : Colors.grey.shade400),
+            borderRadius: BorderRadius.circular(5),
+          ),
+          child: Text(
+            horario != null ? horario.format(context) : label,
+            style: TextStyle(
+                fontSize: 16, color: isEnabled ? Colors.black : Colors.grey),
+          ),
         ),
       ),
     );
@@ -210,12 +346,12 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
             TextInputFormatter.withFunction((oldValue, newValue) {
               String newText = newValue.text;
               if (newText.isEmpty) {
-                return newValue.copyWith(text: "R\$ 0,00");
+                return newValue.copyWith(text: "0,00");
               }
               newText = newText.replaceAll(RegExp(r'[^\d]'), '');
               double value = double.parse(newText) / 100;
               String formattedValue =
-                  "R\$ ${value.toStringAsFixed(2).replaceAll('.', ',')}";
+                  value.toStringAsFixed(2).replaceAll('.', ',');
               return newValue.copyWith(
                 text: formattedValue,
                 selection:
