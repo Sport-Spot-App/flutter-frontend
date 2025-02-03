@@ -10,7 +10,6 @@ class CadastroHorariosPage extends StatefulWidget {
 }
 
 class _CadastroHorariosPageState extends State<CadastroHorariosPage> {
-  bool todosDiasIguais = true;
   TimeOfDay? horarioInicio;
   TimeOfDay? horarioFim;
   Map<String, bool> diasSelecionados = {
@@ -92,16 +91,6 @@ class _CadastroHorariosPageState extends State<CadastroHorariosPage> {
                 ),
               );
             }).toList(),
-            Spacer(),
-            SizedBox(
-              width: double.infinity,
-              child: PrimaryButton(
-                text: 'Salvar',
-                onPressed: () {
-                  // Salvar horários
-                },
-              ),
-            ),
           ],
         ),
       ),
