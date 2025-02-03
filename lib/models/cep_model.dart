@@ -4,7 +4,6 @@ class CepModel {
   final String complemento;
   final String bairro;
   final String localidade;
-  final String uf;
   final String estado;
 
   CepModel({
@@ -13,7 +12,6 @@ class CepModel {
     required this.complemento,
     required this.bairro,
     required this.localidade,
-    required this.uf,
     required this.estado,
   });
 
@@ -24,7 +22,6 @@ class CepModel {
       complemento: map['complemento'],
       bairro: map['bairro'],
       localidade: map['localidade'],
-      uf: map['uf'],
       estado: map['estado'],
     );
   }
@@ -36,7 +33,6 @@ class CepModel {
       "complemento": complemento,
       "bairro": bairro,
       "localidade": localidade,
-      "uf": uf,
       "estado": estado,
     };
   }
