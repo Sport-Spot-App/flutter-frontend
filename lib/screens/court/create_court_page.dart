@@ -11,6 +11,7 @@ import 'package:sport_spot/common/widgets/checkbox_field.dart';
 import 'package:sport_spot/common/widgets/input_field.dart';
 import 'package:sport_spot/models/cep_model.dart';
 import 'package:sport_spot/models/court_model.dart';
+import 'package:sport_spot/models/court_schedules_model.dart';
 import 'package:sport_spot/models/sport_model.dart';
 import 'package:sport_spot/repositories/cep_repository.dart';
 import 'package:sport_spot/repositories/court_repository.dart';
@@ -75,6 +76,35 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
       estado: stateController.text,
     );
 
+    List<CourtSchedulesModel> schedules = [];
+    Map<String, String> daysInEnglish = {
+      'Segunda': 'Monday',
+      'Terça': 'Tuesday',
+      'Quarta': 'Wednesday',
+      'Quinta': 'Thursday',
+      'Sexta': 'Friday',
+      'Sábado': 'Saturday',
+      'Domingo': 'Sunday',
+    };
+
+    diasSelecionados.forEach((dia, isSelected) {
+      if (isSelected) {
+        schedules.add(CourtSchedulesModel(
+          day_of_week: daysInEnglish[dia]!,
+          start_time: horariosInicio[dia]!.toString(),
+          end_time: horariosFim[dia]!.toString(),
+          blocked: false,
+        ));
+      } else{
+        schedules.add(CourtSchedulesModel(
+          day_of_week: daysInEnglish[dia]!,
+          start_time: TimeOfDay(hour: 0, minute: 0).format(context),
+          end_time: TimeOfDay(hour: 23, minute: 59).format(context),
+          blocked: true,
+          ));
+      }
+    });
+
     CourtModel court = CourtModel(
       name: nameController.text,
       price_per_hour: valueController.text,
@@ -85,7 +115,7 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
       sports: sportsSelected.map((id) => sportList.firstWhere((sport) => sport.id == id)).toList(),
       photos: photos,
       cep: cep,
-      schedules: [],
+      schedules: schedules,
     );
 
     await courtStore.registerCourt(court);

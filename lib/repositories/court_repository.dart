@@ -55,8 +55,10 @@ class CourtRepository implements ICourtRepository {
     for (var sport in court.sports) {
       formData.fields.add(MapEntry('sports[]', sport.id.toString()));
     }
+    for (var schedule in court.schedules) {
+      formData.fields.add(MapEntry('schedules[]', jsonEncode(schedule.toMap())));
+    }
     formData.fields.add(MapEntry('cep', jsonEncode(court.cep?.toMap())));
-    formData.fields.add(MapEntry('schedules', jsonEncode(court.schedules.map((schedule) => schedule.toMap()).toList())));
 
     if (court.photos != null) {
       for (var i = 0; i < court.photos!.length; i++) {
