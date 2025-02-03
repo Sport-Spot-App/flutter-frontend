@@ -40,8 +40,7 @@ class _HomePageState extends State<HomePage> {
   Future<void> _fetchFavoriteCourts() async {
     await courtStore.getFavoriteCourts();
     setState(() {
-      favoriteCourtIds =
-          courtStore.state.value.map((court) => court.id!).toList();
+      favoriteCourtIds = courtStore.favoriteCourtIds.value;
     });
   }
 
@@ -59,6 +58,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _toggleFavorite(int courtId) async {
     await courtStore.favoriteCourt(courtId);
+    _fetchFavoriteCourts();
   }
 
   @override
@@ -118,42 +118,36 @@ class _HomePageState extends State<HomePage> {
           child: isLoading
               ? const Center(
                   child: CircularProgressIndicator(color: AppColors.darkOrange))
-              : ValueListenableBuilder<List<int>>(
-                  valueListenable: courtStore.favoriteCourtIds,
-                  builder: (context, favoriteIds, child) {
-                    return ListView.builder(
-                      itemCount: filteredCourts.length,
-                      itemBuilder: (context, index) {
-                        final court = filteredCourts[index];
-                        var isFavorite = favoriteIds.contains(court.id);
-                        return InkWell(
-                          onTap: () {
-                            Navigator.of(context)
-                                .pushNamed(viewCourt, arguments: court);
-                          },
-                          child: CourtCard(
-                            imageUrlList: court.photos
-                                    ?.map((file) => file.path)
-                                    .toList() ??
-                                [],
-                            name: court.name,
-                            type: court.sports.join(', '),
-                            price: court.price_per_hour.toString(),
-                            favoriteIcon: IconButton(
-                              icon: Icon(
-                                isFavorite
-                                    ? Icons.favorite
-                                    : Icons.favorite_border,
-                                color: isFavorite ? Colors.red : Colors.grey,
-                              ),
-                              onPressed: () {
-                                isFavorite = !isFavorite;
-                                _toggleFavorite(court.id!);
-                              },
-                            ),
-                          ),
-                        );
+              : ListView.builder(
+                  itemCount: filteredCourts.length,
+                  itemBuilder: (context, index) {
+                    final court = filteredCourts[index];
+                    var isFavorite = favoriteCourtIds.contains(court.id);
+                    return InkWell(
+                      onTap: () {
+                        Navigator.of(context)
+                            .pushNamed(viewCourt, arguments: court);
                       },
+                      child: CourtCard(
+                        imageUrlList:
+                            court.photos?.map((file) => file.path).toList() ??
+                                [],
+                        name: court.name,
+                        type: court.sports.join(', '),
+                        price: court.price_per_hour,
+                        favoriteIcon: IconButton(
+                          icon: Icon(
+                            isFavorite ? Icons.favorite : Icons.favorite_border,
+                            color: isFavorite ? Colors.red : Colors.grey,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              isFavorite = !isFavorite;
+                            });
+                            _toggleFavorite(court.id!);
+                          },
+                        ),
+                      ),
                     );
                   },
                 ),
