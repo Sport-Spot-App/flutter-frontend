@@ -82,7 +82,7 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
       zip_code: cep.cep,
       street: cep.logradouro,
       number: numberController.text,
-      sports: sportsSelected,
+      sports: sportsSelected.map((id) => sportList.firstWhere((sport) => sport.id == id)).toList(),
       photos: photos,
       cep: cep,
       schedules: [],
