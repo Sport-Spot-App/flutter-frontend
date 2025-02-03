@@ -31,7 +31,7 @@ class _CourtOwnerCardState extends State<CourtOwnerCard> {
             const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         subtitle: Column(
           children: [
-            Text(widget.court.sports.join(', ')),
+            Text(widget.court.sports.map((sport) => sport.name).join(', ')),
             Text("${widget.court.street}, ${widget.court.number}"),
             Text("R\$ ${widget.court.price_per_hour} / hora"),
           ],
