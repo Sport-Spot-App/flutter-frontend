@@ -129,8 +129,8 @@ class _ViewCourtPageState extends State<ViewCourtPage> {
   _getListImages() {
     List<Widget> listImages = [];
 
-    if (widget.court.photos.isNotEmpty) {
-      for (var image in widget.court.photos) {
+    if (widget.court.photos!.isNotEmpty) {
+      for (var image in widget.court.photos ?? []) {
         Widget wdgt = ClipRRect(
           borderRadius: BorderRadius.all(Radius.circular(20)),
           child: Image.network(
@@ -168,7 +168,7 @@ class _ViewCourtPageState extends State<ViewCourtPage> {
   _getIndicatorImages() {
     List<Widget> indicators = [];
 
-    var length = widget.court.photos.length;
+    var length = widget.court.photos!.length;
     for (var i = 0; i < length; i++) {
       Widget wdgt = Container(
         width: 6.0,
