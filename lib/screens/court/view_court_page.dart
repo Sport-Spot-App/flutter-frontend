@@ -2,6 +2,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:sport_spot/common/constants/app_colors.dart';
 import 'package:sport_spot/models/court_model.dart';
+import 'package:sport_spot/screens/court/court_callendar.dart';
 import 'package:sport_spot/screens/map/court_map_page.dart';
 
 class ViewCourtPage extends StatefulWidget {
@@ -117,7 +118,7 @@ class _ViewCourtPageState extends State<ViewCourtPage> {
                 minimumSize: Size(MediaQuery.of(context).size.width / 2 - 25, 50),
               ),
               onPressed: () {
-                // Reservar
+                Navigator.of(context).push(MaterialPageRoute(builder: (_) => CourtCallendar()));
               },
               child: Text("Reservar", style: TextStyle(color: Colors.white)),
             ),
