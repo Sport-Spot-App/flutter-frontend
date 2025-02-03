@@ -28,11 +28,13 @@ class CourtRepository implements ICourtRepository {
     if (response.statusCode == 200) {
       final List<CourtModel> courts = [];
       final body = response.data;
-      
-       body.forEach((item) {
+      try {
+        body.forEach((item) {
           courts.add(CourtModel.fromMap(item));
         });
-
+      } catch (e) {
+        throw Exception('Erro ao buscar quadras');
+      }
       return courts;
     } else if (response.statusCode == 404) {
       throw NotFoundException('A URL informada não é válida');
@@ -43,7 +45,30 @@ class CourtRepository implements ICourtRepository {
 
   @override
   Future<bool> registerCourt(CourtModel court) async {
-    final response = await dio.post('/courts', data: jsonEncode(court.toMap()));
+    final formData = FormData.fromMap(court.toMap());
+    if (court.photos != null) {
+      for (var i = 0; i < court.photos!.length; i++) {
+        formData.files.add(MapEntry(
+          'photos[$i]',
+          await MultipartFile.fromFile(court.photos![i].path,
+              filename: "image_$i.png"),
+        ));
+      }
+    }
+    final response = await dio.post(
+      '/courts',
+      data: formData,
+      options: Options(
+        followRedirects: false,
+        validateStatus: (status) {
+          return status != null && status < 500;
+        },
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Accept': 'application/json',
+        },
+      ),
+    );
 
     if (response.statusCode == 200 || response.statusCode == 201) {
       return true;
@@ -80,15 +105,15 @@ class CourtRepository implements ICourtRepository {
   @override
   Future<List<CourtModel>> getUserCourts() async {
     final response = await dio.get('/owner/courts');
-	
-      final List<CourtModel> courts = [];
-      final body = response.data;
 
-      body.forEach((item) {
-        courts.add(CourtModel.fromMap(item));
-      });
+    final List<CourtModel> courts = [];
+    final body = response.data;
 
-      return courts;    
+    body.forEach((item) {
+      courts.add(CourtModel.fromMap(item));
+    });
+
+    return courts;
   }
 
   @override
@@ -116,7 +141,7 @@ class CourtRepository implements ICourtRepository {
       throw Exception('Erro ao buscar quadras favoritas');
     }
   }
-  
+
   @override
   Future<List<SportModel>> getSports() async {
     final response = await dio.get('/sports');
@@ -124,10 +149,10 @@ class CourtRepository implements ICourtRepository {
     if (response.statusCode == 200) {
       final List<SportModel> sports = [];
       final body = response.data;
-      
-       body.forEach((item) {
-          sports.add(SportModel.fromMap(item));
-        });
+
+      body.forEach((item) {
+        sports.add(SportModel.fromMap(item));
+      });
 
       return sports;
     } else if (response.statusCode == 404) {
@@ -143,7 +168,6 @@ class CourtRepository implements ICourtRepository {
 
     if (response.statusCode == 200) {
       final body = response.data;
-      print(body);
     } else {
       throw Exception('Erro ao buscar quadras favoritas');
     }
