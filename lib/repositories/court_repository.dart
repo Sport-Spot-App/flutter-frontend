@@ -55,8 +55,13 @@ class CourtRepository implements ICourtRepository {
     for (var sport in court.sports) {
       formData.fields.add(MapEntry('sports[]', sport.id.toString()));
     }
-    for (var schedule in court.schedules) {
-      formData.fields.add(MapEntry('schedules[]', jsonEncode(schedule.toMap())));
+    for (var i = 0; i < court.schedules.length; i++) {
+      formData.fields.add(MapEntry(
+          'schedules[$i][day_of_week]', court.schedules[i].day_of_week));
+      formData.fields.add(MapEntry(
+          'schedules[$i][start_time]', court.schedules[i].start_time ?? ''));
+      formData.fields.add(MapEntry(
+          'schedules[$i][end_time]', court.schedules[i].end_time ?? ''));
     }
     formData.fields.add(MapEntry('cep', jsonEncode(court.cep?.toMap())));
 
@@ -64,7 +69,8 @@ class CourtRepository implements ICourtRepository {
       for (var i = 0; i < court.photos!.length; i++) {
         formData.files.add(MapEntry(
           'photos[$i]',
-          await MultipartFile.fromFile(court.photos![i].path, filename: "image_$i.png"),
+          await MultipartFile.fromFile(court.photos![i].path,
+              filename: "image_$i.png"),
         ));
       }
     }
