@@ -40,7 +40,7 @@ class _HomePageState extends State<HomePage> {
   Future<void> _fetchFavoriteCourts() async {
     await courtStore.getFavoriteCourts();
     setState(() {
-      favoriteCourtIds = courtStore.state.value.map((court) => court.id).toList();
+      favoriteCourtIds = courtStore.favoriteCourtIds.value;
     });
   }
 
@@ -58,6 +58,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _toggleFavorite(int courtId) async {
     await courtStore.favoriteCourt(courtId);
+    _fetchFavoriteCourts();
   }
 
   @override
@@ -88,16 +89,23 @@ class _HomePageState extends State<HomePage> {
               // Sports Icons Bar
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                 child: Row(
                   children: const [
-                    IconWithLabel(icon: Icons.sports_volleyball, label: 'Vôlei'),
+                    IconWithLabel(
+                        icon: Icons.sports_volleyball, label: 'Vôlei'),
                     IconWithLabel(icon: Icons.sports_tennis, label: 'Tênis'),
                     IconWithLabel(icon: Icons.sports_soccer, label: 'Futebol'),
-                    IconWithLabel(icon: Icons.sports_basketball, label: 'Basquete'),
-                    IconWithLabel(icon: Icons.sports_handball, label: 'Handebol'),
-                    IconWithLabel(icon: Icons.sports_rugby, label: 'Futebol Americano'),
-                    IconWithLabel(icon: Icons.beach_access_outlined, label: 'Beach Tennis'),
+                    IconWithLabel(
+                        icon: Icons.sports_basketball, label: 'Basquete'),
+                    IconWithLabel(
+                        icon: Icons.sports_handball, label: 'Handebol'),
+                    IconWithLabel(
+                        icon: Icons.sports_rugby, label: 'Futebol Americano'),
+                    IconWithLabel(
+                        icon: Icons.beach_access_outlined,
+                        label: 'Beach Tennis'),
                   ],
                 ),
               ),
@@ -108,37 +116,43 @@ class _HomePageState extends State<HomePage> {
         // Court Card List
         Expanded(
           child: isLoading
-              ? const Center(child: CircularProgressIndicator(color: AppColors.darkOrange))
-              : ValueListenableBuilder<List<int>>(
-                  valueListenable: courtStore.favoriteCourtIds,
-                  builder: (context, favoriteIds, child) {
-                    return ListView.builder(
-                      itemCount: filteredCourts.length,
-                      itemBuilder: (context, index) {
-                        final court = filteredCourts[index];
-                        var isFavorite = favoriteIds.contains(court.id);
-                        return InkWell(
-                          onTap: () {
-                            Navigator.of(context).pushNamed(viewCourt, arguments: court);
-                          },
-                          child: CourtCard(
-                            imageUrlList: court.photos,
-                            name: court.name,
-                            type: court.sports.join(', '),
-                            price: court.price_per_hour.toString(),
-                            favoriteIcon: IconButton(
-                              icon: Icon(
-                                isFavorite ? Icons.favorite : Icons.favorite_border,
-                                color: isFavorite ? Colors.red : Colors.grey,
-                              ),
-                              onPressed: () {
-                                isFavorite = !isFavorite;
-                                _toggleFavorite(court.id);
-                              },
-                            ),
-                          ),
-                        );
+              ? const Center(
+                  child: CircularProgressIndicator(color: AppColors.darkOrange))
+              : ListView.builder(
+                  itemCount: filteredCourts.length,
+                  itemBuilder: (context, index) {
+                    final court = filteredCourts[index];
+                    var isFavorite = favoriteCourtIds.contains(court.id);
+                    return InkWell(
+                      onTap: () {
+                        Navigator.of(context)
+                            .pushNamed(viewCourt, arguments: court);
                       },
+                      child: CourtCard(
+                        imageUrlList: court.photos?.map((file) {
+                              final path = file.path;
+                              final url =
+                                  'https://sportspott.tech/storage/$path';
+                              return url;
+                            }).toList() ??
+                            [],
+                        name: court.name,
+                        type:
+                            court.sports.map((sport) => sport.name).join(', '),
+                        price: court.price_per_hour,
+                        favoriteIcon: IconButton(
+                          icon: Icon(
+                            isFavorite ? Icons.favorite : Icons.favorite_border,
+                            color: isFavorite ? Colors.red : Colors.grey,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              isFavorite = !isFavorite;
+                            });
+                            _toggleFavorite(court.id!);
+                          },
+                        ),
+                      ),
                     );
                   },
                 ),

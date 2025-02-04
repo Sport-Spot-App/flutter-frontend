@@ -44,17 +44,24 @@ class _FavoritesPageState extends State<FavoritesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: isLoading
-          ? const Center(child: CircularProgressIndicator(color:AppColors.darkOrange))
+          ? const Center(
+              child: CircularProgressIndicator(color: AppColors.darkOrange))
           : ListView.builder(
               itemCount: favoriteCourts.length,
               itemBuilder: (context, index) {
                 final court = favoriteCourts[index];
                 return InkWell(
                   onTap: () {
-                    Navigator.of(context).pushNamed(viewCourt, arguments: court);
+                    Navigator.of(context)
+                        .pushNamed(viewCourt, arguments: court);
                   },
                   child: CourtCard(
-                    imageUrlList: court.photos,
+                    imageUrlList: court.photos?.map((file) {
+                          final path = file.path;
+                          final url = 'https://sportspott.tech/storage/$path';
+                          return url;
+                        }).toList() ??
+                        [],
                     name: court.name,
                     type: court.sports.join(', '),
                     price: court.price_per_hour.toString(),
@@ -63,7 +70,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
                         Icons.favorite,
                         color: Colors.red,
                       ),
-                      onPressed: () => _toggleFavorite(court.id),
+                      onPressed: () => _toggleFavorite(court.id!),
                     ),
                   ),
                 );
