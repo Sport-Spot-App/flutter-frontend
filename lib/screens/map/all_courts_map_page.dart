@@ -3,6 +3,9 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:sport_spot/common/constants/app_colors.dart';
+import 'package:sport_spot/models/court_model.dart';
+import 'package:sport_spot/repositories/court_repository.dart';
+import 'package:dio/dio.dart';
 
 class AllCourtsMapPage extends StatefulWidget {
   const AllCourtsMapPage({super.key});
@@ -13,32 +16,54 @@ class AllCourtsMapPage extends StatefulWidget {
 
 class _AllCourtsMapPageState extends State<AllCourtsMapPage> {
   LatLng? myLocation;
-  Map<String, dynamic>? courtSelected;
-  List<Map<String, dynamic>> courtList = [
-    {"lat": -25.54783490595641, "long": -54.56449992657674, "name": "Planeta Bola"},
-    {"lat": -25.548570570762557, "long": -54.545230939133624, "name": "Templo Esportes e BeachBar"},
-    {"lat": -25.54977085627922, "long": -54.55960757787181, "name": "Quadra do Nenezão"},
-    {"lat": -25.539548685291482, "long": -54.556560588766104, "name": "Orla Foz"},
-    {"lat": -25.518243922290036, "long": -54.554903249502345, "name": "Ginásio de Esportes Costa Cavalcanti"},
-  ];
+  CourtModel? courtSelected;
+  List<CourtModel> courtList = [];
+  final CourtRepository courtRepository = CourtRepository(Dio());
 
-  Future _getPosition() async {
+  Future<void> _getCourts() async {
+    try {
+      final courts = await courtRepository.getCourts();
+      if (mounted) {
+        setState(() {
+          courtList = courts;
+        });
+      }
+    } catch (e) {
+      // Handle error
+      print('Error fetching courts: $e');
+    }
+  }
+
+  Future<void> _getPosition() async {
     try {
       await Geolocator.requestPermission();
       Position myPosition = await Geolocator.getCurrentPosition();
-      setState(() {
-        myLocation = LatLng(myPosition.latitude, myPosition.longitude);
-      });
+      if (mounted) {
+        setState(() {
+          myLocation = LatLng(myPosition.latitude, myPosition.longitude);
+        });
+      }
     } catch (e) {
-      setState(() {
-        myLocation = LatLng(-25.542731084056662, -54.58501349777966);
-      });
+      if (courtList.isNotEmpty) {
+        if (mounted) {
+          setState(() {
+        myLocation = LatLng(double.parse(courtList[0].coordinate_x!), double.parse(courtList[0].coordinate_y!));
+          });
+        }
+      } else {
+        if (mounted) {
+          setState(() {
+        myLocation = LatLng(-25.530553, -54.561060);
+          });
+        }
+      }
     }
   }
 
   @override
   void initState() {
     _getPosition();
+    _getCourts();
     super.initState();
   }
 
@@ -104,7 +129,7 @@ class _AllCourtsMapPageState extends State<AllCourtsMapPage> {
                           ),
                           SizedBox(height: 10),
                           Text(
-                            "${courtSelected!['name']}",
+                            courtSelected!.name,
                             style: TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
@@ -113,7 +138,7 @@ class _AllCourtsMapPageState extends State<AllCourtsMapPage> {
                           SizedBox(height: 10),
                           Row(
                             children: [
-                              Text("Nome da rua"),
+                              Text(courtSelected!.street),
                               Text(" • Foz do Iguaçu, Paraná", style: TextStyle(color: AppColors.darkOrange)),
                             ],
                           ),
@@ -130,12 +155,12 @@ class _AllCourtsMapPageState extends State<AllCourtsMapPage> {
     );
   }
 
-  _getMarkerList() {
+  List<Marker> _getMarkerList() {
     List<Marker> markerList = [];
 
     for (var court in courtList) {
       Marker mkr = Marker(
-        point: LatLng(court["lat"], court["long"]),
+        point: LatLng(double.parse(court.coordinate_x!), double.parse(court.coordinate_y!)),
         child: GestureDetector(
           onTap: () {
             setState(() {

@@ -10,13 +10,15 @@ class CourtStore {
   final ValueNotifier<bool> isLoading = ValueNotifier<bool>(false);
 
   // Variável reativa para o estado
-  final ValueNotifier<List<CourtModel>> state = ValueNotifier<List<CourtModel>>([]);
+  final ValueNotifier<List<CourtModel>> state =
+      ValueNotifier<List<CourtModel>>([]);
 
   // Variável reativa para erros
   final ValueNotifier<String> erro = ValueNotifier<String>('');
 
   // Variável reativa para IDs de quadras favoritas
-  final ValueNotifier<List<int>> favoriteCourtIds = ValueNotifier<List<int>>([]);
+  final ValueNotifier<List<int>> favoriteCourtIds =
+      ValueNotifier<List<int>>([]);
 
   CourtStore({required this.repository});
 
@@ -63,7 +65,7 @@ class CourtStore {
 
     try {
       await repository.deleteCourt(id);
-      await getCourts(); 
+      await getCourts();
     } catch (e) {
       erro.value = e.toString();
     } finally {
@@ -98,7 +100,7 @@ class CourtStore {
       isLoading.value = false;
     }
   }
-  
+
   void filterCourts(String query) {
     final results = state.value.where((court) {
       final courtName = court.name.toLowerCase();
@@ -148,9 +150,9 @@ class CourtStore {
     isLoading.value = true;
 
     try {
-      final result = await repository.getFavoriteCourts(); 
+      final result = await repository.getFavoriteCourts();
       state.value = result;
-      favoriteCourtIds.value = result.map((court) => court.id).toList();
+      favoriteCourtIds.value = result.map((court) => court.id!).toList();
     } on NotFoundException catch (e) {
       erro.value = e.message;
     } catch (e) {

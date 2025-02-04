@@ -44,31 +44,59 @@ class _FavoritesPageState extends State<FavoritesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: isLoading
-          ? const Center(child: CircularProgressIndicator(color:AppColors.darkOrange))
-          : ListView.builder(
-              itemCount: favoriteCourts.length,
-              itemBuilder: (context, index) {
-                final court = favoriteCourts[index];
-                return InkWell(
-                  onTap: () {
-                    Navigator.of(context).pushNamed(viewCourt, arguments: court);
-                  },
-                  child: CourtCard(
-                    imageUrlList: court.photos,
-                    name: court.name,
-                    type: court.sports.join(', '),
-                    price: court.price_per_hour.toString(),
-                    favoriteIcon: IconButton(
-                      icon: const Icon(
-                        Icons.favorite,
-                        color: Colors.red,
+          ? const Center(
+              child: CircularProgressIndicator(color: AppColors.darkOrange))
+          : favoriteCourts.isEmpty
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [
+                      Icon(
+                        Icons.heart_broken_outlined,
+                        size: 30,
+                        color: AppColors.gray,
                       ),
-                      onPressed: () => _toggleFavorite(court.id),
-                    ),
+                      SizedBox(height: 5),
+                      Text(
+                        'Você não possuí nenhuma quadra favoritada.',
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: AppColors.gray,
+                        ),
+                      ),
+                    ],
                   ),
-                );
-              },
-            ),
+                )
+              : ListView.builder(
+                  itemCount: favoriteCourts.length,
+                  itemBuilder: (context, index) {
+                    final court = favoriteCourts[index];
+                    return InkWell(
+                      onTap: () {
+                        Navigator.of(context)
+                            .pushNamed(viewCourt, arguments: court);
+                      },
+                      child: CourtCard(
+                        imageUrlList: court.photos?.map((file) {
+                              final path = file.path;
+                              final url = 'https://sportspott.tech/storage/$path';
+                              return url;
+                            }).toList() ??
+                            [],
+                        name: court.name,
+                        type: court.sports.map((sport) => sport.name).join(', '),
+                        price: court.price_per_hour.toString(),
+                        favoriteIcon: IconButton(
+                          icon: const Icon(
+                            Icons.favorite,
+                            color: Colors.red,
+                          ),
+                          onPressed: () => _toggleFavorite(court.id!),
+                        ),
+                      ),
+                    );
+                  },
+                ),
     );
   }
 }

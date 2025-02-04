@@ -6,7 +6,7 @@ import 'package:sport_spot/screens/auth/login_page.dart';
 import 'package:sport_spot/screens/auth/onboarding_page.dart';
 import 'package:sport_spot/screens/auth/register_page.dart';
 import 'package:sport_spot/screens/court/court_callendar.dart';
-import 'package:sport_spot/screens/court/court_schedule.dart';
+import 'package:sport_spot/screens/court/courts_page.dart';
 import 'package:sport_spot/screens/court/favorites_page.dart';
 import 'package:sport_spot/screens/court/view_court_page.dart';
 import 'package:sport_spot/screens/home/app_navigation.dart';
@@ -40,7 +40,8 @@ RouteFactory rotas() {
         screen = RegisterPage(role: role);
         break;
       case confirmRegister:
-        screen = RegistrationCompletedPage();
+        int role = (obj as Map<String, int>)["role"] ?? 0;
+        screen = RegistrationCompletedPage(role: role);
         break;
       case appNavigation:
         screen = AppNavigation();
@@ -64,8 +65,8 @@ RouteFactory rotas() {
       case 'admUsers':
         screen = AdmUsersScreen();
         break;
-      case courtSchedule:
-        screen = CadastroHorariosPage();
+      case courtPage:
+        screen = CourtsPage();
         break;
       case courtCallendar:
         screen = CourtCallendar();

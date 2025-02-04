@@ -27,12 +27,14 @@ class CourtRepository implements ICourtRepository {
 
     if (response.statusCode == 200) {
       final List<CourtModel> courts = [];
-      final body = response.data;
-      
-       body.forEach((item) {
-          courts.add(CourtModel.fromMap(item));
-        });
-
+      final body = response.data as List<dynamic>;
+      try {
+        for (var item in body) {
+          courts.add(CourtModel.fromMap(item as Map<String, dynamic>));
+        }
+      } catch (e) {
+        throw Exception('Erro ao buscar quadras: $e');
+      }
       return courts;
     } else if (response.statusCode == 404) {
       throw NotFoundException('A URL informada não é válida');
@@ -43,7 +45,50 @@ class CourtRepository implements ICourtRepository {
 
   @override
   Future<bool> registerCourt(CourtModel court) async {
-    final response = await dio.post('/courts', data: jsonEncode(court.toMap()));
+    final formData = FormData();
+    formData.fields.add(MapEntry('name', court.name));
+    formData.fields.add(MapEntry('price_per_hour', court.price_per_hour));
+    formData.fields.add(MapEntry('description', court.description));
+    formData.fields.add(MapEntry('zip_code', court.zip_code));
+    formData.fields.add(MapEntry('street', court.street));
+    formData.fields.add(MapEntry('number', court.number));
+    for (var sport in court.sports) {
+      formData.fields.add(MapEntry('sports[]', sport.id.toString()));
+    }
+    for (var i = 0; i < court.schedules.length; i++) {
+      formData.fields.add(MapEntry(
+          'schedules[$i][day_of_week]', court.schedules[i].day_of_week));
+      formData.fields.add(MapEntry(
+          'schedules[$i][start_time]', court.schedules[i].start_time ?? ''));
+      formData.fields.add(MapEntry(
+          'schedules[$i][end_time]', court.schedules[i].end_time ?? ''));
+    }
+    formData.fields.add(MapEntry('cep', jsonEncode(court.cep?.toMap())));
+
+    if (court.photos != null) {
+      for (var i = 0; i < court.photos!.length; i++) {
+        formData.files.add(MapEntry(
+          'photos[$i]',
+          await MultipartFile.fromFile(court.photos![i].path,
+              filename: "image_$i.png"),
+        ));
+      }
+    }
+
+    final response = await dio.post(
+      '/courts',
+      data: formData,
+      options: Options(
+        followRedirects: false,
+        validateStatus: (status) {
+          return status != null && status < 500;
+        },
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Accept': 'application/json',
+        },
+      ),
+    );
 
     if (response.statusCode == 200 || response.statusCode == 201) {
       return true;
@@ -80,15 +125,15 @@ class CourtRepository implements ICourtRepository {
   @override
   Future<List<CourtModel>> getUserCourts() async {
     final response = await dio.get('/owner/courts');
-	
-      final List<CourtModel> courts = [];
-      final body = response.data;
 
-      body.forEach((item) {
-        courts.add(CourtModel.fromMap(item));
-      });
+    final List<CourtModel> courts = [];
+    final body = response.data;
 
-      return courts;    
+    body.forEach((item) {
+      courts.add(CourtModel.fromMap(item));
+    });
+
+    return courts;
   }
 
   @override
@@ -116,7 +161,7 @@ class CourtRepository implements ICourtRepository {
       throw Exception('Erro ao buscar quadras favoritas');
     }
   }
-  
+
   @override
   Future<List<SportModel>> getSports() async {
     final response = await dio.get('/sports');
@@ -124,10 +169,10 @@ class CourtRepository implements ICourtRepository {
     if (response.statusCode == 200) {
       final List<SportModel> sports = [];
       final body = response.data;
-      
-       body.forEach((item) {
-          sports.add(SportModel.fromMap(item));
-        });
+
+      body.forEach((item) {
+        sports.add(SportModel.fromMap(item));
+      });
 
       return sports;
     } else if (response.statusCode == 404) {
@@ -143,9 +188,8 @@ class CourtRepository implements ICourtRepository {
 
     if (response.statusCode == 200) {
       final body = response.data;
-      print(body);
     } else {
-      throw Exception('Erro ao buscar quadras favoritas');
+      throw Exception('Erro ao buscar quadras');
     }
   }
 }

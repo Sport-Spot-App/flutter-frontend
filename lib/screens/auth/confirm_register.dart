@@ -5,7 +5,8 @@ import 'package:sport_spot/common/widgets/primary_button.dart';
 import 'package:sport_spot/routes/routing_constants.dart';
 
 class RegistrationCompletedPage extends StatelessWidget {
-  const RegistrationCompletedPage({super.key});
+  final int role;
+  const RegistrationCompletedPage({super.key, required this.role});
 
   @override
   Widget build(BuildContext context) {
@@ -47,22 +48,20 @@ class RegistrationCompletedPage extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          const Text(
-            'Aguarde a Aprovação de um Administrador',
-            style: TextStyle(
-              color: Colors.black54,
-              fontSize: 16,
+          if (role == 2)
+            const Text(
+              'Aguarde a Aprovação de um Administrador',
+              style: TextStyle(
+                color: Colors.black54,
+                fontSize: 16,
+              ),
+              textAlign: TextAlign.center,
             ),
-            textAlign: TextAlign.center,
-          ),
           const SizedBox(height: 50),
           PrimaryButton(
-            text: 'Ir para a home',
+            text: 'Realizar Login',
             onPressed: () {
-              Navigator.of(context).pushNamedAndRemoveUntil(
-                home,
-                (route) => false,
-              );
+              Navigator.of(context).pushNamed(login);
             },
           ),
           const SizedBox(height: 50),
