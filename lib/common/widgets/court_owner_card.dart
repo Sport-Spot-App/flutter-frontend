@@ -21,8 +21,13 @@ class _CourtOwnerCardState extends State<CourtOwnerCard> {
         leading: ClipRRect(
           borderRadius: const BorderRadius.all(Radius.circular(5)),
           child: widget.court.photos!.isNotEmpty
-              ? Image.network(widget.court.photos![0].path)
-              : const Icon(Icons.image_not_supported),
+              ? Image.network(
+                  'https://sportspott.tech/${widget.court.photos![0].path}',
+                  errorBuilder: (context, error, stackTrace) {
+                    return const Icon(Icons.image_not_supported_outlined);
+                  },
+                )
+              : const Icon(Icons.image_not_supported_outlined),
         ),
         title: Center(
           child: Text(widget.court.name),
