@@ -22,7 +22,7 @@ class _CourtOwnerCardState extends State<CourtOwnerCard> {
           borderRadius: const BorderRadius.all(Radius.circular(5)),
           child: widget.court.photos!.isNotEmpty
               ? Image.network(
-                  'https://sportspott.tech/${widget.court.photos![0].path}',
+                  'https://sportspott.tech/storage/${widget.court.photos![0].path}',
                   errorBuilder: (context, error, stackTrace) {
                     return const Icon(Icons.image_not_supported_outlined);
                   },

@@ -58,7 +58,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
                   child: CourtCard(
                     imageUrlList: court.photos?.map((file) {
                           final path = file.path;
-                          final url = 'https://sportspott.tech/$path';
+                          final url = 'https://sportspott.tech/storage/$path';
                           return url;
                         }).toList() ??
                         [],

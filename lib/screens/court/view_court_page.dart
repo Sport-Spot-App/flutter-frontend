@@ -131,7 +131,7 @@ class _ViewCourtPageState extends State<ViewCourtPage> {
     if (widget.court.photos!.isNotEmpty) {
       for (var file in widget.court.photos ?? []) {
         final path = file.path;
-        final url = 'https://sportspott.tech/$path';
+        final url = 'https://sportspott.tech/storage/$path';
         Widget wdgt = ClipRRect(
           borderRadius: BorderRadius.all(Radius.circular(20)),
           child: Image.network(
