@@ -5,7 +5,6 @@ import 'package:sport_spot/screens/auth/confirm_register.dart';
 import 'package:sport_spot/screens/auth/login_page.dart';
 import 'package:sport_spot/screens/auth/onboarding_page.dart';
 import 'package:sport_spot/screens/auth/register_page.dart';
-import 'package:sport_spot/screens/court/court_callendar.dart';
 import 'package:sport_spot/screens/court/courts_page.dart';
 import 'package:sport_spot/screens/court/favorites_page.dart';
 import 'package:sport_spot/screens/court/view_court_page.dart';
@@ -67,9 +66,6 @@ RouteFactory rotas() {
         break;
       case courtPage:
         screen = CourtsPage();
-        break;
-      case courtCallendar:
-        screen = CourtCallendar();
         break;
       default:
         screen = OnboardingPage();
