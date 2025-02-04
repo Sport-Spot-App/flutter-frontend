@@ -1,4 +1,3 @@
-import 'dart:ffi' as ffi;
 import 'dart:io';
 import 'package:flutter/services.dart';
 
@@ -17,7 +16,6 @@ import 'package:sport_spot/repositories/cep_repository.dart';
 import 'package:sport_spot/repositories/court_repository.dart';
 import 'package:sport_spot/repositories/sport_repository.dart';
 import 'package:sport_spot/routes/routing_constants.dart';
-import 'package:sport_spot/screens/court/courts_page.dart';
 import 'package:sport_spot/stores/cep_store.dart';
 import 'package:sport_spot/stores/court_store.dart';
 import 'package:sport_spot/stores/sport_store.dart';
@@ -91,17 +89,13 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
       if (isSelected) {
         schedules.add(CourtSchedulesModel(
           day_of_week: daysInEnglish[dia]!,
-          start_time: horariosInicio[dia]!.toString(),
-          end_time: horariosFim[dia]!.toString(),
-          blocked: false,
+          start_time: horariosInicio[dia]!.format(context),
+          end_time: horariosFim[dia]!.format(context),
         ));
-      } else{
+      } else {
         schedules.add(CourtSchedulesModel(
           day_of_week: daysInEnglish[dia]!,
-          start_time: TimeOfDay(hour: 0, minute: 0).format(context),
-          end_time: TimeOfDay(hour: 23, minute: 59).format(context),
-          blocked: true,
-          ));
+        ));
       }
     });
 
@@ -112,7 +106,9 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
       zip_code: cep.cep,
       street: cep.logradouro,
       number: numberController.text,
-      sports: sportsSelected.map((id) => sportList.firstWhere((sport) => sport.id == id)).toList(),
+      sports: sportsSelected
+          .map((id) => sportList.firstWhere((sport) => sport.id == id))
+          .toList(),
       photos: photos,
       cep: cep,
       schedules: schedules,
@@ -158,7 +154,9 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
     );
     if (picked != null) {
       final roundedTime = TimeOfDay(hour: picked.hour, minute: 0);
-      onSelected(roundedTime);
+      setState(() {
+        onSelected(roundedTime);
+      });
     }
   }
 
