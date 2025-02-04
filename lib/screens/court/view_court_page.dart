@@ -148,9 +148,8 @@ class _ViewCourtPageState extends State<ViewCourtPage> {
                     Size(MediaQuery.of(context).size.width / 2 - 25, 50),
               ),
               onPressed: () {
-                // Navigator.of(context).push(MaterialPageRoute(builder: (_) => CourtCallendar(courtId: widget.court.id!)));
                 Navigator.of(context).push(MaterialPageRoute(
-                    builder: (_) => CourtBookingPage()));
+                    builder: (_) => CourtBookingPage(court: widget.court)));
               },
               child: Text("Reservar", style: TextStyle(color: Colors.white)),
             ),
