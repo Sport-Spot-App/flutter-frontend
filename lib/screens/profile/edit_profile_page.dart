@@ -1,3 +1,5 @@
+import 'package:cpf_cnpj_validator/cnpj_validator.dart';
+import 'package:cpf_cnpj_validator/cpf_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sport_spot/api/api.dart';
@@ -32,7 +34,29 @@ class _EditProfilePageState extends State<EditProfilePage> {
   final TextEditingController documentController = TextEditingController();
   final TextEditingController cellphoneController = TextEditingController();
 
+  String? documentError;
   File? _image;
+
+
+  _validateDocument(text) {
+    if (widget.user.role == 3 && !CPFValidator.isValid(text)) {
+      setState(() {
+        documentError = "CPF inválido";
+      });
+      return;
+    }
+    
+    if (widget.user.role == 2 && !CNPJValidator.isValid(text)) {
+      setState(() {
+        documentError = "CNPJ inválido";
+      });
+      return;
+    }
+
+    setState(() {
+      documentError = null;
+    });
+  }
 
   Future<void> _pickImage() async {
     final pickedFile =
@@ -164,6 +188,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     label: widget.user.role == 3 ? "CPF" : "CNPJ",
                     controller: documentController,
                     inputFormatters: [widget.user.role == 3 ? maskCPF : maskCNPJ],
+                    onChanged: _validateDocument,
+                    errorText: documentError,
                   ),
                   InputField(
                     label: "CELULAR",
