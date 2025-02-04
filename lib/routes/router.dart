@@ -39,7 +39,8 @@ RouteFactory rotas() {
         screen = RegisterPage(role: role);
         break;
       case confirmRegister:
-        screen = RegistrationCompletedPage();
+        int role = (obj as Map<String, int>)["role"] ?? 0;
+        screen = RegistrationCompletedPage(role: role);
         break;
       case appNavigation:
         screen = AppNavigation();

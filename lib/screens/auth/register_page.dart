@@ -85,7 +85,11 @@ class _RegisterPageState extends State<RegisterPage> {
           content: Text('Usuário cadastrado com sucesso!'),
         ),
       );
-      Navigator.of(context).pushNamedAndRemoveUntil(confirmRegister, (route) => false);
+      Navigator.of(context).pushNamedAndRemoveUntil(
+        confirmRegister,
+        (route) => false,
+        arguments: {'role': widget.role},
+      );
     } else {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
