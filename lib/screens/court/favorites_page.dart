@@ -56,8 +56,12 @@ class _FavoritesPageState extends State<FavoritesPage> {
                         .pushNamed(viewCourt, arguments: court);
                   },
                   child: CourtCard(
-                    imageUrlList:
-                        court.photos?.map((file) => file.path).toList() ?? [],
+                    imageUrlList: court.photos?.map((file) {
+                          final path = file.path;
+                          final url = 'https://sportspott.tech/$path';
+                          return url;
+                        }).toList() ??
+                        [],
                     name: court.name,
                     type: court.sports.join(', '),
                     price: court.price_per_hour.toString(),

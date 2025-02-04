@@ -30,11 +30,11 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _fetchCourts() async {
-      await courtStore.getCourts();
-      setState(() {
-        filteredCourts = courtStore.state.value;
-        isLoading = false;
-      });
+    await courtStore.getCourts();
+    setState(() {
+      filteredCourts = courtStore.state.value;
+      isLoading = false;
+    });
   }
 
   Future<void> _fetchFavoriteCourts() async {
@@ -129,20 +129,15 @@ class _HomePageState extends State<HomePage> {
                             .pushNamed(viewCourt, arguments: court);
                       },
                       child: CourtCard(
-                        imageUrlList: 
-                        // court.photos?.map((file) {
-                        //   final path = file.path;
-                        //   if (path.startsWith('http')) {
-                        //     return path;
-                        //   } else if (path.startsWith('/')) {
-                        //     return 'https://sportspott.tech$path'; // Replace with your server URL
-                        //   } else {
-                        //     return 'https://sportspott.tech/$path'; // Replace with your server URL
-                        //   }
-                        // }).toList() ?? 
-                        [],
+                        imageUrlList: court.photos?.map((file) {
+                              final path = file.path;
+                              final url = 'https://sportspott.tech/$path';
+                              return url;
+                            }).toList() ??
+                            [],
                         name: court.name,
-                        type: court.sports.map((sport) => sport.name).join(', '),
+                        type:
+                            court.sports.map((sport) => sport.name).join(', '),
                         price: court.price_per_hour,
                         favoriteIcon: IconButton(
                           icon: Icon(

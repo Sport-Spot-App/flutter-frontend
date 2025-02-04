@@ -85,7 +85,8 @@ class _ViewCourtPageState extends State<ViewCourtPage> {
               Text("De segunda à sexta\nDas 14h às 16h"),
               SizedBox(height: 20),
               Text("Endereço:", style: TextStyle(fontWeight: FontWeight.bold)),
-              Text("${widget.court.street}, N° ${widget.court.number}, ${widget.court.cep?.bairro}"),
+              Text(
+                  "${widget.court.street}, N° ${widget.court.number}, ${widget.court.cep?.bairro}"),
             ],
           ),
         ),
@@ -128,12 +129,18 @@ class _ViewCourtPageState extends State<ViewCourtPage> {
     List<Widget> listImages = [];
 
     if (widget.court.photos!.isNotEmpty) {
-      for (var image in widget.court.photos ?? []) {
+      for (var file in widget.court.photos ?? []) {
+        final path = file.path;
+        final url = 'https://sportspott.tech/$path';
         Widget wdgt = ClipRRect(
           borderRadius: BorderRadius.all(Radius.circular(20)),
           child: Image.network(
-            image,
+            url,
             width: double.infinity,
+            errorBuilder: (context, error, stackTrace) {
+              return const Icon(Icons.image_not_supported_outlined,
+                  size: 50, color: Colors.grey);
+            },
           ),
         );
 
@@ -150,7 +157,7 @@ class _ViewCourtPageState extends State<ViewCourtPage> {
               Icon(
                 Icons.image_not_supported_outlined,
                 color: Colors.grey,
-                size: 200,
+                size: 50,
               ),
             ],
           ),
