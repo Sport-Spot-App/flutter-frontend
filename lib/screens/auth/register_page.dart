@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sport_spot/api/api.dart';
 import 'package:sport_spot/common/constants/app_colors.dart';
 import 'package:sport_spot/common/constants/app_text_styles.dart';
+import 'package:sport_spot/common/utils/masks.dart';
 import 'package:sport_spot/common/widgets/input_field.dart';
 import 'package:sport_spot/common/widgets/primary_button.dart';
 import 'package:sport_spot/models/user_model.dart';
@@ -89,13 +90,24 @@ class RegisterPage extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 20),
-              InputField(controller: nameController, label: "NOME"),
-              InputField(controller: emailController, label: "EMAIL"),
+              InputField(
+                controller: nameController,
+                label: "NOME",
+              ),
+              InputField(
+                controller: emailController,
+                label: "EMAIL",
+              ),
               InputField(
                 controller: cpfController,
                 label: role == 2 ? "CNPJ" : "CPF",
+                inputFormatters: [role == 2 ? maskCNPJ : maskCPF],
               ),
-              InputField(controller: cellphoneController, label: "CELULAR"),
+              InputField(
+                controller: cellphoneController,
+                label: "CELULAR",
+                inputFormatters: [maskPhone],
+              ),
               InputField(
                 controller: passwordController,
                 label: "SENHA",

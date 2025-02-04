@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:sport_spot/common/constants/app_colors.dart';
+import 'package:sport_spot/common/utils/masks.dart';
 
 class CepField extends StatefulWidget {
   final ValueChanged<String>? onChanged;
@@ -12,12 +12,6 @@ class CepField extends StatefulWidget {
 }
 
 class _CepFieldState extends State<CepField> {
-  final MaskTextInputFormatter cepFormatter = MaskTextInputFormatter(
-    mask: '#####-###', 
-    filter: { "#": RegExp(r'[0-9]') },
-    type: MaskAutoCompletionType.lazy
-  );
-
   @override
   Widget build(BuildContext context) {
     return Column(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sport_spot/api/api.dart';
 import 'package:sport_spot/common/constants/app_colors.dart';
+import 'package:sport_spot/common/utils/masks.dart';
 import 'package:sport_spot/common/widgets/input_field.dart';
 import 'package:sport_spot/common/widgets/primary_button.dart';
 import 'package:sport_spot/models/user_model.dart';
@@ -71,8 +72,23 @@ class _EditProfilePageState extends State<EditProfilePage> {
   void initState() {
     nameController.text = widget.user.name;
     emailController.text = widget.user.email;
-    documentController.text = widget.user.document;
-    cellphoneController.text = widget.user.cellphone;
+
+    if (widget.user.role == 3) {
+      documentController.value = maskCPF.formatEditUpdate(
+        TextEditingValue.empty,
+        TextEditingValue(text: widget.user.document),  
+      );
+    } else {
+      documentController.value = maskCNPJ.formatEditUpdate(
+        TextEditingValue.empty,
+        TextEditingValue(text: widget.user.document),  
+      );
+    }
+
+    cellphoneController.value = maskPhone.formatEditUpdate(
+      TextEditingValue.empty,
+      TextEditingValue(text: widget.user.cellphone),
+    );
     super.initState();
   }
 
@@ -136,12 +152,24 @@ class _EditProfilePageState extends State<EditProfilePage> {
               padding: EdgeInsets.only(left: 20, right: 20),
               child: Column(
                 children: [
-                  InputField(label: "NOME", controller: nameController),
-                  InputField(label: "EMAIL", controller: emailController),
                   InputField(
-                      label: widget.user.role == 3 ? "CPF" : "CNPJ",
-                      controller: documentController),
-                  InputField(label: "CELULAR", controller: cellphoneController),
+                    label: "NOME",
+                    controller: nameController,
+                  ),
+                  InputField(
+                    label: "EMAIL",
+                    controller: emailController,
+                  ),
+                  InputField(
+                    label: widget.user.role == 3 ? "CPF" : "CNPJ",
+                    controller: documentController,
+                    inputFormatters: [widget.user.role == 3 ? maskCPF : maskCNPJ],
+                  ),
+                  InputField(
+                    label: "CELULAR",
+                    controller: cellphoneController,
+                    inputFormatters: [maskPhone],
+                  ),
                   PrimaryButton(
                     text: "Salvar",
                     onPressed: () {
