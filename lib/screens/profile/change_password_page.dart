@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sport_spot/api/api.dart';
 import 'package:sport_spot/common/constants/app_colors.dart';
 import 'package:sport_spot/common/widgets/input_field.dart';
+import 'package:sport_spot/common/widgets/primary_button.dart';
 import 'package:sport_spot/repositories/user_repository.dart';
 import 'package:sport_spot/stores/user_store.dart';
 
@@ -118,16 +119,9 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                     controller: _confirmNewPasswordController,
                     isPassword: true,
                   ),
-                  ElevatedButton(
+                  PrimaryButton(
+                    text: "Alterar senha",
                     onPressed: _changePassword,
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: const Size.fromHeight(50),
-                      backgroundColor: AppColors.darkOrange,
-                    ),
-                    child: const Text(
-                      "Alterar senha",
-                      style: TextStyle(fontSize: 20, color: Colors.white),
-                    ),
                   ),
                 ],
               ),
