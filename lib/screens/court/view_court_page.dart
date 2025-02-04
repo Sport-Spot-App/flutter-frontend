@@ -1,8 +1,11 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:sport_spot/api/api.dart';
 import 'package:sport_spot/common/constants/app_colors.dart';
 import 'package:sport_spot/models/court_model.dart';
+import 'package:sport_spot/repositories/court_repository.dart';
 import 'package:sport_spot/screens/map/court_map_page.dart';
+import 'package:sport_spot/stores/court_store.dart';
 
 class ViewCourtPage extends StatefulWidget {
   final CourtModel court;
@@ -15,7 +18,27 @@ class ViewCourtPage extends StatefulWidget {
 
 class _ViewCourtPageState extends State<ViewCourtPage> {
   final CarouselSliderController _controller = CarouselSliderController();
+  final CourtStore courtStore = CourtStore(repository: CourtRepository(Api()));
+  bool isFavorite = false;
   int currentIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkIfFavorite();
+  }
+
+  Future<void> _checkIfFavorite() async {
+    await courtStore.getFavoriteCourts();
+    setState(() {
+      isFavorite = courtStore.favoriteCourtIds.value.contains(widget.court.id);
+    });
+  }
+
+  Future<void> _toggleFavorite() async {
+    await courtStore.favoriteCourt(widget.court.id!);
+    _checkIfFavorite();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,15 +79,23 @@ class _ViewCourtPageState extends State<ViewCourtPage> {
                     ),
                   ),
                   IconButton(
-                    onPressed: () {},
-                    icon: Icon(Icons.favorite_outline),
+                    onPressed: () {
+                      setState(() {
+                        isFavorite = !isFavorite;
+                      });
+                      _toggleFavorite();
+                    },
+                    icon: Icon(
+                      isFavorite ? Icons.favorite : Icons.favorite_outline,
+                      color: isFavorite ? Colors.red : Colors.grey,
+                    ),
                   ),
                 ],
               ),
               Row(
                 children: [
                   Text(
-                    "R\$ ${widget.court.price_per_hour}",
+                    "R\$ ${widget.court.price_per_hour.toString()}",
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -82,7 +113,13 @@ class _ViewCourtPageState extends State<ViewCourtPage> {
               SizedBox(height: 20),
               Text("Horário de funcionamento:",
                   style: TextStyle(fontWeight: FontWeight.bold)),
-              Text("De segunda à sexta\nDas 14h às 16h"),
+              Text(
+                widget.court.schedules.isNotEmpty
+                    ? widget.court.schedules
+                        .map((e) => "${e.day_of_week}: ${e.start_time} até ${e.end_time}")
+                        .join("\n")
+                    : "Não informado",
+              ),
               SizedBox(height: 20),
               Text("Endereço:", style: TextStyle(fontWeight: FontWeight.bold)),
               Text(
