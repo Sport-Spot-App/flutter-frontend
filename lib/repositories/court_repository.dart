@@ -52,16 +52,13 @@ class CourtRepository implements ICourtRepository {
     formData.fields.add(MapEntry('zip_code', court.zip_code));
     formData.fields.add(MapEntry('street', court.street));
     formData.fields.add(MapEntry('number', court.number));
+    formData.fields.add(MapEntry('initial_hour', court.initial_hour!));
+    formData.fields.add(MapEntry('final_hour', court.final_hour!));
+    for (var day in court.blocked_days!) {
+      formData.fields.add(MapEntry('blocked_days[]', day.toString()));
+    }
     for (var sport in court.sports) {
       formData.fields.add(MapEntry('sports[]', sport.id.toString()));
-    }
-    for (var i = 0; i < court.schedules.length; i++) {
-      formData.fields.add(MapEntry(
-          'schedules[$i][day_of_week]', court.schedules[i].day_of_week));
-      formData.fields.add(MapEntry(
-          'schedules[$i][start_time]', court.schedules[i].start_time ?? ''));
-      formData.fields.add(MapEntry(
-          'schedules[$i][end_time]', court.schedules[i].end_time ?? ''));
     }
     formData.fields.add(MapEntry('cep', jsonEncode(court.cep?.toMap())));
 

@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:sport_spot/models/cep_model.dart';
-import 'package:sport_spot/models/court_schedules_model.dart';
 import 'package:sport_spot/models/sport_model.dart';
 
 class CourtModel {
@@ -20,7 +19,9 @@ class CourtModel {
   final List<SportModel> sports;
   final List<File>? photos;
   final CepModel? cep;
-  final List<CourtSchedulesModel> schedules;
+  final String? initial_hour;
+  final String? final_hour;
+  final List<String>? blocked_days;
 
   CourtModel({
     this.id,
@@ -39,7 +40,9 @@ class CourtModel {
     required this.sports,
     this.photos,
     this.cep,
-    required this.schedules,
+    this.initial_hour,
+    this.final_hour,
+    this.blocked_days,
   });
 
   factory CourtModel.fromMap(Map<String, dynamic> map) {
@@ -62,8 +65,9 @@ class CourtModel {
           ?.map((item) => File(item['path'] as String))
           .toList(),
       cep: map['cep'] != null ? CepModel.fromMap(map['cep'] as Map<String, dynamic>) : null,
-      schedules: List<CourtSchedulesModel>.from(
-          map['schedules']?.map((x) => CourtSchedulesModel.fromMap(x as Map<String, dynamic>)) ?? []),
+      initial_hour: map['initialHour'],
+      final_hour: map['finalHour'],
+      blocked_days: (map['blockedDays'] as List<dynamic>?)?.map((item) => item as String).toList(),
     );
   }
 
@@ -85,7 +89,9 @@ class CourtModel {
       'sports': sports.map((sport) => sport.id).toList(),
       'photos': photos?.map((file) => {'path': file.path}).toList(),
       'cep': cep?.toMap(),
-      'schedules': schedules.map((x) => x.toMap()).toList(),
+      'initialHour': initial_hour,
+      'finalHour': final_hour,
+      'blockedDays': blocked_days,
     };
   }
 }

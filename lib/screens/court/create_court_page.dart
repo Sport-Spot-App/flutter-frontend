@@ -10,7 +10,6 @@ import 'package:sport_spot/common/widgets/checkbox_field.dart';
 import 'package:sport_spot/common/widgets/input_field.dart';
 import 'package:sport_spot/models/cep_model.dart';
 import 'package:sport_spot/models/court_model.dart';
-import 'package:sport_spot/models/court_schedules_model.dart';
 import 'package:sport_spot/models/sport_model.dart';
 import 'package:sport_spot/repositories/cep_repository.dart';
 import 'package:sport_spot/repositories/court_repository.dart';
@@ -60,8 +59,9 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
     'Sábado': false,
     'Domingo': false,
   };
-  Map<String, TimeOfDay?> horariosInicio = {};
-  Map<String, TimeOfDay?> horariosFim = {};
+  TimeOfDay? horarioInicio;
+  TimeOfDay? horarioFim;
+  List<String> blockedDays = [];
 
   //Método para criar quadra
   Future<void> _createCourt() async {
@@ -73,31 +73,6 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
       localidade: cityController.text,
       estado: stateController.text,
     );
-
-    List<CourtSchedulesModel> schedules = [];
-    Map<String, String> daysInEnglish = {
-      'Segunda': 'Monday',
-      'Terça': 'Tuesday',
-      'Quarta': 'Wednesday',
-      'Quinta': 'Thursday',
-      'Sexta': 'Friday',
-      'Sábado': 'Saturday',
-      'Domingo': 'Sunday',
-    };
-
-    diasSelecionados.forEach((dia, isSelected) {
-      if (isSelected) {
-        schedules.add(CourtSchedulesModel(
-          day_of_week: daysInEnglish[dia]!,
-          start_time: horariosInicio[dia]!.format(context),
-          end_time: horariosFim[dia]!.format(context),
-        ));
-      } else {
-        schedules.add(CourtSchedulesModel(
-          day_of_week: daysInEnglish[dia]!,
-        ));
-      }
-    });
 
     CourtModel court = CourtModel(
       name: nameController.text,
@@ -111,7 +86,12 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
           .toList(),
       photos: photos,
       cep: cep,
-      schedules: schedules,
+      initial_hour: horarioInicio?.format(context) ?? '',
+      final_hour: horarioFim?.format(context) ?? '',
+      blocked_days: diasSelecionados.entries
+          .where((entry) => !entry.value)
+          .map((entry) => entry.key)
+          .toList(),
     );
 
     await courtStore.registerCourt(court);
@@ -273,68 +253,59 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           "Horários de Funcionamento",
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
-        SizedBox(height: 20),
-        ...diasSelecionados.keys.map((dia) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    Checkbox(
-                      value: diasSelecionados[dia],
-                      onChanged: (value) => setState(
-                          () => diasSelecionados[dia] = value ?? false),
-                      activeColor: Colors.green,
-                    ),
-                    Text(dia),
-                  ],
-                ),
-                Row(
-                  children: [
-                    _horarioButton(
-                        'Início',
-                        horariosInicio[dia],
-                        (value) => setState(() => horariosInicio[dia] = value),
-                        diasSelecionados[dia] == true),
-                    SizedBox(width: 10),
-                    _horarioButton(
-                        'Fim',
-                        horariosFim[dia],
-                        (value) => setState(() => horariosFim[dia] = value),
-                        diasSelecionados[dia] == true),
-                  ],
-                ),
-              ],
+        const SizedBox(height: 20),
+        Column(
+          children: diasSelecionados.keys.map((dia) {
+            return CheckboxListTile(
+              title: Text(dia),
+              value: diasSelecionados[dia],
+              onChanged: (value) {
+                setState(() {
+                  diasSelecionados[dia] = value ?? false;
+                });
+              },
+              activeColor: Colors.green,
+            );
+          }).toList(),
+        ),
+        const SizedBox(height: 20),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            _horarioButton(
+              'Início',
+              horarioInicio,
+              (value) => setState(() => horarioInicio = value),
             ),
-          );
-        }).toList(),
+            _horarioButton(
+              'Fim',
+              horarioFim,
+              (value) => setState(() => horarioFim = value),
+            ),
+          ],
+        ),
       ],
     );
   }
 
-  Widget _horarioButton(String label, TimeOfDay? horario,
-      Function(TimeOfDay) onSelected, bool isEnabled) {
+  Widget _horarioButton(String label, TimeOfDay? horario, Function(TimeOfDay) onSelected) {
     return SizedBox(
-      width: 100,
+      width: 150,
       child: GestureDetector(
-        onTap: isEnabled ? () => _selecionarHorario(context, onSelected) : null,
+        onTap: () => _selecionarHorario(context, onSelected),
         child: Container(
-          padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+          padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
           decoration: BoxDecoration(
-            border: Border.all(
-                color: isEnabled ? Colors.grey : Colors.grey.shade400),
+            border: Border.all(color: Colors.grey),
             borderRadius: BorderRadius.circular(5),
           ),
           child: Text(
             horario != null ? horario.format(context) : label,
-            style: TextStyle(
-                fontSize: 16, color: isEnabled ? Colors.black : Colors.grey),
+            style: const TextStyle(fontSize: 16, color: Colors.black),
           ),
         ),
       ),
