@@ -85,7 +85,7 @@ class CourtStore {
         // Atualiza a quadra na lista de estado
         final courts = state.value.map((court) {
           if (court.id == updatedCourt.id) {
-            return updatedCourt; // Substitui pela quadra atualizada
+            return updatedCourt;
           }
           return court;
         }).toList();
