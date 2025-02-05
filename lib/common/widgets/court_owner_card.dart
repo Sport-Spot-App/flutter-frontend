@@ -9,9 +9,9 @@ import 'package:sport_spot/stores/court_store.dart';
 
 class CourtOwnerCard extends StatefulWidget {
   final CourtModel court;
-  final VoidCallback onDelete;
 
-  const CourtOwnerCard(this.court, {required this.onDelete, super.key});
+
+  const CourtOwnerCard(this.court, {super.key});
 
   @override
   State<CourtOwnerCard> createState() => _CourtOwnerCardState();
