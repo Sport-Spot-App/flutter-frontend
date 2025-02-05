@@ -110,4 +110,9 @@ class UserRepository implements IUserRepository {
       throw Exception('Erro ao alterar senha.');
     }
   }
+
+  Future<UserModel> getUser(int userId) async {
+    final response = await dio.get('/users/$userId');
+    return UserModel.fromMap(response.data);
+  }
 }
