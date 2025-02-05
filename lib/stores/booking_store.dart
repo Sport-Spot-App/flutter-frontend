@@ -14,7 +14,7 @@ class BookingStore {
 
   BookingStore({required this.repository});
 
-  Future<void> getCourts() async {
+  Future<void> getBookings() async {
     isLoading.value = true;
 
     try {
@@ -33,7 +33,6 @@ class BookingStore {
     try {
       final result = await repository.registerBooking(bookings, courtId);
       if (result) {
-        await getCourts();
         return true;
       }
     } catch (e) {
@@ -50,7 +49,6 @@ class BookingStore {
 
     try {
       await repository.approveBooking(bookingId);
-      await getCourts();
     } catch (e) {
       erro.value = e.toString();
     } finally {
