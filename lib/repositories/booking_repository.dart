@@ -96,7 +96,7 @@ class BookingRepository implements IBookingRepository {
 
   @override
   Future<void> approveBooking(int bookingId) async {
-    final response = await dio.post('/approveBook/$bookingId');
+    final response = await dio.put('/approveBook/$bookingId');
 
     if (response.statusCode == 200) {
       return;
