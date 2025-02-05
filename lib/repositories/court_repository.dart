@@ -14,6 +14,7 @@ abstract class ICourtRepository {
   Future<List<CourtModel>> getFavoriteCourts();
   Future<List<SportModel>> getSports();
   Future<void> findCep(String cep);
+  Future<CourtModel> getCourt(int courtId);
 }
 
 class CourtRepository implements ICourtRepository {
@@ -36,6 +37,19 @@ class CourtRepository implements ICourtRepository {
       throw NotFoundException('A URL informada não é válida');
     } else {
       throw Exception('Erro ao buscar quadras');
+    }
+  }
+
+  @override
+  Future<CourtModel> getCourt(int courtId) async {
+    final response = await dio.get('/courts/$courtId');
+
+    if (response.statusCode == 200) {
+      return CourtModel.fromMap(response.data);
+    } else if (response.statusCode == 404) {
+      throw NotFoundException('Quadra não encontrada');
+    } else {
+      throw Exception('Erro ao buscar quadra');
     }
   }
 
