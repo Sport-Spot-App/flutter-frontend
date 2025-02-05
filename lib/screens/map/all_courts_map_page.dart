@@ -45,13 +45,13 @@ class _AllCourtsMapPageState extends State<AllCourtsMapPage> {
         setState(() {
           courtList = [];
         });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error fetching courts: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
       }
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error fetching courts: $e'),
-          backgroundColor: Colors.red,
-        ),
-      );
     }
   }
 
