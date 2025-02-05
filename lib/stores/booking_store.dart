@@ -15,17 +15,19 @@ class BookingStore {
 
   BookingStore({required this.repository});
 
-  Future<void> getBookings() async {
+  Future<List<BookingModel>> getBookings() async {
     isLoading.value = true;
 
     try {
       final result = await repository.getBookings();
       state.value = result;
+      return result;
     } catch (e) {
       erro.value = e.toString();
     } finally {
       isLoading.value = false;
     }
+    return [];
   }
 
   Future<bool> registerBooking(List<BookingModel> bookings, String courtId) async {
@@ -58,4 +60,33 @@ class BookingStore {
       isLoading.value = false;
     }
   }
+
+  Future<List<BookingModel>> getBookingsByCourtId(String courtId) async {
+    isLoading.value = true;
+
+    try {
+      final result = await repository.getBookingByCourtId(courtId);
+      return result;
+    } catch (e) {
+      erro.value = e.toString();
+      return [];
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<List<BookingModel>> getBlockedBookings(String courtId, String ownerId) async {
+    isLoading.value = true;
+
+    try {
+      final result = await repository.getBlockedBookings(courtId, ownerId);
+      return result;
+    } catch (e) {
+      erro.value = e.toString();
+      return [];
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
 }
