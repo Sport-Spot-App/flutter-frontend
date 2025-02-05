@@ -4,6 +4,7 @@ import 'package:sport_spot/repositories/booking_repository.dart';
 import 'package:sport_spot/api/api.dart';
 import 'package:sport_spot/repositories/user_repository.dart';
 import 'package:sport_spot/models/user_model.dart';
+import 'package:sport_spot/stores/booking_store.dart';
 
 class BookingHistoryPage extends StatefulWidget {
   BookingHistoryPage({super.key});
@@ -14,6 +15,7 @@ class BookingHistoryPage extends StatefulWidget {
 
 class _BookingHistoryPageState extends State<BookingHistoryPage> {
   final BookingRepository bookingRepository = BookingRepository(Api());
+  final BookingStore bookingStore = BookingStore(repository: BookingRepository(Api()));
   final UserRepository userRepository = UserRepository(Api());
   late Future<List<BookingModel>> futureBookings;
 
@@ -21,6 +23,13 @@ class _BookingHistoryPageState extends State<BookingHistoryPage> {
   void initState() {
     super.initState();
     futureBookings = bookingRepository.getBookings();
+  }
+
+  _approveBooking(int bookingId) async {
+    await bookingStore.approveBooking(bookingId);
+    setState(() {
+      futureBookings = bookingRepository.getBookings();
+    });
   }
 
   @override
@@ -97,12 +106,14 @@ class _BookingHistoryPageState extends State<BookingHistoryPage> {
                           ),
                           trailing: !booking.status!
                               ? ElevatedButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    _approveBooking(booking.id!);
+                                  },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.orange,
                                     foregroundColor: Colors.white,
                                   ),
-                                  child: const Text('Cancelar'),
+                                  child: const Text('Aprovar Reserva'),
                                 )
                               : null,
                         ),

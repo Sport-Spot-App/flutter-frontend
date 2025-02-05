@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sport_spot/models/booking_model.dart';
 import 'package:sport_spot/repositories/booking_repository.dart';
+import 'package:dio/dio.dart';
 
 class BookingStore {
   final IBookingRepository repository;
@@ -49,6 +50,8 @@ class BookingStore {
 
     try {
       await repository.approveBooking(bookingId);
+    } on DioException catch (e) {
+      erro.value = 'Erro: ${e.response?.statusCode} - ${e.response?.statusMessage}\n${e.response?.data}';
     } catch (e) {
       erro.value = e.toString();
     } finally {
