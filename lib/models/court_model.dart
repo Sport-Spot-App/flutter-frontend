@@ -21,7 +21,7 @@ class CourtModel {
   final CepModel? cep;
   final String? initial_hour;
   final String? final_hour;
-  final List<String>? blocked_days;
+  final List<String>? work_days;
 
   CourtModel({
     this.id,
@@ -42,7 +42,7 @@ class CourtModel {
     this.cep,
     this.initial_hour,
     this.final_hour,
-    this.blocked_days,
+    this.work_days,
   });
 
   factory CourtModel.fromMap(Map<String, dynamic> map) {
@@ -67,7 +67,7 @@ class CourtModel {
       cep: map['cep'] != null ? CepModel.fromMap(map['cep'] as Map<String, dynamic>) : null,
       initial_hour: map['initialHour'],
       final_hour: map['finalHour'],
-      blocked_days: (map['blockedDays'] as List<dynamic>?)?.map((item) => item as String).toList(),
+      work_days: (map['work_days'] as List<dynamic>?)?.map((item) => item as String).toList(),
     );
   }
 
@@ -91,7 +91,37 @@ class CourtModel {
       'cep': cep?.toMap(),
       'initialHour': initial_hour,
       'finalHour': final_hour,
-      'blockedDays': blocked_days,
+      'work_days': work_days,
     };
+  }
+
+  CourtModel copyWith({
+    String? name,
+    String? price_per_hour,
+    String? description,
+    String? zip_code,
+    String? street,
+    String? number,
+    List<SportModel>? sports,
+    List<File>? photos,
+    CepModel? cep,
+    String? initial_hour,
+    String? final_hour,
+    List<String>? work_days,
+  }) {
+    return CourtModel(
+      name: name ?? this.name,
+      price_per_hour: price_per_hour ?? this.price_per_hour,
+      description: description ?? this.description,
+      zip_code: zip_code ?? this.zip_code,
+      street: street ?? this.street,
+      number: number ?? this.number,
+      sports: sports ?? this.sports,
+      photos: photos ?? this.photos,
+      cep: cep ?? this.cep,
+      initial_hour: initial_hour ?? this.initial_hour,
+      final_hour: final_hour ?? this.final_hour,
+      work_days: work_days ?? this.work_days,
+    );
   }
 }
