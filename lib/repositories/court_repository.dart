@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:sport_spot/models/cep_model.dart';
 import 'package:sport_spot/models/court_model.dart';
 import 'package:sport_spot/http/exceptions.dart';
 import 'package:sport_spot/models/sport_model.dart';
@@ -13,7 +14,7 @@ abstract class ICourtRepository {
   Future<void> favoriteCourt(int courtId);
   Future<List<CourtModel>> getFavoriteCourts();
   Future<List<SportModel>> getSports();
-  Future<void> findCep(String cep);
+  Future<CepModel> findCep(String cep);
 }
 
 class CourtRepository implements ICourtRepository {
@@ -183,13 +184,13 @@ class CourtRepository implements ICourtRepository {
   }
 
   @override
-  Future<void> findCep(String cep) async {
+  Future<CepModel> findCep(String cep) async {
     final response = await dio.get('/cep/$cep');
 
     if (response.statusCode == 200) {
-      final body = response.data;
+      return CepModel.fromMap(response.data);
     } else {
-      throw Exception('Erro ao buscar quadras');
+      throw Exception('Erro ao buscar CEP');
     }
   }
 }

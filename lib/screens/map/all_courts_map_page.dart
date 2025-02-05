@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:sport_spot/api/api.dart';
 import 'package:sport_spot/common/constants/app_colors.dart';
+import 'package:sport_spot/models/cep_model.dart';
 import 'package:sport_spot/models/court_model.dart';
+import 'package:sport_spot/repositories/cep_repository.dart';
 import 'package:sport_spot/repositories/court_repository.dart';
-import 'package:dio/dio.dart';
+import 'package:sport_spot/stores/cep_store.dart';
 
 class AllCourtsMapPage extends StatefulWidget {
   const AllCourtsMapPage({super.key});
@@ -15,10 +18,19 @@ class AllCourtsMapPage extends StatefulWidget {
 }
 
 class _AllCourtsMapPageState extends State<AllCourtsMapPage> {
+  final CourtRepository courtRepository = CourtRepository(Api());
+  final CepStore cepStore = CepStore(repository: CepRepository(Api()));
   LatLng? myLocation;
-  CourtModel? courtSelected;
   List<CourtModel> courtList = [];
-  final CourtRepository courtRepository = CourtRepository(Dio());
+  CourtModel? courtSelected;
+  CepModel? cepCourtSelected;
+
+  Future<void> _getCEP() async {
+    await cepStore.findCep(courtSelected!.zip_code);
+    setState(() {
+      cepCourtSelected = cepStore.state.value;
+    });
+  }
 
   Future<void> _getCourts() async {
     try {
@@ -47,13 +59,13 @@ class _AllCourtsMapPageState extends State<AllCourtsMapPage> {
       if (courtList.isNotEmpty) {
         if (mounted) {
           setState(() {
-        myLocation = LatLng(double.parse(courtList[0].coordinate_x!), double.parse(courtList[0].coordinate_y!));
+            myLocation = LatLng(double.parse(courtList[0].coordinate_x!), double.parse(courtList[0].coordinate_y!));
           });
         }
       } else {
         if (mounted) {
           setState(() {
-        myLocation = LatLng(-25.530553, -54.561060);
+            myLocation = LatLng(-25.530553, -54.561060);
           });
         }
       }
@@ -136,11 +148,27 @@ class _AllCourtsMapPageState extends State<AllCourtsMapPage> {
                             ),
                           ),
                           SizedBox(height: 10),
-                          Row(
-                            children: [
-                              Text(courtSelected!.street),
-                              Text(" • Foz do Iguaçu, Paraná", style: TextStyle(color: AppColors.darkOrange)),
-                            ],
+                          Builder(
+                            builder: (_) {
+                              if (cepStore.isLoading.value) {
+                                return Center(
+                                  child: SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                      color: AppColors.darkOrange,
+                                    ),
+                                  ),
+                                );
+                              }
+
+                              return Row(
+                                children: [
+                                  Text(cepCourtSelected!.logradouro),
+                                  Text(" • ${cepCourtSelected!.localidade}, ${cepCourtSelected!.estado}", style: TextStyle(color: AppColors.darkOrange)),
+                                ],
+                              );
+                            },
                           ),
                         ],
                       ),
@@ -158,6 +186,19 @@ class _AllCourtsMapPageState extends State<AllCourtsMapPage> {
   List<Marker> _getMarkerList() {
     List<Marker> markerList = [];
 
+    Marker myMkr = Marker(
+      point: myLocation!,
+      child: GestureDetector(
+        child: Icon(
+          Icons.my_location,
+          size: 30,
+          color: Colors.blueAccent,
+        ),
+      ),
+    );
+
+    markerList.add(myMkr);
+
     for (var court in courtList) {
       Marker mkr = Marker(
         point: LatLng(double.parse(court.coordinate_x!), double.parse(court.coordinate_y!)),
@@ -166,6 +207,7 @@ class _AllCourtsMapPageState extends State<AllCourtsMapPage> {
             setState(() {
               courtSelected = court;
             });
+            _getCEP();
           },
           child: Icon(
             Icons.location_on,
