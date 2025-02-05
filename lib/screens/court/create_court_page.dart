@@ -143,10 +143,12 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
       cepController.text = widget.court!.zip_code;
       addressController.text = widget.court!.street;
       numberController.text = widget.court!.number;
-      complementController.text = widget.court!.cep!.complemento;
-      neighborhoodController.text = widget.court!.cep!.bairro;
-      cityController.text = widget.court!.cep!.localidade;
-      stateController.text = widget.court!.cep!.estado;
+      complementController.text = widget.court!.complemento ?? '';
+      neighborhoodController.text = widget.court!.bairro ?? '';
+      cityController.text = widget.court!.localidade ?? '';
+      stateController.text = widget.court!.estado ?? '';
+      sportsSelected = widget.court!.sports.map((sport) => sport.id).toList();
+      photos = widget.court!.photos!.map((photo) => File(photo.path)).toList();
     }
     super.initState();
   }
@@ -382,7 +384,7 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
           ),
         ),
         SizedBox(height: 20),
-        CepField(onChanged: _fetchCEP),
+        CepField(onChanged: _fetchCEP, controller: cepController),
         InputField(label: "LOGRADOURO", controller: addressController),
         InputField(label: "NÚMERO", controller: numberController),
         InputField(label: "COMPLEMENTO", controller: complementController),
