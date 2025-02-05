@@ -34,6 +34,21 @@ class UserStore {
     }
   }
 
+  Future<void> getUser(int userId) async{
+    isLoading.value = true;
+
+    try {
+      final result = await repository.getUser(userId);
+      state.value = [result];
+    } on NotFoundException catch (e) {
+      erro.value = e.message;
+    } catch (e) {
+      erro.value = e.toString();
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
   /// Método para realizar o registro de um usuário na API
   Future<void> registerUser(UserModel user) async {
     isLoading.value = true;
