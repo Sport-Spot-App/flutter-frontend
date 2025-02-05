@@ -4,8 +4,9 @@ import 'package:sport_spot/common/utils/masks.dart';
 
 class CepField extends StatefulWidget {
   final ValueChanged<String>? onChanged;
+  final TextEditingController? controller;
 
-  const CepField({super.key, this.onChanged});
+  const CepField({super.key, this.onChanged, this.controller});
 
   @override
   State<CepField> createState() => _CepFieldState();
@@ -18,8 +19,9 @@ class _CepFieldState extends State<CepField> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         TextFormField(
+          controller: widget.controller,
           onChanged: widget.onChanged,
-          inputFormatters: [ cepFormatter ],
+          inputFormatters: [cepFormatter],
           decoration: InputDecoration(
             labelText: "CEP",
             labelStyle: const TextStyle(

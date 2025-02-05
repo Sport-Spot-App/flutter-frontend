@@ -59,6 +59,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
                       SizedBox(height: 5),
                       Text(
                         'Você não possuí nenhuma quadra favoritada.',
+                        textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 18,
                           color: AppColors.gray,

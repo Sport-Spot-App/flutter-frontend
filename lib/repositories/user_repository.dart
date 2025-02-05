@@ -9,6 +9,7 @@ abstract class IUserRepository {
   get dio => null;
 
   Future<List<UserModel>> getUsers();
+  Future<UserModel> getUser(int userId);
   Future<bool> registerUser(UserModel user);
   Future<void> deleteUser(int userId);
   Future<bool> updateUser(UserModel user);
@@ -109,5 +110,10 @@ class UserRepository implements IUserRepository {
     } else {
       throw Exception('Erro ao alterar senha.');
     }
+  }
+
+  Future<UserModel> getUser(int userId) async {
+    final response = await dio.get('/users/$userId');
+    return UserModel.fromMap(response.data);
   }
 }

@@ -4,6 +4,7 @@ import 'package:sport_spot/api/api.dart';
 import 'package:sport_spot/common/constants/app_colors.dart';
 import 'package:sport_spot/models/court_model.dart';
 import 'package:sport_spot/repositories/court_repository.dart';
+import 'package:sport_spot/screens/court/court_booking.dart';
 import 'package:sport_spot/screens/map/court_map_page.dart';
 import 'package:sport_spot/stores/court_store.dart';
 
@@ -113,12 +114,7 @@ class _ViewCourtPageState extends State<ViewCourtPage> {
               SizedBox(height: 20),
               Text("Horário de funcionamento:",
                   style: TextStyle(fontWeight: FontWeight.bold)),
-              Text(
-                widget.court.schedules.isNotEmpty
-                    ? widget.court.schedules
-                        .map((e) => "${e.day_of_week}: ${e.start_time} até ${e.end_time}")
-                        .join("\n")
-                    : "Não informado",
+              Text( "Horário vai aqui"
               ),
               SizedBox(height: 20),
               Text("Endereço:", style: TextStyle(fontWeight: FontWeight.bold)),
@@ -152,7 +148,8 @@ class _ViewCourtPageState extends State<ViewCourtPage> {
                     Size(MediaQuery.of(context).size.width / 2 - 25, 50),
               ),
               onPressed: () {
-                // Reservar
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (_) => CourtBookingPage(court: widget.court)));
               },
               child: Text("Reservar", style: TextStyle(color: Colors.white)),
             ),

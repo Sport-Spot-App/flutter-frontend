@@ -133,7 +133,8 @@ class _HomePageState extends State<HomePage> {
                 // Sports Icons Bar
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 5.0),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0, vertical: 5.0),
                   child: Row(
                     children: [
                       Padding(
@@ -219,7 +220,8 @@ class _HomePageState extends State<HomePage> {
           Expanded(
             child: isLoading
                 ? const Center(
-                    child: CircularProgressIndicator(color: AppColors.darkOrange))
+                    child:
+                        CircularProgressIndicator(color: AppColors.darkOrange))
                 : ListView.builder(
                     itemCount: filteredCourts.length,
                     itemBuilder: (context, index) {
@@ -238,13 +240,20 @@ class _HomePageState extends State<HomePage> {
                                 final url =
                                     'https://sportspott.tech/storage/$path';
                                 return url;
-                              }).toList() ?? [],
+                              }).toList() ??
+                              [],
                           name: court.name,
-                          type: court.sports.map((sport) => sport.name).join(', '),
-                          price: court.price_per_hour.toString().replaceAll('.', ','),
+                          type: court.sports
+                              .map((sport) => sport.name)
+                              .join(', '),
+                          price: court.price_per_hour
+                              .toString()
+                              .replaceAll('.', ','),
                           favoriteIcon: IconButton(
                             icon: Icon(
-                              isFavorite ? Icons.favorite : Icons.favorite_border,
+                              isFavorite
+                                  ? Icons.favorite
+                                  : Icons.favorite_border,
                               color: isFavorite ? Colors.red : Colors.grey,
                             ),
                             onPressed: () {

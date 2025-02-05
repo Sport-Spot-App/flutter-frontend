@@ -14,7 +14,9 @@ abstract class ICourtRepository {
   Future<void> favoriteCourt(int courtId);
   Future<List<CourtModel>> getFavoriteCourts();
   Future<List<SportModel>> getSports();
-  Future<CepModel> findCep(String cep);
+  Future<void> findCep(String cep);
+  Future<CourtModel> getCourt(int courtId);
+
 }
 
 class CourtRepository implements ICourtRepository {
@@ -29,18 +31,27 @@ class CourtRepository implements ICourtRepository {
     if (response.statusCode == 200) {
       final List<CourtModel> courts = [];
       final body = response.data as List<dynamic>;
-      try {
-        for (var item in body) {
-          courts.add(CourtModel.fromMap(item as Map<String, dynamic>));
-        }
-      } catch (e) {
-        throw Exception('Erro ao buscar quadras: $e');
+      for (var item in body) {
+        courts.add(CourtModel.fromMap(item as Map<String, dynamic>));
       }
       return courts;
     } else if (response.statusCode == 404) {
       throw NotFoundException('A URL informada não é válida');
     } else {
       throw Exception('Erro ao buscar quadras');
+    }
+  }
+
+  @override
+  Future<CourtModel> getCourt(int courtId) async {
+    final response = await dio.get('/courts/$courtId');
+
+    if (response.statusCode == 200) {
+      return CourtModel.fromMap(response.data);
+    } else if (response.statusCode == 404) {
+      throw NotFoundException('Quadra não encontrada');
+    } else {
+      throw Exception('Erro ao buscar quadra');
     }
   }
 
@@ -53,16 +64,18 @@ class CourtRepository implements ICourtRepository {
     formData.fields.add(MapEntry('zip_code', court.zip_code));
     formData.fields.add(MapEntry('street', court.street));
     formData.fields.add(MapEntry('number', court.number));
+    formData.fields.add(MapEntry('initial_hour', court.initial_hour!));
+    formData.fields.add(MapEntry('final_hour', court.final_hour!));
+    formData.fields.add(MapEntry('logradouro', court.logradouro));
+    formData.fields.add(MapEntry('complemento', court.complemento));
+    formData.fields.add(MapEntry('bairro', court.bairro));
+    formData.fields.add(MapEntry('localidade', court.localidade));
+    formData.fields.add(MapEntry('estado', court.estado));
+    for (var day in court.work_days!) {
+      formData.fields.add(MapEntry('work_days[]', day.toString()));
+    }
     for (var sport in court.sports) {
       formData.fields.add(MapEntry('sports[]', sport.id.toString()));
-    }
-    for (var i = 0; i < court.schedules.length; i++) {
-      formData.fields.add(MapEntry(
-          'schedules[$i][day_of_week]', court.schedules[i].day_of_week));
-      formData.fields.add(MapEntry(
-          'schedules[$i][start_time]', court.schedules[i].start_time ?? ''));
-      formData.fields.add(MapEntry(
-          'schedules[$i][end_time]', court.schedules[i].end_time ?? ''));
     }
     formData.fields.add(MapEntry('cep', jsonEncode(court.cep?.toMap())));
 
