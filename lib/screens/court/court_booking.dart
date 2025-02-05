@@ -18,6 +18,8 @@ class _CourtBookingPageState extends State<CourtBookingPage> {
   final DateTime now = DateTime.now();
   final List<DateTimeRange> bookedSlots = [];
 
+
+
   @override
   void initState() {
     super.initState();
@@ -25,6 +27,7 @@ class _CourtBookingPageState extends State<CourtBookingPage> {
       setState(() {});
     });
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -42,8 +45,8 @@ class _CourtBookingPageState extends State<CourtBookingPage> {
           )
         : TimeOfDay(hour: 22, minute: 0);
 
-    final blockedDays = widget.court.blocked_days != null
-        ? widget.court.blocked_days!.map((day) => _dayStringToInt(day)).toList()
+    final blockedDays = widget.court.work_days != null
+        ? widget.court.work_days!.map((day) => _dayStringToInt(day)).toList()
         : [DateTime.sunday];
 
     return Scaffold(
