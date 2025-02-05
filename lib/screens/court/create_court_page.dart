@@ -86,6 +86,11 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
           .toList(),
       photos: photos,
       cep: cep,
+      logradouro: cep.logradouro,
+      complemento: cep.complemento,
+      bairro: cep.bairro,
+      estado: cep.estado,
+      localidade: cep.localidade,
       initial_hour: horarioInicio?.format(context) ?? '',
       final_hour: horarioFim?.format(context) ?? '',
       work_days: diasSelecionados.entries
@@ -106,7 +111,7 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
       });
     }
   }
-  
+
   Future<void> _selecionarHorario(
       BuildContext context, Function(TimeOfDay) onSelected) async {
     final TimeOfDay? picked = await showTimePicker(
@@ -279,7 +284,8 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
     );
   }
 
-  Widget _horarioButton(String label, TimeOfDay? horario, Function(TimeOfDay) onSelected) {
+  Widget _horarioButton(
+      String label, TimeOfDay? horario, Function(TimeOfDay) onSelected) {
     return SizedBox(
       width: 150,
       child: GestureDetector(

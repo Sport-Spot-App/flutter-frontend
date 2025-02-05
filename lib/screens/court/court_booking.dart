@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:booking_calendar/booking_calendar.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:sport_spot/api/api.dart';
 import 'package:sport_spot/common/constants/app_colors.dart';
+import 'package:sport_spot/models/booking_model.dart';
 import 'package:sport_spot/models/court_model.dart';
+import 'package:sport_spot/repositories/booking_repository.dart';
+import 'package:sport_spot/stores/booking_store.dart';
 
 class CourtBookingPage extends StatefulWidget {
   final CourtModel court;
@@ -17,8 +21,8 @@ class _CourtBookingPageState extends State<CourtBookingPage> {
   // Horários de funcionamento da quadra
   final DateTime now = DateTime.now();
   final List<DateTimeRange> bookedSlots = [];
-
-
+  final BookingStore bookingStore =
+      BookingStore(repository: BookingRepository(Api()));
 
   @override
   void initState() {
@@ -27,7 +31,6 @@ class _CourtBookingPageState extends State<CourtBookingPage> {
       setState(() {});
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -45,9 +48,13 @@ class _CourtBookingPageState extends State<CourtBookingPage> {
           )
         : TimeOfDay(hour: 22, minute: 0);
 
-    final blockedDays = widget.court.work_days != null
+    final workDays = widget.court.work_days != null
         ? widget.court.work_days!.map((day) => _dayStringToInt(day)).toList()
-        : [DateTime.sunday];
+        : [];
+
+    final blockedDays = List.generate(7, (index) => index + 1)
+        .where((day) => !workDays.contains(day))
+        .toList();
 
     return Scaffold(
       appBar: AppBar(title: const Text("Agendar Quadra")),
@@ -55,12 +62,15 @@ class _CourtBookingPageState extends State<CourtBookingPage> {
         bookingService: BookingService(
           serviceName: "Quadra de Esportes",
           serviceDuration: 60,
-          bookingStart: DateTime(now.year, now.month, now.day, initialHour.hour, initialHour.minute),
-          bookingEnd: DateTime(now.year, now.month, now.day, finalHour.hour, finalHour.minute), 
+          bookingStart: DateTime(now.year, now.month, now.day, initialHour.hour,
+              initialHour.minute),
+          bookingEnd: DateTime(
+              now.year, now.month, now.day, finalHour.hour, finalHour.minute),
         ),
         getBookingStream: _getBookedSlots,
-        uploadBooking: _addNewBooking,
-        convertStreamResultToDateTimeRanges: _convertStreamResultToDateTimeRanges,
+        uploadBooking: _registerBooking,
+        convertStreamResultToDateTimeRanges:
+            _convertStreamResultToDateTimeRanges,
         loadingWidget: const Center(child: CircularProgressIndicator()),
         hideBreakTime: true,
         disabledDays: blockedDays,
@@ -96,21 +106,49 @@ class _CourtBookingPageState extends State<CourtBookingPage> {
     }
   }
 
-  Stream<dynamic>? _getBookedSlots({required DateTime start, required DateTime end}) {
+  Stream<dynamic>? _getBookedSlots(
+      {required DateTime start, required DateTime end}) {
     return Stream.value(bookedSlots);
   }
 
-  Future<void> _addNewBooking({required BookingService newBooking}) async {
-    setState(() {
-      bookedSlots.add(DateTimeRange(start: newBooking.bookingStart, end: newBooking.bookingEnd));
-    });
+  Future<void> _registerBooking({required BookingService newBooking}) async {
+    final List<BookingModel> bookings = [
+      BookingModel(
+        court_id: widget.court.id!,
+        start_datetime: newBooking.bookingStart,
+        end_datetime: newBooking.bookingEnd,
+      )
+    ];
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Reserva feita com sucesso das ${newBooking.bookingStart} às ${newBooking.bookingEnd}")),
-    );
+    try {
+      final success = await bookingStore.registerBooking(
+          bookings, widget.court.id.toString());
+      if (success) {
+        setState(() {
+          bookedSlots.add(DateTimeRange(
+            start: newBooking.bookingStart,
+            end: newBooking.bookingEnd,
+          ));
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text(
+                  'Reserva feita com sucesso das ${newBooking.bookingStart} às ${newBooking.bookingEnd}')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Erro ao fazer reserva')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erro ao fazer reserva: $e')),
+      );
+    }
   }
 
-  List<DateTimeRange> _convertStreamResultToDateTimeRanges({required dynamic streamResult}) {
+  List<DateTimeRange> _convertStreamResultToDateTimeRanges(
+      {required dynamic streamResult}) {
     return streamResult as List<DateTimeRange>;
   }
 }

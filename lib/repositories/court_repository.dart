@@ -28,9 +28,9 @@ class CourtRepository implements ICourtRepository {
     if (response.statusCode == 200) {
       final List<CourtModel> courts = [];
       final body = response.data as List<dynamic>;
-        for (var item in body) {
-          courts.add(CourtModel.fromMap(item as Map<String, dynamic>));
-        }
+      for (var item in body) {
+        courts.add(CourtModel.fromMap(item as Map<String, dynamic>));
+      }
       return courts;
     } else if (response.statusCode == 404) {
       throw NotFoundException('A URL informada não é válida');
@@ -38,7 +38,6 @@ class CourtRepository implements ICourtRepository {
       throw Exception('Erro ao buscar quadras');
     }
   }
-  
 
   @override
   Future<bool> registerCourt(CourtModel court) async {
@@ -51,6 +50,10 @@ class CourtRepository implements ICourtRepository {
     formData.fields.add(MapEntry('number', court.number));
     formData.fields.add(MapEntry('initial_hour', court.initial_hour!));
     formData.fields.add(MapEntry('final_hour', court.final_hour!));
+    formData.fields.add(MapEntry('logradouro', court.logradouro));
+    formData.fields.add(MapEntry('complemento', court.complemento));
+    formData.fields.add(MapEntry('bairro', court.bairro));
+    formData.fields.add(MapEntry('localidade', court.localidade));
     for (var day in court.work_days!) {
       formData.fields.add(MapEntry('work_days[]', day.toString()));
     }
