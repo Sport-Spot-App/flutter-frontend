@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:sport_spot/models/booking_model.dart';
+import 'package:sport_spot/models/court_model.dart';
 import 'package:sport_spot/repositories/booking_repository.dart';
 import 'package:sport_spot/api/api.dart';
+import 'package:sport_spot/repositories/court_repository.dart';
 import 'package:sport_spot/repositories/user_repository.dart';
 import 'package:sport_spot/models/user_model.dart';
 import 'package:sport_spot/stores/booking_store.dart';
+import 'package:intl/intl.dart';
 
 class BookingHistoryPage extends StatefulWidget {
   BookingHistoryPage({super.key});
@@ -16,90 +19,104 @@ class BookingHistoryPage extends StatefulWidget {
 class _BookingHistoryPageState extends State<BookingHistoryPage> {
   final BookingRepository bookingRepository = BookingRepository(Api());
   final BookingStore bookingStore = BookingStore(repository: BookingRepository(Api()));
+  final CourtRepository courtRepository = CourtRepository(Api());
   final UserRepository userRepository = UserRepository(Api());
-  late Future<List<BookingModel>> futureBookings;
+  List<BookingModel> bookings = [];
 
   @override
   void initState() {
     super.initState();
-    futureBookings = bookingRepository.getBookings();
+    fetchBookings(); // Call fetchBookings to load the bookings
+  }
+
+  Future<List<BookingModel>> fetchBookings() async {
+    await bookingStore.getBookings();
+    setState(() {
+      bookings = bookingStore.state.value;
+    });
+    return bookings;
+  }
+
+  Future<CourtModel> _getCourt(int courtId) async {
+    try {
+      final court = await courtRepository.getCourt(courtId);
+      return court;
+    } catch (e) {
+      print("Error fetching court: $e");
+      rethrow;
+    }
   }
 
   _approveBooking(int bookingId) async {
     await bookingStore.approveBooking(bookingId);
+    final newBookings = await bookingRepository.getBookings();
     setState(() {
-      futureBookings = bookingRepository.getBookings();
+      bookings = newBookings;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: FutureBuilder<List<BookingModel>>(
-        future: futureBookings,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Erro: ${snapshot.error}'));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('Nenhuma reserva encontrada'));
-          } else {
-            final bookings = snapshot.data!;
-            return ListView.builder(
-              itemCount: bookings.length,
-              itemBuilder: (context, index) {
-                final booking = bookings[index];
-                return FutureBuilder<UserModel>(
-                  future: userRepository.getUser(booking.user_id!),
-                  builder: (context, userSnapshot) {
-                    if (userSnapshot.connectionState == ConnectionState.waiting) {
+      body: ListView.builder(
+        itemCount: bookings.length,
+        itemBuilder: (context, index) {
+          final booking = bookings[index];
+          return FutureBuilder<UserModel>(
+            future: userRepository.getUser(booking.user_id!),
+            builder: (context, userSnapshot) {
+              if (userSnapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (userSnapshot.hasError) {
+                return Center(child: Text('Erro: ${userSnapshot.error}'));
+              } else if (!userSnapshot.hasData) {
+                return const Center(child: Text('Usuário não encontrado'));
+              } else {
+                final user = userSnapshot.data!;
+                final DateFormat dateFormat = DateFormat('HH:mm');
+                final DateFormat dateFullFormat = DateFormat('dd/MM/yyyy');
+                final String formattedStart = dateFormat.format(booking.start_datetime);
+                final String formattedEnd = dateFormat.format(booking.end_datetime);
+                final String formattedDate = dateFullFormat.format(booking.start_datetime);
+                return FutureBuilder<CourtModel>(
+                  future: _getCourt(booking.court_id),
+                  builder: (context, courtSnapshot) {
+                    if (courtSnapshot.connectionState == ConnectionState.waiting) {
                       return const Center(child: CircularProgressIndicator());
-                    } else if (userSnapshot.hasError) {
-                      return Center(child: Text('Erro: ${userSnapshot.error}'));
-                    } else if (!userSnapshot.hasData) {
-                      return const Center(child: Text('Usuário não encontrado'));
+                    } else if (courtSnapshot.hasError) {
+                      return Center(child: Text('Erro: ${courtSnapshot.error}'));
+                    } else if (!courtSnapshot.hasData) {
+                      return const Center(child: Text('Quadra não encontrada'));
                     } else {
-                      final user = userSnapshot.data!;
+                      final court = courtSnapshot.data!;
+                      print("Court: ${court.toMap()}"); // Debugging line
                       return Card(
                         margin: const EdgeInsets.all(10),
                         child: ListTile(
                           leading: ClipRRect(
                             borderRadius: BorderRadius.circular(8.0),
-                            child: Image.network(
-                              'https://cdn.sqhk.co/2020newsportcourt/2023/8/etghh2i/MapleSelect_B-ball,Pickleball_HerberCity_2.jpg',
-                              width: 60,
-                              height: 60,
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) {
-                                return const Icon(Icons.error);
-                              },
-                            ),
+                            child: const Icon(Icons.image_not_supported, size: 60),
                           ),
                           title: Text(
-                            'Quadra ${booking.court_id}',
+                            court.name,
                             style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                           subtitle: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text('Proprietário: ${user.name}'),
-                              Text(
-                                  '${booking.start_datetime} - ${booking.end_datetime}'),
+                              Text('$formattedDate'),
+                              Text('Das $formattedStart até $formattedEnd'),
                               Container(
                                 margin: const EdgeInsets.only(top: 5),
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 4),
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                 decoration: BoxDecoration(
                                   color: getStatusColor(booking.status),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Text(
-                                  booking.status!
-                                      ? 'Confirmado'
-                                      : 'Aguardando Aprovação',
-                                  style: const TextStyle(
-                                      color: Colors.white, fontSize: 12),
+                                  booking.status! ? 'Confirmado' : 'Aguardando Aprovação',
+                                  style: const TextStyle(color: Colors.white, fontSize: 10),
                                 ),
                               ),
                             ],
@@ -121,9 +138,9 @@ class _BookingHistoryPageState extends State<BookingHistoryPage> {
                     }
                   },
                 );
-              },
-            );
-          }
+              }
+            },
+          );
         },
       ),
     );
@@ -134,3 +151,5 @@ class _BookingHistoryPageState extends State<BookingHistoryPage> {
     return status ? Colors.green : Colors.yellow;
   }
 }
+
+
