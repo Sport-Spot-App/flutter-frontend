@@ -161,4 +161,21 @@ class CourtStore {
       isLoading.value = false;
     }
   }
+
+  // Método para pegar os horários de funcionamento de uma quadra
+  Future<List<String>> getWorkHours(CourtModel court) async {
+    isLoading.value = true;
+
+    try {
+      final result = await repository.getWorkHours(court);
+      return result;
+    } on NotFoundException catch (e) {
+      erro.value = e.message;
+    } catch (e) {
+      erro.value = e.toString();
+    } finally {
+      isLoading.value = false;
+    }
+    return [];
+  }
 }
