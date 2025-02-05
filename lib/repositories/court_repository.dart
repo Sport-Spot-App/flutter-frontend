@@ -54,6 +54,7 @@ class CourtRepository implements ICourtRepository {
     formData.fields.add(MapEntry('complemento', court.complemento));
     formData.fields.add(MapEntry('bairro', court.bairro));
     formData.fields.add(MapEntry('localidade', court.localidade));
+    formData.fields.add(MapEntry('estado', court.estado));
     for (var day in court.work_days!) {
       formData.fields.add(MapEntry('work_days[]', day.toString()));
     }
