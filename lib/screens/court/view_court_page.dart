@@ -114,12 +114,12 @@ class _ViewCourtPageState extends State<ViewCourtPage> {
               SizedBox(height: 20),
               Text("Horário de funcionamento:",
                   style: TextStyle(fontWeight: FontWeight.bold)),
-              Text( "Horário vai aqui"
-              ),
+              Text("Das " + widget.court.initial_hour! + " às " + widget.court.final_hour!),
+              Text(widget.court.work_days!.map((e) => e).join(", ")),
               SizedBox(height: 20),
               Text("Endereço:", style: TextStyle(fontWeight: FontWeight.bold)),
               Text(
-                  "${widget.court.street}, N° ${widget.court.number}, ${widget.court.cep?.bairro}"),
+                  "${widget.court.street}, N° ${widget.court.number}, ${widget.court.bairro}"),
             ],
           ),
         ),
