@@ -51,13 +51,13 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
   List<File> photos = [];
 
   Map<String, bool> diasSelecionados = {
-    'Segunda': false,
-    'Terça': false,
-    'Quarta': false,
-    'Quinta': false,
-    'Sexta': false,
-    'Sábado': false,
-    'Domingo': false,
+    'Monday': false,
+    'Tuesday': false,
+    'Wednesday': false,
+    'Thursday': false,
+    'Friday': false,
+    'Saturday': false,
+    'Sunday': false,
   };
   TimeOfDay? horarioInicio;
   TimeOfDay? horarioFim;
@@ -88,8 +88,8 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
       cep: cep,
       initial_hour: horarioInicio?.format(context) ?? '',
       final_hour: horarioFim?.format(context) ?? '',
-      blocked_days: diasSelecionados.entries
-          .where((entry) => !entry.value)
+      work_days: diasSelecionados.entries
+          .where((entry) => entry.value)
           .map((entry) => entry.key)
           .toList(),
     );
@@ -106,20 +106,7 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
       });
     }
   }
-
-  Future<void> _selectTime(
-      BuildContext context, TextEditingController controller) async {
-    final TimeOfDay? picked = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.now(),
-    );
-    if (picked != null) {
-      setState(() {
-        controller.text = picked.format(context);
-      });
-    }
-  }
-
+  
   Future<void> _selecionarHorario(
       BuildContext context, Function(TimeOfDay) onSelected) async {
     final TimeOfDay? picked = await showTimePicker(
