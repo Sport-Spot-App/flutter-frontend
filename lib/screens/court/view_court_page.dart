@@ -55,29 +55,6 @@ class _ViewCourtPageState extends State<ViewCourtPage> {
                         .map<String>((day) => day["label"])
                         .toList();
 
-    List<String> hourParts = [];
-    List<String> hourMinutes = [];
-    bool isMorning = false;
-
-    if (widget.court.initial_hour != null && widget.court.initial_hour!.isNotEmpty) {
-      hourParts = widget.court.initial_hour!.split(' ');
-      if (hourParts.length == 2) {
-        hourMinutes = hourParts[0].split(':');
-        isMorning = hourParts[1] == "AM";
-        int auxInitial = isMorning ? int.parse(hourMinutes[0]) : int.parse(hourMinutes[0]) + 12;
-        initialHour = "${auxInitial}h${hourMinutes[1]}";
-      }
-    }
-
-    if (widget.court.final_hour != null && widget.court.final_hour!.isNotEmpty) {
-      hourParts = widget.court.final_hour!.split(' ');
-      if (hourParts.length == 2) {
-        hourMinutes = hourParts[0].split(':');
-        isMorning = hourParts[1] == "AM";
-        int auxFinal = isMorning ? int.parse(hourMinutes[0]) : int.parse(hourMinutes[0]) + 12;
-        finalHour = "${auxFinal}h${hourMinutes[1]}";
-      }
-    }
                 
   }
 
@@ -172,7 +149,7 @@ class _ViewCourtPageState extends State<ViewCourtPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(diasFuncionamento.join(', ')),
-                  Text("das $initialHour às $finalHour"),
+                  Text("Das ${widget.court.initial_hour ?? ''} às ${widget.court.final_hour ?? ''}"),
                 ],
               ),
               SizedBox(height: 20),
@@ -208,7 +185,7 @@ class _ViewCourtPageState extends State<ViewCourtPage> {
               ),
               onPressed: () {
                 Navigator.of(context).push(MaterialPageRoute(
-                    builder: (_) => CourtBookingPage(court: widget.court)));
+                    builder: (_) => CourtBookingPage(courtId: widget.court.id.toString())));
               },
               child: Text("Reservar", style: TextStyle(color: Colors.white)),
             ),
