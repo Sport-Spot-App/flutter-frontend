@@ -76,29 +76,6 @@ class _HomePageState extends State<HomePage> {
     _fetchFavoriteCourts();
   }
 
-  IconData _getSportIcon(String sportName) {
-    switch (sportName) {
-      case 'Futsal':
-        return CupertinoIcons.sportscourt;
-      case 'Vôlei':
-        return Icons.sports_volleyball;
-      case 'Tênis':
-        return Icons.sports_tennis;
-      case 'Futebol':
-        return Icons.sports_soccer;
-      case 'Basquete':
-        return Icons.sports_basketball;
-      case 'Handebol':
-        return Icons.sports_handball;
-      case 'Futebol Americano':
-        return Icons.sports_rugby;
-      case 'Beach Tênis':
-        return Icons.beach_access_outlined;
-      default:
-        return Icons.sports;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
