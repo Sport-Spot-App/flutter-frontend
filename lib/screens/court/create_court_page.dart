@@ -14,7 +14,6 @@ import 'package:sport_spot/models/sport_model.dart';
 import 'package:sport_spot/repositories/cep_repository.dart';
 import 'package:sport_spot/repositories/court_repository.dart';
 import 'package:sport_spot/repositories/sport_repository.dart';
-import 'package:sport_spot/routes/routing_constants.dart';
 import 'package:sport_spot/stores/cep_store.dart';
 import 'package:sport_spot/stores/court_store.dart';
 import 'package:sport_spot/stores/sport_store.dart';
@@ -101,17 +100,11 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
 
     await courtStore.registerCourt(court);
     
-    if (courtStore.state.value != null) {
-      Navigator.of(context).pop();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Quadra criada com sucesso!')),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Erro ao criar quadra')),
-      );
-    }
-
+    Navigator.of(context).pop();
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Quadra criada com sucesso!')),
+    );
+  
   }
 
   Future<void> _updateCourt() async {
