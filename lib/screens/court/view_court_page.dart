@@ -25,10 +25,22 @@ class _ViewCourtPageState extends State<ViewCourtPage> {
   bool isFavorite = false;
   int currentIndex = 0;
   UserModel? authUser;
+  List<String> diasFuncionamento = [];
+  String initialHour = "";
+  String finalHour = "";
+
+  List<Map<String, dynamic>> dias = [
+    { 'label': 'Domingo', 'key': 'sunday' },
+    { 'label': 'Segunda-Feira', 'key': 'Monday' },
+    { 'label': 'Terça-Feira', 'key': 'Tuesday' },
+    { 'label': 'Quarta-Feira', 'key': 'Wednesday' },
+    { 'label': 'Quinta-Feira', 'key': 'Thursday' },
+    { 'label': 'Sexta-Feira', 'key': 'Friday' },
+    { 'label': 'Sábado', 'key': 'Saturday' },
+  ];
 
   @override
   void initState() {
-    super.initState();
     _checkIfFavorite();
     _loadUser();
   }
@@ -37,7 +49,28 @@ class _ViewCourtPageState extends State<ViewCourtPage> {
       setState(() {
         authUser = loadedUser;
       });
-    }
+      diasFuncionamento = dias.where((day) => widget.court.work_days!.contains( day["key"] ))
+                          .map<String>((day) => day["label"])
+                          .toList();
+
+    List<String> hourParts = [];
+    List<String> hourMinutes = [];
+    bool isMorning = false;
+
+    hourParts = widget.court.initial_hour!.split(' ');
+    hourMinutes = hourParts[0].split(':');
+    isMorning = hourParts[1] == "AM";
+    int auxInitial = isMorning ? int.parse(hourMinutes[0]) : int.parse(hourMinutes[0]) + 12;
+    initialHour = "${auxInitial}h${hourMinutes[1]}";
+
+    hourParts = widget.court.final_hour!.split(' ');
+    hourMinutes = hourParts[0].split(':');
+    isMorning = hourParts[1] == "AM";
+    int auxFinal = isMorning ? int.parse(hourMinutes[0]) : int.parse(hourMinutes[0]) + 12;
+    finalHour = "${auxFinal}h${hourMinutes[1]}";
+                  
+    super.initState();
+  }
 
   Future<void> _checkIfFavorite() async {
     await courtStore.getFavoriteCourts();
@@ -83,11 +116,13 @@ class _ViewCourtPageState extends State<ViewCourtPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    widget.court.name,
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
+                  Flexible(
+                    child: Text(
+                      widget.court.name,
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                   IconButton(
@@ -123,14 +158,17 @@ class _ViewCourtPageState extends State<ViewCourtPage> {
               Text("Esportes:", style: TextStyle(fontWeight: FontWeight.bold)),
               Text(widget.court.sports.map((e) => e.name).join(", ")),
               SizedBox(height: 20),
-              Text("Horário de funcionamento:",
-                  style: TextStyle(fontWeight: FontWeight.bold)),
-              Text("Das " + widget.court.initial_hour! + " às " + widget.court.final_hour!),
-              Text(widget.court.work_days!.map((e) => e).join(", ")),
+              Text("Horário de funcionamento:", style: TextStyle(fontWeight: FontWeight.bold)),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(diasFuncionamento.join(', ')),
+                  Text("das $initialHour às $finalHour"),
+                ],
+              ),
               SizedBox(height: 20),
               Text("Endereço:", style: TextStyle(fontWeight: FontWeight.bold)),
-              Text(
-                  "${widget.court.street}, N° ${widget.court.number}, ${widget.court.bairro}"),
+              Text("${widget.court.street}, N° ${widget.court.number}, ${widget.court.bairro}"),
             ],
           ),
         ),

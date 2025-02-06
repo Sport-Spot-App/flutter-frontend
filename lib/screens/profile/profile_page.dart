@@ -100,47 +100,54 @@ class _ProfilePageState extends State<ProfilePage> {
               shrinkWrap: true,
               children: [
                 ListTile(
-                  leading:
-                      const Icon(Icons.person, color: AppColors.charcoalBlue),
+                  leading: const Icon(Icons.person, color: AppColors.charcoalBlue),
                   title: const Text("Editar perfil"),
                   onTap: () async {
-                    await Navigator.of(context).push(MaterialPageRoute(
-                        builder: (_) => EditProfilePage(user!)));
+                    await Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => EditProfilePage(user!)),
+                    );
                     _loadUser();
                   },
                 ),
-                Builder(builder: (_) {
-                  if (user != null && user!.role == 2 && user!.is_approved) {
-                    return ListTile(
-                      leading: const Icon(CupertinoIcons.sportscourt_fill,
-                          color: AppColors.charcoalBlue),
-                      title: const Text("Minhas quadras"),
-                      onTap: () {
-                        Navigator.of(context)
-                            .push(MaterialPageRoute(builder: (_) => CourtsPage()));
-                      },
-                    );
-                  } else {
+                Builder(
+                  builder: (_) {
+                    if (user != null && user!.role == 2 && user!.is_approved) {
+                      return ListTile(
+                        leading: const Icon(CupertinoIcons.sportscourt_fill, color: AppColors.charcoalBlue),
+                        title: const Text("Minhas quadras"),
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(builder: (_) => CourtsPage()));
+                        },
+                      );
+                    }
+                    
                     return Container();
-                  }
-                }),
-                if (user != null && user!.role == 1)
-                  ListTile(
-                    leading: const Icon(Icons.admin_panel_settings,
-                        color: AppColors.charcoalBlue),
-                    title: const Text("Aprovar proprietários"),
-                    onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (_) => CourtOwnerApprovalPage()));
-                    },
-                  ),
+                  },
+                ),
+                Builder(
+                  builder: (_) {
+                    if (user != null && user!.role == 1) {
+                      return ListTile(
+                        leading: const Icon(Icons.admin_panel_settings, color: AppColors.charcoalBlue),
+                        title: const Text("Aprovar proprietários"),
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(builder: (_) => CourtOwnerApprovalPage()),
+                          );
+                        },
+                      );
+                    }
+
+                    return Container();
+                  },
+                ),
                 ListTile(
-                  leading:
-                      const Icon(Icons.lock, color: AppColors.charcoalBlue),
+                  leading: const Icon(Icons.lock, color: AppColors.charcoalBlue),
                   title: const Text("Trocar senha"),
                   onTap: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (_) => const ChangePasswordPage()));
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => const ChangePasswordPage()),
+                    );
                   },
                 ),
                 ListTile(

@@ -16,6 +16,16 @@ class _CheckboxFieldState extends State<CheckboxField> {
   bool? isChecked = false;
 
   @override
+  void initState() {
+    if (widget.listValues.contains(widget.id)) {
+      setState(() {
+        isChecked = true;
+      });
+    }
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Row(
       children: [

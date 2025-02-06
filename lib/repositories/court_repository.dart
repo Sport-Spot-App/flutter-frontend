@@ -131,8 +131,56 @@ class CourtRepository implements ICourtRepository {
 
   @override
   Future<bool> updateCourt(CourtModel court) async {
-    final response =
-        await dio.put('/courts/${court.id}', data: jsonEncode(court.toMap()));
+    final formData = FormData();
+    // formData.fields.add(MapEntry('_method', 'PUT'));
+    formData.fields.add(MapEntry('id', court.id.toString()));
+    formData.fields.add(MapEntry('name', court.name));
+    formData.fields.add(MapEntry('price_per_hour', court.price_per_hour));
+    formData.fields.add(MapEntry('description', court.description));
+    formData.fields.add(MapEntry('zip_code', court.zip_code));
+    formData.fields.add(MapEntry('street', court.street));
+    formData.fields.add(MapEntry('number', court.number));
+    formData.fields.add(MapEntry('initial_hour', court.initial_hour!));
+    formData.fields.add(MapEntry('final_hour', court.final_hour!));
+    formData.fields.add(MapEntry('logradouro', court.logradouro));
+    formData.fields.add(MapEntry('complemento', court.complemento));
+    formData.fields.add(MapEntry('bairro', court.bairro));
+    formData.fields.add(MapEntry('localidade', court.localidade));
+    formData.fields.add(MapEntry('estado', court.estado));
+    for (var day in court.work_days!) {
+      formData.fields.add(MapEntry('work_days[]', day.toString()));
+    }
+    for (var sport in court.sports) {
+      formData.fields.add(MapEntry('sports[]', sport.id.toString()));
+    }
+    formData.fields.add(MapEntry('cep', jsonEncode(court.cep?.toMap())));
+
+    if (court.photos != null) {
+      for (var i = 0; i < court.photos!.length; i++) {
+        if (!court.photos![i].path.contains('images/courts/')) {
+          formData.files.add(MapEntry(
+            'photos[$i]',
+            await MultipartFile.fromFile(court.photos![i].path,
+                filename: "image_$i.png"),
+          ));
+        }
+      }
+    }
+
+    final response = await dio.post(
+      '/courts/${court.id}',
+      data: formData,
+      options: Options(
+        followRedirects: false,
+        validateStatus: (status) {
+          return status != null && status < 500;
+        },
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Accept': 'application/json',
+        },
+      ),
+    );
 
     if (response.statusCode == 200) {
       return true;
