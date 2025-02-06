@@ -47,11 +47,11 @@ class BookingStore {
     return false;
   }
 
-  Future<void> approveBooking(int bookingId) async {
+  Future<void> approveBooking(int bookingId, int value) async {
     isLoading.value = true;
 
     try {
-      await repository.approveBooking(bookingId);
+      await repository.approveBooking(bookingId, value);
     } on DioException catch (e) {
       erro.value = 'Erro: ${e.response?.statusCode} - ${e.response?.statusMessage}\n${e.response?.data}';
     } catch (e) {
