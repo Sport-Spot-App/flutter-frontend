@@ -63,10 +63,17 @@ class BookingStore {
 
   Future<List<BookingModel>> getBookingsByCourtId(String courtId) async {
     isLoading.value = true;
-
     try {
       final result = await repository.getBookingByCourtId(courtId);
       return result;
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 403) {
+        erro.value = 'Acesso negado: ${e.response?.statusMessage}';
+      } else {
+        erro.value =
+            'Erro: ${e.response?.statusCode} - ${e.response?.statusMessage}\n${e.response?.data}';
+      }
+      return [];
     } catch (e) {
       erro.value = e.toString();
       return [];
