@@ -2,11 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:sport_spot/common/constants/app_colors.dart';
 import 'package:sport_spot/common/utils/user_map.dart';
 import 'package:sport_spot/models/booking_model.dart';
-import 'package:sport_spot/models/court_model.dart';
 import 'package:sport_spot/repositories/booking_repository.dart';
 import 'package:sport_spot/api/api.dart';
-import 'package:sport_spot/repositories/court_repository.dart';
-import 'package:sport_spot/repositories/user_repository.dart';
 import 'package:sport_spot/models/user_model.dart';
 import 'package:sport_spot/stores/booking_store.dart';
 import 'package:intl/intl.dart';
@@ -18,20 +15,6 @@ class BookingHistoryPage extends StatefulWidget {
   _BookingHistoryPageState createState() => _BookingHistoryPageState();
 }
 
-class BookingWithDetails {
-  final BookingModel booking;
-  final CourtModel court;
-  final UserModel user;
-  final UserModel owner;
-
-  BookingWithDetails({
-    required this.booking,
-    required this.court,
-    required this.user,
-    required this.owner,
-  });
-}
-
 class StatusInfo {
   final Color color;
   final String text;
@@ -40,12 +23,9 @@ class StatusInfo {
 }
 
 class _BookingHistoryPageState extends State<BookingHistoryPage> {
-  final BookingRepository bookingRepository = BookingRepository(Api());
   final BookingStore bookingStore = BookingStore(repository: BookingRepository(Api()));
-  final CourtRepository courtRepository = CourtRepository(Api());
-  final UserRepository userRepository = UserRepository(Api());
   UserModel? authUser;
-  List<BookingWithDetails> bookings = [];
+  List<BookingModel> bookings = [];
   bool isLoading = true;
   int? approvingBookingId;
 
@@ -53,36 +33,16 @@ class _BookingHistoryPageState extends State<BookingHistoryPage> {
   void initState() {
     super.initState();
     _loadUser();
-    fetchBookings(); // Call fetchBookings to load the bookings
+    fetchBookings(); 
   }
 
   Future<void> fetchBookings() async {
     await bookingStore.getBookings();
-    List<BookingModel> fetchedBookings = bookingStore.state.value;
-    print('Fetched bookings: $fetchedBookings');
-    List<BookingWithDetails> bookingsWithDetails = [];
-    for (var booking in fetchedBookings) {
-      try {
-        final court = await courtRepository.getCourt(booking.court_id);
-        final user = await userRepository.getUser(booking.user_id!);
-        final owner = await userRepository.getUser(court.user_id!);
-        bookingsWithDetails.add(BookingWithDetails(
-          booking: booking,
-          court: court,
-          user: user,
-          owner: owner,
-        ));
-      } catch (e) {
-        Exception('Erro ao buscar reservas: $e');
-      }
-    }
-
-    if (mounted) {
-      setState(() {
-        bookings = bookingsWithDetails;
-        isLoading = false;
-      });
-    }
+    setState(() {
+      bookings = bookingStore.state.value;
+      print(bookings);
+      isLoading = false; // Defina isLoading como false após carregar as reservas
+    });
   }
 
       Future<void> _loadUser() async {
@@ -137,11 +97,7 @@ class _BookingHistoryPageState extends State<BookingHistoryPage> {
           : ListView.builder(
               itemCount: bookings.length,
               itemBuilder: (context, index) {
-                final bookingWithDetails = bookings[index];
-                final booking = bookingWithDetails.booking;
-                final court = bookingWithDetails.court;
-                final user = bookingWithDetails.user;
-                final owner = bookingWithDetails.owner;
+                final booking = bookings[index];
                 final DateFormat dateFormat = DateFormat('HH:mm');
                 final DateFormat dateFullFormat = DateFormat('dd/MM/yyyy');
                 final String formattedStart = dateFormat.format(booking.start_datetime);
@@ -156,14 +112,13 @@ class _BookingHistoryPageState extends State<BookingHistoryPage> {
                       child: const Icon(Icons.image_not_supported, size: 60),
                     ),
                     title: Text(
-                      court.name,
+                      booking.court?.name ?? 'Quadra desconhecida',
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                     subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Atleta: ${user.name}'),
-                        Text('Proprietário: ${owner.name}'),
+                        Text('Atleta: ${booking.user?.name ?? 'Desconhecido'}'),
                         Text('$formattedDate'),
                         Text('Das $formattedStart até $formattedEnd'),
                         Container(
@@ -181,7 +136,7 @@ class _BookingHistoryPageState extends State<BookingHistoryPage> {
                       ],
                     ),
                   
-                    trailing: booking.status == 0 && authUser?.id == owner.id
+                    trailing: booking.status == 0 && authUser?.id == booking.court?.user_id
                         ? Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [

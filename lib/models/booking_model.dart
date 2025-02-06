@@ -1,4 +1,6 @@
 import 'package:intl/intl.dart';
+import 'user_model.dart';
+import 'court_model.dart';
 
 class BookingModel {
   final int? id;
@@ -9,6 +11,8 @@ class BookingModel {
   final int? status;
   final DateTime? created_at;
   final DateTime? updated_at;
+  final CourtModel? court;
+  final UserModel? user;
 
   BookingModel({
     this.id,
@@ -19,6 +23,9 @@ class BookingModel {
     this.status,
     this.created_at,
     this.updated_at,
+    this.user,
+    this.court,
+
   });
 
   factory BookingModel.fromMap(Map<String, dynamic> map) {
@@ -31,6 +38,8 @@ class BookingModel {
       status: map['status'],
       created_at: DateTime.parse(map['created_at']),
       updated_at: DateTime.parse(map['updated_at']),
+      user: map['user'] != null ? UserModel.fromMap(map['user']) : null,
+      court: map['court'] != null ? CourtModel.fromMap(map['court']) : null,
     );
   }
 
@@ -46,6 +55,8 @@ class BookingModel {
       'status': status,
       'created_at': created_at?.toIso8601String(),
       'updated_at': updated_at?.toIso8601String(),
+      'user': user?.toMap(),
+      'court': court?.toMap(),
     };
   }
 }

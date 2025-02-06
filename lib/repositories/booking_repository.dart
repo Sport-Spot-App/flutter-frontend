@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:sport_spot/http/exceptions.dart';
 import 'package:sport_spot/models/booking_model.dart';
+import 'package:sport_spot/models/court_model.dart';
+import 'package:sport_spot/models/user_model.dart';
 
 abstract class IBookingRepository {
   Future<List<BookingModel>> getBookings();
@@ -19,21 +21,26 @@ class BookingRepository implements IBookingRepository {
 @override
 Future<List<BookingModel>> getBookings() async {
   final response = await dio.get('/bookings');
-  print('Response data: ${response.data}');  // Verificar estrutura
 
   if (response.statusCode == 200) {
     final List<BookingModel> bookings = [];
 
     if (response.data is Map<String, dynamic> && response.data.containsKey('bookings')) {
       final body = response.data['bookings'] as List<dynamic>;
+      print('body: $body');
+      print('Tipo de body: ${body.runtimeType}');
 
       for (var item in body) {
-        if (item is Map<String, dynamic>) {
+      if (item is Map<String, dynamic>) {
+        try {
+          print('Item recebido: $item');
           bookings.add(BookingModel.fromMap(item));
+        } catch (e, stackTrace) {
+          print('Erro ao converter item para BookingModel: $e\n$stackTrace');
         }
       }
     }
-
+    }
     print('bookings: $bookings');
     return bookings;
   } else if (response.statusCode == 404) {
@@ -42,8 +49,6 @@ Future<List<BookingModel>> getBookings() async {
     throw Exception('Erro ao buscar reservas');
   }
 }
-
-
 
 
     @override
