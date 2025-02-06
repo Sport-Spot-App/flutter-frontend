@@ -4,7 +4,6 @@ import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:sport_spot/api/api.dart';
 import 'package:sport_spot/common/constants/app_colors.dart';
-import 'package:sport_spot/models/cep_model.dart';
 import 'package:sport_spot/models/court_model.dart';
 import 'package:sport_spot/repositories/cep_repository.dart';
 import 'package:sport_spot/repositories/court_repository.dart';
@@ -23,14 +22,6 @@ class _AllCourtsMapPageState extends State<AllCourtsMapPage> {
   LatLng? myLocation;
   List<CourtModel> courtList = [];
   CourtModel? courtSelected;
-  CepModel? cepCourtSelected;
-
-  Future<void> _getCEP() async {
-    await cepStore.findCep(courtSelected!.zip_code);
-    setState(() {
-      cepCourtSelected = cepStore.state.value;
-    });
-  }
 
   Future<void> _getCourts() async {
     try {
@@ -164,8 +155,8 @@ class _AllCourtsMapPageState extends State<AllCourtsMapPage> {
 
                               return Row(
                                 children: [
-                                  Text(cepCourtSelected!.logradouro),
-                                  Text(" • ${cepCourtSelected!.localidade}, ${cepCourtSelected!.estado}", style: TextStyle(color: AppColors.darkOrange)),
+                                  Text("${courtSelected!.logradouro}, ${courtSelected!.number}"),
+                                  Text(" • ${courtSelected!.localidade}, ${courtSelected!.estado}", style: TextStyle(color: AppColors.darkOrange)),
                                 ],
                               );
                             },
@@ -207,7 +198,6 @@ class _AllCourtsMapPageState extends State<AllCourtsMapPage> {
             setState(() {
               courtSelected = court;
             });
-            _getCEP();
           },
           child: Icon(
             Icons.location_on,
