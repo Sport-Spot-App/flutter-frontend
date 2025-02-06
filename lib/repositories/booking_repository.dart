@@ -15,7 +15,8 @@ class BookingRepository implements IBookingRepository {
 
   BookingRepository(this.dio);
 
- // PEGA AS RESERVAS DE UM USUÁRIO 
+ // PEGA AS RESERVAS DE UM USUÁRIO / HISTÓRICO DE RESERVAS
+ @override
   Future<List<BookingModel>> getBookings() async {
     final response = await dio.get('/bookings');
 
