@@ -1,9 +1,7 @@
-import 'dart:io';
-
 class UserModel {
   final int id;
   final String name;
-  final File? photo;
+  final String? photo;
   final String email;
   final String? password;
   final String document;
@@ -35,7 +33,7 @@ class UserModel {
     return UserModel(
       id: int.tryParse(map['id'].toString()) ?? 0,
       name: map['name'],
-      photo: map['photo'] != null ? File(map['photo']) : null,
+      photo: map['photo'] != null ? map['photo'] as String : null,
       email: map['email'],
       document: map['document'],
       cellphone: map['cellphone'],
@@ -68,12 +66,12 @@ class UserModel {
     };
   }
 
-  UserModel copyWith({
+   UserModel copyWith({
     int? id,
     String? name,
     String? email,
     int? role,
-    File? photo,
+    String? photo,
     String? cellphone,
     String? document,
     bool? status,

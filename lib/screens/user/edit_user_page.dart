@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:sport_spot/common/widgets/input_field.dart';
 import 'package:sport_spot/common/widgets/primary_button.dart';
@@ -29,7 +27,7 @@ class _EditUserPageState extends State<EditUserPage> {
   @override
   void initState() {
     super.initState();
-    _photoController = TextEditingController(text: widget.user.photo?.path);
+    _photoController = TextEditingController(text: widget.user.photo);
     _nameController = TextEditingController(text: widget.user.name);
     _emailController = TextEditingController(text: widget.user.email);
     _cellphoneController = TextEditingController(text: widget.user.cellphone);
@@ -49,9 +47,7 @@ class _EditUserPageState extends State<EditUserPage> {
   Future<void> _saveChanges() async {
     if (_formKey.currentState!.validate()) {
       final updatedUser = widget.user.copyWith(
-        photo: _photoController.text.isNotEmpty
-            ? File(_photoController.text)
-            : null,
+        photo: _photoController.text,
         name: _nameController.text,
         email: _emailController.text,
         cellphone: _cellphoneController.text,
@@ -98,28 +94,27 @@ class _EditUserPageState extends State<EditUserPage> {
                   end: Alignment.bottomCenter,
                 ),
               ),
-              child: Align(
-                alignment: Alignment.topCenter, // Alinha a foto para o topo
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                      top: 20.0), // Ajuste da margem superior
-                  child: CircleAvatar(
-                    radius: 50,
-                    backgroundImage: widget.user.photo != null
-                        ? NetworkImage(widget.user.photo!.path)
-                        : const AssetImage('assets/images/default_user.png')
-                            as ImageProvider,
-                    child: IconButton(
-                      icon: const Icon(Icons.camera_alt, color: Colors.white),
-                      onPressed: () {
-                        // Ação para alterar a foto
-                      },
-                    ),
+            child: Align(
+              alignment: Alignment.topCenter,  // Alinha a foto para o topo
+              child: Padding(
+                padding: const EdgeInsets.only(top: 20.0), // Ajuste da margem superior
+                child: CircleAvatar(
+                  radius: 50,
+                  backgroundImage: widget.user.photo != null
+                      ? NetworkImage(widget.user.photo!)
+                      : const AssetImage('assets/images/default_user.png')
+                          as ImageProvider,
+                  child: IconButton(
+                    icon: const Icon(Icons.camera_alt, color: Colors.white),
+                    onPressed: () {
+                      // Ação para alterar a foto
+                    },
                   ),
                 ),
               ),
             ),
           ),
+        ),
           // Campos de input
           Padding(
             padding: const EdgeInsets.all(8.0),
