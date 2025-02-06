@@ -15,28 +15,36 @@ class BookingRepository implements IBookingRepository {
 
   BookingRepository(this.dio);
 
-  // PEGA AS RESERVAS DE UM USUÁRIO / HISTÓRICO DE RESERVAS
-  @override
-  Future<List<BookingModel>> getBookings() async {
-    final response = await dio.get('/bookings');
+// // PEGA AS RESERVAS DE UM USUÁRIO / HISTÓRICO DE RESERVAS
+@override
+Future<List<BookingModel>> getBookings() async {
+  final response = await dio.get('/bookings');
+  print('Response data: ${response.data}');  // Verificar estrutura
 
-    if (response.statusCode == 200) {
-      final List<BookingModel> bookings = [];
-      final body = response.data as List<dynamic>?;
-      if (body != null) {
-        for (var item in body) {
-          if (item is Map<String, dynamic>) {
-            bookings.add(BookingModel.fromMap(item));
-          }
+  if (response.statusCode == 200) {
+    final List<BookingModel> bookings = [];
+
+    if (response.data is Map<String, dynamic> && response.data.containsKey('bookings')) {
+      final body = response.data['bookings'] as List<dynamic>;
+
+      for (var item in body) {
+        if (item is Map<String, dynamic>) {
+          bookings.add(BookingModel.fromMap(item));
         }
       }
-      return bookings;
-    } else if (response.statusCode == 404) {
-      throw NotFoundException('A URL informada não é válida');
-    } else {
-      throw Exception('Erro ao buscar reservas');
     }
+
+    print('bookings: $bookings');
+    return bookings;
+  } else if (response.statusCode == 404) {
+    throw NotFoundException('A URL informada não é válida');
+  } else {
+    throw Exception('Erro ao buscar reservas');
   }
+}
+
+
+
 
     @override
   Future<List<BookingModel>> getBookingByCourtId(String courtId) async {
@@ -70,8 +78,6 @@ class BookingRepository implements IBookingRepository {
   Future<List<BookingModel>> getBlockedBookings(
       String courtId, String ownerId) async {
     final response = await dio.get('/court/$courtId/booking/$ownerId');
-    print('API response status: ${response.statusCode}'); 
-    print('API response data: ${response.data}'); 
 
     if (response.statusCode == 200) {
       final List<BookingModel> bookings = [];

@@ -55,7 +55,7 @@ class _BookingHistoryPageState extends State<BookingHistoryPage> {
   Future<void> fetchBookings() async {
     await bookingStore.getBookings();
     List<BookingModel> fetchedBookings = bookingStore.state.value;
-
+    print('Fetched bookings: $fetchedBookings');
     List<BookingWithDetails> bookingsWithDetails = [];
     for (var booking in fetchedBookings) {
       try {
@@ -81,8 +81,8 @@ class _BookingHistoryPageState extends State<BookingHistoryPage> {
     }
   }
 
-  Future<void> _approveBooking(int bookingId) async {
-    await bookingStore.approveBooking(bookingId, 2);
+  Future<void> _approveBooking(int bookingId, int value) async {
+    await bookingStore.approveBooking(bookingId, value);
     await fetchBookings();
   }
 
@@ -91,7 +91,7 @@ class _BookingHistoryPageState extends State<BookingHistoryPage> {
       return StatusInfo(color: const Color.fromARGB(202, 67, 136, 131), text: "Pendente");
     } else if (status == 1) {
       return StatusInfo(color: Colors.green, text: "Aprovado");
-    } else if (status == 2) {
+    } else if (status == 3) {
       return StatusInfo(color: Colors.red, text: "Rejeitado");
     } else {
       return StatusInfo(color: const Color.fromARGB(0, 255, 255, 255), text: "");
@@ -155,7 +155,7 @@ class _BookingHistoryPageState extends State<BookingHistoryPage> {
                             children: [
                               ElevatedButton(
                                 onPressed: () {
-                                  _approveBooking(booking.id!);
+                                  _approveBooking(booking.id!, 1);
                                 },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: AppColors.green,
@@ -166,7 +166,7 @@ class _BookingHistoryPageState extends State<BookingHistoryPage> {
                               SizedBox(width: 8),
                               ElevatedButton(
                                 onPressed: () {
-                                  _approveBooking(booking.id!);
+                                  _approveBooking(booking.id!, 3);
                                 },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: AppColors.darkOrange,
