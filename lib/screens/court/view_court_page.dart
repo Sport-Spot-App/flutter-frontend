@@ -41,35 +41,44 @@ class _ViewCourtPageState extends State<ViewCourtPage> {
 
   @override
   void initState() {
+    super.initState();
     _checkIfFavorite();
     _loadUser();
   }
-        Future<void> _loadUser() async {
-      final loadedUser = await UserMap.getUserMap();
-      setState(() {
-        authUser = loadedUser;
-      });
-      diasFuncionamento = dias.where((day) => widget.court.work_days!.contains( day["key"] ))
-                          .map<String>((day) => day["label"])
-                          .toList();
+      
+  Future<void> _loadUser() async {
+    final loadedUser = await UserMap.getUserMap();
+    setState(() {
+      authUser = loadedUser;
+    });
+    diasFuncionamento = dias.where((day) => widget.court.work_days!.contains( day["key"] ))
+                        .map<String>((day) => day["label"])
+                        .toList();
 
     List<String> hourParts = [];
     List<String> hourMinutes = [];
     bool isMorning = false;
 
-    hourParts = widget.court.initial_hour!.split(' ');
-    hourMinutes = hourParts[0].split(':');
-    isMorning = hourParts[1] == "AM";
-    int auxInitial = isMorning ? int.parse(hourMinutes[0]) : int.parse(hourMinutes[0]) + 12;
-    initialHour = "${auxInitial}h${hourMinutes[1]}";
+    if (widget.court.initial_hour != null && widget.court.initial_hour!.isNotEmpty) {
+      hourParts = widget.court.initial_hour!.split(' ');
+      if (hourParts.length == 2) {
+        hourMinutes = hourParts[0].split(':');
+        isMorning = hourParts[1] == "AM";
+        int auxInitial = isMorning ? int.parse(hourMinutes[0]) : int.parse(hourMinutes[0]) + 12;
+        initialHour = "${auxInitial}h${hourMinutes[1]}";
+      }
+    }
 
-    hourParts = widget.court.final_hour!.split(' ');
-    hourMinutes = hourParts[0].split(':');
-    isMorning = hourParts[1] == "AM";
-    int auxFinal = isMorning ? int.parse(hourMinutes[0]) : int.parse(hourMinutes[0]) + 12;
-    finalHour = "${auxFinal}h${hourMinutes[1]}";
-                  
-    super.initState();
+    if (widget.court.final_hour != null && widget.court.final_hour!.isNotEmpty) {
+      hourParts = widget.court.final_hour!.split(' ');
+      if (hourParts.length == 2) {
+        hourMinutes = hourParts[0].split(':');
+        isMorning = hourParts[1] == "AM";
+        int auxFinal = isMorning ? int.parse(hourMinutes[0]) : int.parse(hourMinutes[0]) + 12;
+        finalHour = "${auxFinal}h${hourMinutes[1]}";
+      }
+    }
+                
   }
 
   Future<void> _checkIfFavorite() async {
