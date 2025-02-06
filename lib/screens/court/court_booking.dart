@@ -157,6 +157,7 @@ class _CourtBookingPageState extends State<CourtBookingPage> {
     try {
       final blockedbookings = await bookingStore.getBlockedBookings(
           widget.court.id!.toString(), widget.court.user_id.toString());
+          print('Blocked bookings: $blockedbookings');
       return blockedbookings
           .map((booking) => DateTimeRange(
                 start: booking.start_datetime,

@@ -38,21 +38,24 @@ class BookingRepository implements IBookingRepository {
     }
   }
 
-  // PEGA AS RESERVAS DE UMA QUADRA
-  @override
+    @override
   Future<List<BookingModel>> getBookingByCourtId(String courtId) async {
     final response = await dio.get('/bookings/court/$courtId');
 
     if (response.statusCode == 200) {
       final List<BookingModel> bookings = [];
-      final body = response.data as List<dynamic>?;
-      if (body != null) {
+      
+      // Ajuste para pegar o segundo item da lista
+      if (response.data is List && response.data.length > 1) {
+        final body = response.data[1] as List<dynamic>; // Pegando os dados corretos
+
         for (var item in body) {
           if (item is Map<String, dynamic>) {
             bookings.add(BookingModel.fromMap(item));
           }
         }
       }
+      
       return bookings;
     } else if (response.statusCode == 404) {
       throw NotFoundException('A URL informada não é válida');
@@ -61,15 +64,18 @@ class BookingRepository implements IBookingRepository {
     }
   }
 
+
   //PEGA OS HORÁRIOS BLOQUEADOS PELO PROPRIETÁRIOS
   @override
   Future<List<BookingModel>> getBlockedBookings(
       String courtId, String ownerId) async {
     final response = await dio.get('/court/$courtId/booking/$ownerId');
+    print('API response status: ${response.statusCode}'); 
+    print('API response data: ${response.data}'); 
 
     if (response.statusCode == 200) {
       final List<BookingModel> bookings = [];
-      final body = response.data as List<dynamic>?;
+      final body = response.data['bookings'] as List<dynamic>?;
       if (body != null) {
         for (var item in body) {
           if (item is Map<String, dynamic>) {
