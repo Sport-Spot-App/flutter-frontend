@@ -6,7 +6,7 @@ class BookingModel {
   final int court_id;
   final DateTime start_datetime;
   final DateTime end_datetime;
-  final bool? status;
+  final int? status;
   final DateTime? created_at;
   final DateTime? updated_at;
 
@@ -28,7 +28,7 @@ class BookingModel {
       court_id: map['court_id'],
       start_datetime: DateTime.parse(map['start_datetime']),
       end_datetime: DateTime.parse(map['end_datetime']),
-      status: map['status'] == 1,
+      status: map['status'],
       created_at: DateTime.parse(map['created_at']),
       updated_at: DateTime.parse(map['updated_at']),
     );
@@ -43,7 +43,7 @@ class BookingModel {
           DateFormat('yyyy-MM-dd HH:mm:ss.SSS').format(start_datetime),
       'end_datetime':
           DateFormat('yyyy-MM-dd HH:mm:ss.SSS').format(end_datetime),
-      'status': status == true ? 1 : 0,
+      'status': status,
       'created_at': created_at?.toIso8601String(),
       'updated_at': updated_at?.toIso8601String(),
     };
