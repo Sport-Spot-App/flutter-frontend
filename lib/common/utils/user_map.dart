@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sport_spot/models/user_model.dart';
 
@@ -8,7 +10,7 @@ class UserMap {
     prefs.setString('userName', user.name);
     prefs.setString('userEmail', user.email);
     prefs.setInt('userRole', user.role);
-    prefs.setString('userPhoto', user.photo ?? "");
+    prefs.setString('userPhoto', user.photo?.path ?? "");
     prefs.setString('userCellphone', user.cellphone);
     prefs.setString('userDocument', user.document);
     prefs.setBool('userApproved', user.is_approved);
@@ -31,7 +33,10 @@ class UserMap {
       name: prefs.getString('userName') ?? "",
       email: prefs.getString('userEmail') ?? "",
       role: prefs.getInt('userRole') ?? 0,
-      photo: prefs.getString('userPhoto') ?? "",
+      photo: prefs.getString('userPhoto') != null &&
+              prefs.getString('userPhoto')!.isNotEmpty
+          ? File(prefs.getString('userPhoto')!)
+          : null,
       cellphone: prefs.getString('userCellphone') ?? "",
       document: prefs.getString('userDocument') ?? "",
       is_approved: prefs.getBool('userApproved') ?? false,

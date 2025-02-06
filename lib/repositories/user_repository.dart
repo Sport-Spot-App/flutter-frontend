@@ -14,7 +14,8 @@ abstract class IUserRepository {
   Future<void> deleteUser(int userId);
   Future<bool> updateUser(UserModel user);
   Future<bool> approveUser(UserModel user);
-  Future<bool> changePassword(String currentPassword, String newPassword, String confirmNewPassword);
+  Future<bool> changePassword(
+      String currentPassword, String newPassword, String confirmNewPassword);
 }
 
 class UserRepository implements IUserRepository {
@@ -45,7 +46,39 @@ class UserRepository implements IUserRepository {
 
   @override
   Future<bool> registerUser(UserModel user) async {
-    final response = await dio.post('/users', data: jsonEncode(user.toMap()));
+    final formData = FormData();
+    formData.fields.add(MapEntry('name', user.name));
+    formData.fields.add(MapEntry('email', user.email));
+    formData.fields.add(MapEntry('role', user.role.toString()));
+    formData.fields.add(MapEntry('status', user.status.toString()));
+    formData.fields.add(MapEntry('is_approved', user.is_approved.toString()));
+    formData.fields.add(MapEntry('document', user.document));
+    formData.fields.add(MapEntry('cellphone', user.cellphone));
+    formData.fields.add(MapEntry('password', user.password!));
+
+    if (user.photo != null) {
+      formData.files.add(MapEntry(
+        'photo',
+        await MultipartFile.fromFile(user.photo!.path),
+      ));
+    }
+
+    final response = await dio.post(
+      '/users',
+      data: formData,
+      options: Options(
+        followRedirects: false,
+        validateStatus: (status) {
+          return status != null && status < 500;
+        },
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Accept': 'application/json',
+        },
+      ),
+    );
+
+    // final response = await dio.post('/users', data: jsonEncode(user.toMap()));
 
     if (response.statusCode == 200 || response.statusCode == 201) {
       return true;
@@ -67,7 +100,8 @@ class UserRepository implements IUserRepository {
 
   @override
   Future<bool> updateUser(UserModel user) async {
-    final response = await dio.put('/users/${user.id}', data: jsonEncode(user.toMap()));
+    final response =
+        await dio.put('/users/${user.id}', data: jsonEncode(user.toMap()));
 
     if (response.statusCode == 200) {
       return true;
@@ -92,8 +126,8 @@ class UserRepository implements IUserRepository {
   }
 
   @override
-  Future<bool> changePassword(String currentPassword, String newPassword, String confirmNewPassword) async {
-
+  Future<bool> changePassword(String currentPassword, String newPassword,
+      String confirmNewPassword) async {
     final requestData = {
       'current_password': currentPassword,
       'password': newPassword,

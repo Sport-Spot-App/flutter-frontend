@@ -1,5 +1,9 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:cpf_cnpj_validator/cnpj_validator.dart';
 import 'package:cpf_cnpj_validator/cpf_validator.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:sport_spot/api/api.dart';
 import 'package:sport_spot/common/constants/app_colors.dart';
@@ -30,7 +34,8 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController cpfController = TextEditingController();
   final TextEditingController cellphoneController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
 
   String? documentError;
 
@@ -41,7 +46,7 @@ class _RegisterPageState extends State<RegisterPage> {
       });
       return;
     }
-    
+
     if (widget.role == 2 && !CNPJValidator.isValid(text)) {
       setState(() {
         documentError = "CNPJ inválido";
@@ -159,9 +164,8 @@ class _RegisterPageState extends State<RegisterPage> {
                 builder: (context, isLoading, child) {
                   return PrimaryButton(
                     text: isLoading ? 'Carregando...' : 'Cadastrar',
-                    onPressed: isLoading
-                        ? null 
-                        : () => _handleRegister(context),
+                    onPressed:
+                        isLoading ? null : () => _handleRegister(context),
                   );
                 },
               ),

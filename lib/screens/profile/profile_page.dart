@@ -65,7 +65,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 child: CircleAvatar(
                   radius: 70,
                   backgroundImage: user?.photo != null && user?.photo != ""
-                      ? NetworkImage(user!.photo!)
+                      ? NetworkImage(user!.photo!.path)
                       : const AssetImage('assets/images/default_user.png')
                           as ImageProvider,
                 ),
@@ -100,7 +100,8 @@ class _ProfilePageState extends State<ProfilePage> {
               shrinkWrap: true,
               children: [
                 ListTile(
-                  leading: const Icon(Icons.person, color: AppColors.charcoalBlue),
+                  leading:
+                      const Icon(Icons.person, color: AppColors.charcoalBlue),
                   title: const Text("Editar perfil"),
                   onTap: () async {
                     await Navigator.of(context).push(
@@ -113,14 +114,16 @@ class _ProfilePageState extends State<ProfilePage> {
                   builder: (_) {
                     if (user != null && user!.role == 2 && user!.is_approved) {
                       return ListTile(
-                        leading: const Icon(CupertinoIcons.sportscourt_fill, color: AppColors.charcoalBlue),
+                        leading: const Icon(CupertinoIcons.sportscourt_fill,
+                            color: AppColors.charcoalBlue),
                         title: const Text("Minhas quadras"),
                         onTap: () {
-                          Navigator.of(context).push(MaterialPageRoute(builder: (_) => CourtsPage()));
+                          Navigator.of(context).push(
+                              MaterialPageRoute(builder: (_) => CourtsPage()));
                         },
                       );
                     }
-                    
+
                     return Container();
                   },
                 ),
@@ -128,11 +131,13 @@ class _ProfilePageState extends State<ProfilePage> {
                   builder: (_) {
                     if (user != null && user!.role == 1) {
                       return ListTile(
-                        leading: const Icon(Icons.admin_panel_settings, color: AppColors.charcoalBlue),
+                        leading: const Icon(Icons.admin_panel_settings,
+                            color: AppColors.charcoalBlue),
                         title: const Text("Aprovar proprietários"),
                         onTap: () {
                           Navigator.of(context).push(
-                            MaterialPageRoute(builder: (_) => CourtOwnerApprovalPage()),
+                            MaterialPageRoute(
+                                builder: (_) => CourtOwnerApprovalPage()),
                           );
                         },
                       );
@@ -142,11 +147,13 @@ class _ProfilePageState extends State<ProfilePage> {
                   },
                 ),
                 ListTile(
-                  leading: const Icon(Icons.lock, color: AppColors.charcoalBlue),
+                  leading:
+                      const Icon(Icons.lock, color: AppColors.charcoalBlue),
                   title: const Text("Trocar senha"),
                   onTap: () {
                     Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => const ChangePasswordPage()),
+                      MaterialPageRoute(
+                          builder: (_) => const ChangePasswordPage()),
                     );
                   },
                 ),
@@ -157,7 +164,8 @@ class _ProfilePageState extends State<ProfilePage> {
                     await store.logout();
                     await UserMap.removeUserMap();
                     if (!context.mounted) return;
-                    Navigator.of(context).pushNamedAndRemoveUntil(onboarding, (route) => false);
+                    Navigator.of(context)
+                        .pushNamedAndRemoveUntil(onboarding, (route) => false);
                   },
                 ),
               ],

@@ -37,7 +37,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
   String? documentError;
   File? _image;
 
-
   _validateDocument(text) {
     if (widget.user.role == 3 && !CPFValidator.isValid(text)) {
       setState(() {
@@ -45,7 +44,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       });
       return;
     }
-    
+
     if (widget.user.role == 2 && !CNPJValidator.isValid(text)) {
       setState(() {
         documentError = "CNPJ inválido";
@@ -100,12 +99,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
     if (widget.user.role == 3) {
       documentController.value = maskCPF.formatEditUpdate(
         TextEditingValue.empty,
-        TextEditingValue(text: widget.user.document),  
+        TextEditingValue(text: widget.user.document),
       );
     } else {
       documentController.value = maskCNPJ.formatEditUpdate(
         TextEditingValue.empty,
-        TextEditingValue(text: widget.user.document),  
+        TextEditingValue(text: widget.user.document),
       );
     }
 
@@ -160,9 +159,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       radius: 70,
                       backgroundImage: _image != null
                           ? FileImage(_image!)
-                          : (widget.user.photo != null &&
-                                      widget.user.photo!.isNotEmpty
-                                  ? NetworkImage(widget.user.photo!)
+                          : (widget.user.photo != null
+                                  ? NetworkImage(widget.user.photo!.path)
                                   : const AssetImage(
                                       'assets/images/default_user.png'))
                               as ImageProvider,
@@ -187,7 +185,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   InputField(
                     label: widget.user.role == 3 ? "CPF" : "CNPJ",
                     controller: documentController,
-                    inputFormatters: [widget.user.role == 3 ? maskCPF : maskCNPJ],
+                    inputFormatters: [
+                      widget.user.role == 3 ? maskCPF : maskCNPJ
+                    ],
                     onChanged: _validateDocument,
                     errorText: documentError,
                   ),
