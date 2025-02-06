@@ -5,7 +5,7 @@ import 'package:sport_spot/models/booking_model.dart';
 abstract class IBookingRepository {
   Future<List<BookingModel>> getBookings();
   Future<bool> registerBooking(List<BookingModel> bookings, String courtId);
-  Future<void> approveBooking(int bookingId);
+  Future<void> approveBooking(int bookingId, int value);
   Future<List<BookingModel>> getBookingByCourtId(String courtId);
   Future<List<BookingModel>> getBlockedBookings(String courtId, String ownerId);
 }
@@ -15,6 +15,7 @@ class BookingRepository implements IBookingRepository {
 
   BookingRepository(this.dio);
 
+ // PEGA AS RESERVAS DE UM USUÁRIO 
   Future<List<BookingModel>> getBookings() async {
     final response = await dio.get('/bookings');
 
@@ -34,18 +35,17 @@ class BookingRepository implements IBookingRepository {
     }
   }
 
+  // PEGA AS RESERVAS DE UMA QUADRA
   @override
   Future<List<BookingModel>> getBookingByCourtId(String courtId) async {
-    final response = await dio.get('/bookings');
+    final response = await dio.get('/bookings/court/$courtId');
 
     if(response.statusCode == 200) {
       final List<BookingModel> bookings = [];
       final body = response.data as Map<String, dynamic>?;
       if (body != null && body['bookings'] != null) {
         for (var item in body['bookings']) {
-          if(item['court_id'].toString() == courtId){ 
             bookings.add(BookingModel.fromMap(item as Map<String, dynamic>));
-          }
         }
       }
       return bookings;
@@ -56,18 +56,18 @@ class BookingRepository implements IBookingRepository {
     }
   }
 
+
+  //PEGA OS HORÁRIOS BLOQUEADOS PELO PROPRIETÁRIOS
   @override
   Future<List<BookingModel>> getBlockedBookings(String courtId, String ownerId) async {
-    final response = await dio.get('/bookings');
+    final response = await dio.get('/court/$courtId/booking/$ownerId');
 
     if(response.statusCode == 200) {
       final List<BookingModel> bookings = [];
       final body = response.data as Map<String, dynamic>?;
       if (body != null && body['bookings'] != null) {
         for (var item in body['bookings']) {
-          if(item['court_id'].toString() == courtId && item['user_id'].toString() == ownerId){ 
             bookings.add(BookingModel.fromMap(item as Map<String, dynamic>));
-          }
         }
       }
       return bookings;
@@ -95,8 +95,8 @@ class BookingRepository implements IBookingRepository {
   }
 
   @override
-  Future<void> approveBooking(int bookingId) async {
-    final response = await dio.put('/approveBook/$bookingId');
+  Future<void> approveBooking(int bookingId, int value) async {
+    final response = await dio.put('/approveBook/$bookingId/$value');
 
     if (response.statusCode == 200) {
       return;
