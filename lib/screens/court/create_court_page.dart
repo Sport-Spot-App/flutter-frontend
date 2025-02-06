@@ -100,6 +100,12 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
                                         .map<String>((day) => day["key"])
                                         .toList();
 
+    String formatTimeOfDay(TimeOfDay time) {
+      final hour = time.hour.toString().padLeft(2, '0');
+      final minute = time.minute.toString().padLeft(2, '0');
+      return '$hour:$minute';
+    }
+
     CourtModel court = CourtModel(
       id: isEditing ? widget.court!.id : null,
       name: nameController.text,
@@ -116,8 +122,8 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
       bairro: cep.bairro,
       estado: cep.estado,
       localidade: cep.localidade,
-      initial_hour: horarioInicio?.format(context) ?? '',
-      final_hour: horarioFim?.format(context) ?? '',
+      initial_hour: formatTimeOfDay(horarioInicio!),
+      final_hour: formatTimeOfDay(horarioFim!),
       work_days: diasFuncionamento,
     );
 
@@ -190,33 +196,20 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
           }
         }
       }
-      
 
-      int initialHour = 0;
-      int initialMinutes = 0;
       if (widget.court!.initial_hour != null && widget.court!.initial_hour!.isNotEmpty) {
-        List<String> hourParts = widget.court!.initial_hour!.split(' ');
-        if (hourParts.length == 2) {
-          List<String> hourMinutes = hourParts[0].split(':');
-          bool isMorning = hourParts[1] == "AM";
-          initialHour = isMorning ? int.parse(hourMinutes[0]) : int.parse(hourMinutes[0]) + 12;
-          initialMinutes = int.parse(hourMinutes[1]);
-        }
+        List<String> hourMinutes = widget.court!.initial_hour!.split(':');
+        int initialHour = int.parse(hourMinutes[0]);
+        int initialMinutes = int.parse(hourMinutes[1]);
+        horarioInicio = TimeOfDay(hour: initialHour, minute: initialMinutes);
       }
-      horarioInicio = TimeOfDay(hour: initialHour, minute: initialMinutes);
 
-      int finalHour = 0;
-      int finalMinutes = 0;
       if (widget.court!.final_hour != null && widget.court!.final_hour!.isNotEmpty) {
-        List<String> hourParts = widget.court!.final_hour!.split(' ');
-        if (hourParts.length == 2) {
-          List<String> hourMinutes = hourParts[0].split(':');
-          bool isMorning = hourParts[1] == "AM";
-          finalHour = isMorning ? int.parse(hourMinutes[0]) : int.parse(hourMinutes[0]) + 12;
-          finalMinutes = int.parse(hourMinutes[1]);
-        }
+        List<String> hourMinutes = widget.court!.final_hour!.split(':');
+        int finalHour = int.parse(hourMinutes[0]);
+        int finalMinutes = int.parse(hourMinutes[1]);
+        horarioFim = TimeOfDay(hour: finalHour, minute: finalMinutes);
       }
-      horarioFim = TimeOfDay(hour: finalHour, minute: finalMinutes);
     }
     super.initState();
   }
@@ -363,7 +356,9 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
             borderRadius: BorderRadius.circular(5),
           ),
           child: Text(
-            horario != null ? horario.format(context) : label,
+            horario != null
+                ? MaterialLocalizations.of(context).formatTimeOfDay(horario, alwaysUse24HourFormat: true)
+                : label,
             style: const TextStyle(fontSize: 16, color: Colors.black),
           ),
         ),
