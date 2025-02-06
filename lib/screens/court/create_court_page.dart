@@ -15,6 +15,8 @@ import 'package:sport_spot/repositories/cep_repository.dart';
 import 'package:sport_spot/repositories/court_repository.dart';
 import 'package:sport_spot/repositories/sport_repository.dart';
 import 'package:sport_spot/routes/routing_constants.dart';
+import 'package:sport_spot/screens/court/courts_page.dart';
+import 'package:sport_spot/screens/court/view_court_page.dart';
 import 'package:sport_spot/stores/cep_store.dart';
 import 'package:sport_spot/stores/court_store.dart';
 import 'package:sport_spot/stores/sport_store.dart';
@@ -65,6 +67,25 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
 
   //Método para criar ou editar quadra
   Future<void> _handleCourt() async {
+    if (nameController.text.isEmpty ||
+        valueController.text.isEmpty ||
+        descriptionController.text.isEmpty ||
+        cepController.text.isEmpty ||
+        addressController.text.isEmpty ||
+        numberController.text.isEmpty ||
+        complementController.text.isEmpty ||
+        neighborhoodController.text.isEmpty ||
+        cityController.text.isEmpty ||
+        stateController.text.isEmpty ||
+        sportsSelected.isEmpty ||
+        horarioInicio == null ||
+        horarioFim == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Por favor, preencha todos os campos.')),
+      );
+      return;
+    }
+
     CepModel cep = CepModel(
       cep: cepController.text,
       logradouro: addressController.text,
@@ -111,7 +132,9 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
         SnackBar(content: Text(courtStore.erro.value)),
       );
     } else {
-      Navigator.of(context).pushNamedAndRemoveUntil(courtPage, (route) => false);
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => CourtsPage()),
+      );
     }
   }
 
@@ -167,15 +190,18 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
           }
         }
       }
+      
 
       int initialHour = 0;
       int initialMinutes = 0;
       if (widget.court!.initial_hour != null && widget.court!.initial_hour!.isNotEmpty) {
         List<String> hourParts = widget.court!.initial_hour!.split(' ');
-        List<String> hourMinutes = hourParts[0].split(':');
-        bool isMorning = hourParts[1] == "AM";
-        initialHour = isMorning ? int.parse(hourMinutes[0]) : int.parse(hourMinutes[0]) + 12;
-        initialMinutes = int.parse(hourMinutes[1]);
+        if (hourParts.length == 2) {
+          List<String> hourMinutes = hourParts[0].split(':');
+          bool isMorning = hourParts[1] == "AM";
+          initialHour = isMorning ? int.parse(hourMinutes[0]) : int.parse(hourMinutes[0]) + 12;
+          initialMinutes = int.parse(hourMinutes[1]);
+        }
       }
       horarioInicio = TimeOfDay(hour: initialHour, minute: initialMinutes);
 
@@ -183,10 +209,12 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
       int finalMinutes = 0;
       if (widget.court!.final_hour != null && widget.court!.final_hour!.isNotEmpty) {
         List<String> hourParts = widget.court!.final_hour!.split(' ');
-        List<String> hourMinutes = hourParts[0].split(':');
-        bool isMorning = hourParts[1] == "AM";
-        finalHour = isMorning ? int.parse(hourMinutes[0]) : int.parse(hourMinutes[0]) + 12;
-        finalMinutes = int.parse(hourMinutes[1]);
+        if (hourParts.length == 2) {
+          List<String> hourMinutes = hourParts[0].split(':');
+          bool isMorning = hourParts[1] == "AM";
+          finalHour = isMorning ? int.parse(hourMinutes[0]) : int.parse(hourMinutes[0]) + 12;
+          finalMinutes = int.parse(hourMinutes[1]);
+        }
       }
       horarioFim = TimeOfDay(hour: finalHour, minute: finalMinutes);
     }
