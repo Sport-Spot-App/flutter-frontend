@@ -125,6 +125,7 @@ class CourtRepository implements ICourtRepository {
   @override
   Future<bool> updateCourt(CourtModel court) async {
     final formData = FormData();
+    // formData.fields.add(MapEntry('_method', 'PUT'));
     formData.fields.add(MapEntry('id', court.id.toString()));
     formData.fields.add(MapEntry('name', court.name));
     formData.fields.add(MapEntry('price_per_hour', court.price_per_hour));
@@ -159,7 +160,7 @@ class CourtRepository implements ICourtRepository {
       }
     }
 
-    final response = await dio.put(
+    final response = await dio.post(
       '/courts/${court.id}',
       data: formData,
       options: Options(

@@ -80,6 +80,7 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
                                         .toList();
 
     CourtModel court = CourtModel(
+      id: isEditing ? widget.court!.id : null,
       name: nameController.text,
       price_per_hour: valueController.text,
       description: descriptionController.text,
