@@ -60,7 +60,7 @@ class _CourtOwnerCardState extends State<CourtOwnerCard> {
                     onTap: () {
                       Navigator.pop(context);
                       Navigator.of(context).push(MaterialPageRoute(
-                          builder: (_) => CourtBookingPage(court: widget.court)));
+                          builder: (_) => CourtBookingPage(courtId: widget.court.id.toString())));
                     },
                   ),
                   ListTile(
