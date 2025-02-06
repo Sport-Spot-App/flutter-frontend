@@ -125,11 +125,13 @@ class _CourtCardState extends State<CourtCard> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      widget.name,
-                      style: AppTextStyles.mediumText.copyWith(
-                        color: const Color.fromARGB(255, 0, 0, 0),
-                        height: 1,
+                    Flexible(
+                      child: Text(
+                        widget.name,
+                        style: AppTextStyles.mediumText.copyWith(
+                          color: const Color.fromARGB(255, 0, 0, 0),
+                          height: 1,
+                        ),
                       ),
                     ),
                     widget.favoriteIcon,
