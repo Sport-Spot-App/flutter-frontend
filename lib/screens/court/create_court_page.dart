@@ -50,15 +50,15 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
   List<int> sportsSelected = [];
   List<File> photos = [];
 
-  Map<String, bool> diasSelecionados = {
-    'Monday': false,
-    'Tuesday': false,
-    'Wednesday': false,
-    'Thursday': false,
-    'Friday': false,
-    'Saturday': false,
-    'Sunday': false,
-  };
+  List<Map<String, dynamic>> diasSelecionados = [
+    { 'label': 'Domingo', 'key': 'sunday', 'value': false },
+    { 'label': 'Segunda-Feira', 'key': 'Monday', 'value': false },
+    { 'label': 'Terça-Feira', 'key': 'Tuesday', 'value': false },
+    { 'label': 'Quarta-Feira', 'key': 'Wednesday', 'value': false },
+    { 'label': 'Quinta-Feira', 'key': 'Thursday', 'value': false },
+    { 'label': 'Sexta-Feira', 'key': 'Friday', 'value': false },
+    { 'label': 'Sábado', 'key': 'Saturday', 'value': false },
+  ];
   TimeOfDay? horarioInicio;
   TimeOfDay? horarioFim;
   List<String> blockedDays = [];
@@ -73,6 +73,11 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
       localidade: cityController.text,
       estado: stateController.text,
     );
+
+    List<String>? diasFuncionamento = diasSelecionados
+                                        .where((day) => day["value"])
+                                        .map<String>((day) => day["key"])
+                                        .toList();
 
     CourtModel court = CourtModel(
       name: nameController.text,
@@ -91,10 +96,7 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
       localidade: cep.localidade,
       initial_hour: horarioInicio?.format(context) ?? '',
       final_hour: horarioFim?.format(context) ?? '',
-      work_days: diasSelecionados.entries
-          .where((entry) => entry.value)
-          .map((entry) => entry.key)
-          .toList(),
+      work_days: diasFuncionamento,
     );
 
     if (isEditing) {
@@ -153,13 +155,39 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
       cepController.text = widget.court!.zip_code;
       addressController.text = widget.court!.street;
       numberController.text = widget.court!.number;
-      // complementController.text = widget.court!.cep!.complemento;
-      // neighborhoodController.text = widget.court!.cep!.bairro;
-      // cityController.text = widget.court!.cep!.localidade;
-      // stateController.text = widget.court!.cep!.estado;
-
       sportsSelected = widget.court!.sports.map((sport) => sport.id).toList();
       photos = widget.court!.photos!.map((photo) => File(photo.path)).toList();
+
+      if (widget.court!.work_days != null) {
+        List<String> workDays = widget.court!.work_days!;
+        for (var day in diasSelecionados) {
+          if (workDays.contains(day["key"])) {
+            day["value"] = true;
+          }
+        }
+      }
+
+      int initialHour = 0;
+      int initialMinutes = 0;
+      if (widget.court!.initial_hour != null && widget.court!.initial_hour!.isNotEmpty) {
+        List<String> hourParts = widget.court!.initial_hour!.split(' ');
+        List<String> hourMinutes = hourParts[0].split(':');
+        bool isMorning = hourParts[1] == "AM";
+        initialHour = isMorning ? int.parse(hourMinutes[0]) : int.parse(hourMinutes[0]) + 12;
+        initialMinutes = int.parse(hourMinutes[1]);
+      }
+      horarioInicio = TimeOfDay(hour: initialHour, minute: initialMinutes);
+
+      int finalHour = 0;
+      int finalMinutes = 0;
+      if (widget.court!.final_hour != null && widget.court!.final_hour!.isNotEmpty) {
+        List<String> hourParts = widget.court!.final_hour!.split(' ');
+        List<String> hourMinutes = hourParts[0].split(':');
+        bool isMorning = hourParts[1] == "AM";
+        finalHour = isMorning ? int.parse(hourMinutes[0]) : int.parse(hourMinutes[0]) + 12;
+        finalMinutes = int.parse(hourMinutes[1]);
+      }
+      horarioFim = TimeOfDay(hour: finalHour, minute: finalMinutes);
     }
     super.initState();
   }
@@ -260,13 +288,13 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
         ),
         const SizedBox(height: 20),
         Column(
-          children: diasSelecionados.keys.map((dia) {
+          children: diasSelecionados.map((dia) {
             return CheckboxListTile(
-              title: Text(dia),
-              value: diasSelecionados[dia],
+              title: Text(dia["label"]),
+              value: dia["value"],
               onChanged: (value) {
                 setState(() {
-                  diasSelecionados[dia] = value ?? false;
+                  dia["value"] = value ?? false;
                 });
               },
               activeColor: Colors.green,
@@ -448,11 +476,20 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
               itemBuilder: (context, index) {
                 return ClipRRect(
                   borderRadius: BorderRadius.circular(10),
-                  child: Image.file(
-                    photos[index],
-                    fit: BoxFit.cover,
-                    width: double.infinity,
-                    height: double.infinity,
+                  child: Builder(
+                    builder: (context) {
+                      if (photos[index].path.contains('images/courts/')) {
+                        String path = photos[index].path;
+                        return Image.network('https://sportspott.tech/storage/$path');
+                      }
+                      
+                      return Image.file(
+                        photos[index],
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        height: double.infinity,
+                      );
+                    }
                   ),
                 );
               },
