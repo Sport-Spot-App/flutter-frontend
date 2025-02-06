@@ -63,8 +63,8 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
   TimeOfDay? horarioFim;
   List<String> blockedDays = [];
 
-  //Método para criar quadra
-  Future<void> _createCourt() async {
+  //Método para criar ou editar quadra
+  Future<void> _handleCourt() async {
     CepModel cep = CepModel(
       cep: cepController.text,
       logradouro: addressController.text,
@@ -81,9 +81,7 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
       zip_code: cep.cep,
       street: cep.logradouro,
       number: numberController.text,
-      sports: sportsSelected
-          .map((id) => sportList.firstWhere((sport) => sport.id == id))
-          .toList(),
+      sports: sportsSelected.map((id) => sportList.firstWhere((sport) => sport.id == id)).toList(),
       photos: photos,
       cep: cep,
       logradouro: cep.logradouro,
@@ -99,8 +97,19 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
           .toList(),
     );
 
-    await courtStore.registerCourt(court);
-    Navigator.of(context).pushNamedAndRemoveUntil(courtPage, (route) => false);
+    if (isEditing) {
+      await courtStore.updateCourt(court);
+    } else {
+      await courtStore.registerCourt(court);
+    }
+    if (!mounted) return;
+    if (courtStore.erro.value.isNotEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(courtStore.erro.value)),
+      );
+    } else {
+      Navigator.of(context).pushNamedAndRemoveUntil(courtPage, (route) => false);
+    }
   }
 
   Future<void> _pickImage() async {
@@ -137,16 +146,18 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
     _fetchSports();
     if (widget.court != null) {
       isEditing = true;
+      _fetchCEP(widget.court!.zip_code);
       nameController.text = widget.court!.name;
       valueController.text = widget.court!.price_per_hour;
       descriptionController.text = widget.court!.description;
       cepController.text = widget.court!.zip_code;
       addressController.text = widget.court!.street;
       numberController.text = widget.court!.number;
-      complementController.text = widget.court!.complemento ?? '';
-      neighborhoodController.text = widget.court!.bairro ?? '';
-      cityController.text = widget.court!.localidade ?? '';
-      stateController.text = widget.court!.estado ?? '';
+      // complementController.text = widget.court!.cep!.complemento;
+      // neighborhoodController.text = widget.court!.cep!.bairro;
+      // cityController.text = widget.court!.cep!.localidade;
+      // stateController.text = widget.court!.cep!.estado;
+
       sportsSelected = widget.court!.sports.map((sport) => sport.id).toList();
       photos = widget.court!.photos!.map((photo) => File(photo.path)).toList();
     }
@@ -218,11 +229,7 @@ class _CreateCourtPageState extends State<CreateCourtPage> {
           child: ElevatedButton(
               onPressed: () {
                 if (pass == 3) {
-                  if (isEditing) {
-                    print("Editar quadra");
-                  } else {
-                    _createCourt();
-                  }
+                  _handleCourt();
                 } else {
                   setState(() {
                     pass++;
