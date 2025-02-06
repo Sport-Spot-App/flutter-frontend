@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:sport_spot/api/api.dart';
 import 'package:sport_spot/models/court_model.dart';
-import 'package:sport_spot/repositories/court_repository.dart';
 import 'package:sport_spot/screens/court/court_booking.dart';
 import 'package:sport_spot/screens/court/create_court_page.dart';
-import 'package:dio/dio.dart';
-import 'package:sport_spot/stores/court_store.dart';
 
 class CourtOwnerCard extends StatefulWidget {
   final CourtModel court;
