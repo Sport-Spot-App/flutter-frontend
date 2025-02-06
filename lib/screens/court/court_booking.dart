@@ -8,14 +8,16 @@ import 'package:sport_spot/models/booking_model.dart';
 import 'package:sport_spot/models/court_model.dart';
 import 'package:sport_spot/models/user_model.dart';
 import 'package:sport_spot/repositories/booking_repository.dart';
+import 'package:sport_spot/repositories/court_repository.dart';
 import 'package:sport_spot/repositories/user_repository.dart';
 import 'package:sport_spot/stores/booking_store.dart';
 import 'package:sport_spot/stores/user_store.dart';
+import 'package:flutter/scheduler.dart';
 
 class CourtBookingPage extends StatefulWidget {
-  final CourtModel court;
+  final String courtId;
 
-  CourtBookingPage({required this.court});
+  CourtBookingPage({required this.courtId});
 
   @override
   _CourtBookingPageState createState() => _CourtBookingPageState();
@@ -26,18 +28,47 @@ class _CourtBookingPageState extends State<CourtBookingPage> {
   final List<DateTimeRange> bookedSlots = [];
   final List<DateTimeRange> blockedSlots = [];
   final BookingRepository bookingRepository = BookingRepository(Api());
+  final CourtRepository courtRepository = CourtRepository(Api());
   final BookingStore bookingStore =
       BookingStore(repository: BookingRepository(Api()));
   final UserStore userStore = UserStore(repository: UserRepository(Api()));
   UserModel? authUser;
+  CourtModel? court;
 
   @override
   void initState() {
     super.initState();
-    _loadUser();
     initializeDateFormatting('pt_BR', null).then((_) {
       setState(() {});
     });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _loadUser();
+    _loadCourt();
+    // Any initialization that depends on inherited widgets can be done here.
+  }
+
+  Future<void> _loadCourt() async {
+    try {
+      final int courtId = int.parse(widget.courtId);
+      final loadedCourt = await courtRepository.getCourt(courtId);
+      setState(() {
+        court = loadedCourt;
+      });
+    } catch (e) {
+      print(e);
+      setState(() {
+        court = null;
+      });
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Erro ao carregar dados da quadra: $e')),
+        );
+      });
+    }
   }
 
   Future<void> _loadUser() async {
@@ -55,7 +86,7 @@ class _CourtBookingPageState extends State<CourtBookingPage> {
             minute: int.parse(widget.court.initial_hour!.split(":")[1]),
           )
         : TimeOfDay(hour: 8, minute: 0);
-
+        
     final finalHour = widget.court.final_hour != null
         ? TimeOfDay(
             hour: int.parse(widget.court.final_hour!.split(":")[0]),
@@ -71,7 +102,7 @@ class _CourtBookingPageState extends State<CourtBookingPage> {
         .where((day) => !workDays.contains(day))
         .toList();
 
-    bool isCourtOwner = authUser?.id == widget.court.user_id;
+    bool isCourtOwner = authUser?.id == court!.user_id;
 
     return Scaffold(
       appBar: AppBar(title: const Text("Agendar Quadra")),
@@ -140,7 +171,7 @@ class _CourtBookingPageState extends State<CourtBookingPage> {
       {required DateTime start, required DateTime end}) async* {
     try {
       final bookings = await bookingRepository
-          .getBookingByCourtId(widget.court.id!.toString());
+          .getBookingByCourtId(widget.courtId);
       final bookedRanges = bookings
           .map((booking) => DateTimeRange(
                 start: booking.start_datetime,
@@ -156,7 +187,7 @@ class _CourtBookingPageState extends State<CourtBookingPage> {
   Future<List<DateTimeRange>> _getBlockedSlots() async {
     try {
       final blockedbookings = await bookingStore.getBlockedBookings(
-          widget.court.id!.toString(), widget.court.user_id.toString());
+          widget.courtId, court!.user_id.toString());
       return blockedbookings
           .map((booking) => DateTimeRange(
                 start: booking.start_datetime,
@@ -171,7 +202,7 @@ class _CourtBookingPageState extends State<CourtBookingPage> {
   Future<void> _registerBooking({required BookingService newBooking}) async {
     final List<BookingModel> bookings = [
       BookingModel(
-        court_id: widget.court.id!,
+        court_id: court!.id!,
         start_datetime: newBooking.bookingStart,
         end_datetime: newBooking.bookingEnd,
       )
@@ -179,7 +210,7 @@ class _CourtBookingPageState extends State<CourtBookingPage> {
 
     try {
       final success = await bookingStore.registerBooking(
-          bookings, widget.court.id.toString());
+          bookings, court!.id.toString());
       if (success) {
         setState(() {
           bookedSlots.add(DateTimeRange(
@@ -187,21 +218,27 @@ class _CourtBookingPageState extends State<CourtBookingPage> {
             end: newBooking.bookingEnd,
           ));
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text(authUser?.id == widget.court.user_id
-                  ? 'Horário Bloqueado com sucesso'
-                  : 'Reserva feita com sucesso!')),
-        );
+        SchedulerBinding.instance.addPostFrameCallback((_) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content: Text(authUser?.id == court!.user_id
+                    ? 'Horário Bloqueado com sucesso'
+                    : 'Reserva feita com sucesso!')),
+          );
+        });
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Erro ao fazer reserva')),
-        );
+        SchedulerBinding.instance.addPostFrameCallback((_) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Erro ao fazer reserva')),
+          );
+        });
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Erro ao fazer reserva: $e')),
-      );
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Erro ao fazer reserva: $e')),
+        );
+      });
     }
   }
 
