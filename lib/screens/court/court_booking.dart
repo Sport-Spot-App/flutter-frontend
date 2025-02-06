@@ -80,22 +80,29 @@ class _CourtBookingPageState extends State<CourtBookingPage> {
 
   @override
   Widget build(BuildContext context) {
-    final initialHour = widget.court.initial_hour != null
+    if (court == null) {
+      return Scaffold(
+        appBar: AppBar(title: const Text("Agendar Quadra")),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    final initialHour = court!.initial_hour != null
         ? TimeOfDay(
-            hour: int.parse(widget.court.initial_hour!.split(":")[0]),
-            minute: int.parse(widget.court.initial_hour!.split(":")[1]),
+            hour: int.parse(court!.initial_hour!.split(":")[0]),
+            minute: int.parse(court!.initial_hour!.split(":")[1]),
           )
         : TimeOfDay(hour: 8, minute: 0);
         
-    final finalHour = widget.court.final_hour != null
+    final finalHour = court!.final_hour != null
         ? TimeOfDay(
-            hour: int.parse(widget.court.final_hour!.split(":")[0]),
-            minute: int.parse(widget.court.final_hour!.split(":")[1]),
+            hour: int.parse(court!.final_hour!.split(":")[0]),
+            minute: int.parse(court!.final_hour!.split(":")[1]),
           )
         : TimeOfDay(hour: 22, minute: 0);
 
-    final workDays = widget.court.work_days != null
-        ? widget.court.work_days!.map((day) => _dayStringToInt(day)).toList()
+    final workDays = court!.work_days != null
+        ? court!.work_days!.map((day) => _dayStringToInt(day)).toList()
         : [];
 
     final blockedDays = List.generate(7, (index) => index + 1)
