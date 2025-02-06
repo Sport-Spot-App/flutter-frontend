@@ -25,6 +25,7 @@ class _CourtBookingPageState extends State<CourtBookingPage> {
   final DateTime now = DateTime.now();
   final List<DateTimeRange> bookedSlots = [];
   final List<DateTimeRange> blockedSlots = [];
+  final BookingRepository bookingRepository = BookingRepository(Api());
   final BookingStore bookingStore =
       BookingStore(repository: BookingRepository(Api()));
   final UserStore userStore = UserStore(repository: UserRepository(Api()));
@@ -135,15 +136,17 @@ class _CourtBookingPageState extends State<CourtBookingPage> {
     }
   }
 
-  Stream<List<DateTimeRange>> _getBookedSlots({required DateTime start, required DateTime end}) async* {
+  Stream<List<DateTimeRange>> _getBookedSlots(
+      {required DateTime start, required DateTime end}) async* {
     try {
-      final bookings = await bookingStore.getBookingsByCourtId(widget.court.id!.toString());
-
-      final bookedRanges = bookings.map((booking) => DateTimeRange(
-        start: booking.start_datetime,
-        end: booking.end_datetime,
-      )).toList();
-
+      final bookings = await bookingRepository
+          .getBookingByCourtId(widget.court.id!.toString());
+      final bookedRanges = bookings
+          .map((booking) => DateTimeRange(
+                start: booking.start_datetime,
+                end: booking.end_datetime,
+              ))
+          .toList();
       yield bookedRanges;
     } catch (e) {
       yield [];
@@ -152,11 +155,14 @@ class _CourtBookingPageState extends State<CourtBookingPage> {
 
   Future<List<DateTimeRange>> _getBlockedSlots() async {
     try {
-      final bookings = await bookingStore.getBlockedBookings(widget.court.id!.toString(), authUser!.id.toString());
-      return bookings.map((booking) => DateTimeRange(
-        start: booking.start_datetime,
-        end: booking.end_datetime,
-      )).toList();
+      final blockedbookings = await bookingStore.getBlockedBookings(
+          widget.court.id!.toString(), widget.court.user_id.toString());
+      return blockedbookings
+          .map((booking) => DateTimeRange(
+                start: booking.start_datetime,
+                end: booking.end_datetime,
+              ))
+          .toList();
     } catch (e) {
       return [];
     }
@@ -183,10 +189,9 @@ class _CourtBookingPageState extends State<CourtBookingPage> {
         });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text(
-                  authUser?.id == widget.court.user_id
-                      ? 'Horário Bloqueado com sucesso'
-                      : 'Reserva feita com sucesso!')),
+              content: Text(authUser?.id == widget.court.user_id
+                  ? 'Horário Bloqueado com sucesso'
+                  : 'Reserva feita com sucesso!')),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
