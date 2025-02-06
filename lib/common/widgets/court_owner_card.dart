@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:sport_spot/api/api.dart';
 import 'package:sport_spot/models/court_model.dart';
+import 'package:sport_spot/repositories/court_repository.dart';
+import 'package:sport_spot/screens/court/court_booking.dart';
 import 'package:sport_spot/screens/court/create_court_page.dart';
+import 'package:dio/dio.dart';
+import 'package:sport_spot/stores/court_store.dart';
 
 class CourtOwnerCard extends StatefulWidget {
   final CourtModel court;
+
 
   const CourtOwnerCard(this.court, {super.key});
 
@@ -42,8 +48,34 @@ class _CourtOwnerCardState extends State<CourtOwnerCard> {
           ],
         ),
         onTap: () {
-          Navigator.of(context).push(MaterialPageRoute(
-              builder: (_) => CreateCourtPage(court: widget.court)));
+          showModalBottomSheet(
+            context: context,
+            builder: (BuildContext context) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ListTile(
+                    leading: const Icon(Icons.block),
+                    title: const Text("Bloquear Horários"),
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (_) => CourtBookingPage(court: widget.court)));
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.edit),
+                    title: const Text("Editar Quadra"),
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (_) => CreateCourtPage(court: widget.court)));
+                    },
+                  ),
+                ],
+              );
+            },
+          );
         },
       ),
     );

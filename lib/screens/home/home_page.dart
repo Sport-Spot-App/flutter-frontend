@@ -31,6 +31,20 @@ class _HomePageState extends State<HomePage> {
     _fetchFavoriteCourts();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _fetchCourts();
+    _fetchFavoriteCourts();
+  }
+
+  @override
+  void didUpdateWidget(covariant HomePage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _fetchCourts();
+    _fetchFavoriteCourts();
+  }
+
   Future<void> _fetchCourts() async {
     await courtStore.getCourts();
     setState(() {

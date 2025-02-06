@@ -47,7 +47,14 @@ class CourtRepository implements ICourtRepository {
     final response = await dio.get('/courts/$courtId');
 
     if (response.statusCode == 200) {
-      return CourtModel.fromMap(response.data);
+      final data = response.data;
+      if (data is Map<String, dynamic>) {
+        return CourtModel.fromMap(data);
+      } else if (data is List && data.isNotEmpty && data[0] is Map<String, dynamic>) {
+        return CourtModel.fromMap(data[0]);
+      } else {
+        throw Exception("Invalid data format");
+      }
     } else if (response.statusCode == 404) {
       throw NotFoundException('Quadra não encontrada');
     } else {

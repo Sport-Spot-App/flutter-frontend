@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:sport_spot/common/constants/app_colors.dart';
+import 'package:sport_spot/common/utils/user_map.dart';
 import 'package:sport_spot/models/booking_model.dart';
+import 'package:sport_spot/models/court_model.dart';
 import 'package:sport_spot/repositories/booking_repository.dart';
 import 'package:sport_spot/api/api.dart';
+import 'package:sport_spot/repositories/court_repository.dart';
 import 'package:sport_spot/repositories/user_repository.dart';
 import 'package:sport_spot/models/user_model.dart';
+import 'package:sport_spot/stores/booking_store.dart';
+import 'package:intl/intl.dart';
 
 class BookingHistoryPage extends StatefulWidget {
   BookingHistoryPage({super.key});
@@ -12,114 +18,205 @@ class BookingHistoryPage extends StatefulWidget {
   _BookingHistoryPageState createState() => _BookingHistoryPageState();
 }
 
+class BookingWithDetails {
+  final BookingModel booking;
+  final CourtModel court;
+  final UserModel user;
+  final UserModel owner;
+
+  BookingWithDetails({
+    required this.booking,
+    required this.court,
+    required this.user,
+    required this.owner,
+  });
+}
+
+class StatusInfo {
+  final Color color;
+  final String text;
+
+  StatusInfo({required this.color, required this.text});
+}
+
 class _BookingHistoryPageState extends State<BookingHistoryPage> {
   final BookingRepository bookingRepository = BookingRepository(Api());
+  final BookingStore bookingStore = BookingStore(repository: BookingRepository(Api()));
+  final CourtRepository courtRepository = CourtRepository(Api());
   final UserRepository userRepository = UserRepository(Api());
-  late Future<List<BookingModel>> futureBookings;
+  UserModel? authUser;
+  List<BookingWithDetails> bookings = [];
+  bool isLoading = true;
+  int? approvingBookingId;
 
   @override
   void initState() {
     super.initState();
-    futureBookings = bookingRepository.getBookings();
+    _loadUser();
+    fetchBookings(); // Call fetchBookings to load the bookings
+  }
+
+  Future<void> fetchBookings() async {
+    await bookingStore.getBookings();
+    List<BookingModel> fetchedBookings = bookingStore.state.value;
+    print('Fetched bookings: $fetchedBookings');
+    List<BookingWithDetails> bookingsWithDetails = [];
+    for (var booking in fetchedBookings) {
+      try {
+        final court = await courtRepository.getCourt(booking.court_id);
+        final user = await userRepository.getUser(booking.user_id!);
+        final owner = await userRepository.getUser(court.user_id!);
+        bookingsWithDetails.add(BookingWithDetails(
+          booking: booking,
+          court: court,
+          user: user,
+          owner: owner,
+        ));
+      } catch (e) {
+        Exception('Erro ao buscar reservas: $e');
+      }
+    }
+
+    if (mounted) {
+      setState(() {
+        bookings = bookingsWithDetails;
+        isLoading = false;
+      });
+    }
+  }
+
+      Future<void> _loadUser() async {
+      final loadedUser = await UserMap.getUserMap();
+      setState(() {
+        authUser = loadedUser;
+      });
+    }
+
+    Future<void> _approveBooking(int bookingId, int value) async {
+      setState(() {
+        approvingBookingId = bookingId;
+      });
+      await bookingStore.approveBooking(bookingId, value);
+      await fetchBookings();
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              value == 1 ? 'Reserva aprovada com sucesso!' : 'Reserva rejeitada com sucesso!',
+            ),
+            backgroundColor: value == 1 ? Colors.green : Colors.red,
+            duration: Duration(seconds: 2),
+          ),
+        );
+        setState(() {
+          approvingBookingId = null;
+        });
+      }
+    }
+
+
+
+  StatusInfo getStatus(int status) {
+    if (status == 0) {
+      return StatusInfo(color: const Color.fromARGB(202, 67, 136, 131), text: "Pendente");
+    } else if (status == 1) {
+      return StatusInfo(color: Colors.green, text: "Aprovado");
+    } else if (status == 3) {
+      return StatusInfo(color: Colors.red, text: "Rejeitado");
+    } else {
+      return StatusInfo(color: const Color.fromARGB(0, 255, 255, 255), text: "");
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: FutureBuilder<List<BookingModel>>(
-        future: futureBookings,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Erro: ${snapshot.error}'));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('Nenhuma reserva encontrada'));
-          } else {
-            final bookings = snapshot.data!;
-            return ListView.builder(
+      body: isLoading
+          ? Center(child: CircularProgressIndicator())
+          : ListView.builder(
               itemCount: bookings.length,
               itemBuilder: (context, index) {
-                final booking = bookings[index];
-                return FutureBuilder<UserModel>(
-                  future: userRepository.getUser(booking.user_id!),
-                  builder: (context, userSnapshot) {
-                    if (userSnapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
-                    } else if (userSnapshot.hasError) {
-                      return Center(child: Text('Erro: ${userSnapshot.error}'));
-                    } else if (!userSnapshot.hasData) {
-                      return const Center(child: Text('Usuário não encontrado'));
-                    } else {
-                      final user = userSnapshot.data!;
-                      return Card(
-                        margin: const EdgeInsets.all(10),
-                        child: ListTile(
-                          leading: ClipRRect(
-                            borderRadius: BorderRadius.circular(8.0),
-                            child: Image.network(
-                              'https://cdn.sqhk.co/2020newsportcourt/2023/8/etghh2i/MapleSelect_B-ball,Pickleball_HerberCity_2.jpg',
-                              width: 60,
-                              height: 60,
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) {
-                                return const Icon(Icons.error);
-                              },
-                            ),
+                final bookingWithDetails = bookings[index];
+                final booking = bookingWithDetails.booking;
+                final court = bookingWithDetails.court;
+                final user = bookingWithDetails.user;
+                final owner = bookingWithDetails.owner;
+                final DateFormat dateFormat = DateFormat('HH:mm');
+                final DateFormat dateFullFormat = DateFormat('dd/MM/yyyy');
+                final String formattedStart = dateFormat.format(booking.start_datetime);
+                final String formattedEnd = dateFormat.format(booking.end_datetime);
+                final String formattedDate = dateFullFormat.format(booking.start_datetime);
+                final statusInfo = getStatus(booking.status!);
+                return Card(
+                  margin: const EdgeInsets.all(10),
+                  child: ListTile(
+                    leading: ClipRRect(
+                      borderRadius: BorderRadius.circular(8.0),
+                      child: const Icon(Icons.image_not_supported, size: 60),
+                    ),
+                    title: Text(
+                      court.name,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Atleta: ${user.name}'),
+                        Text('Proprietário: ${owner.name}'),
+                        Text('$formattedDate'),
+                        Text('Das $formattedStart até $formattedEnd'),
+                        Container(
+                          margin: const EdgeInsets.only(top: 5),
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: statusInfo.color,
+                            borderRadius: BorderRadius.circular(8),
                           ),
-                          title: Text(
-                            'Quadra ${booking.court_id}',
-                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          child: Text(
+                            statusInfo.text,
+                            style: const TextStyle(color: Colors.white, fontSize: 10),
                           ),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('Proprietário: ${user.name}'),
-                              Text(
-                                  '${booking.start_datetime} - ${booking.end_datetime}'),
-                              Container(
-                                margin: const EdgeInsets.only(top: 5),
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 4),
-                                decoration: BoxDecoration(
-                                  color: getStatusColor(booking.status),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Text(
-                                  booking.status!
-                                      ? 'Confirmado'
-                                      : 'Aguardando Aprovação',
-                                  style: const TextStyle(
-                                      color: Colors.white, fontSize: 12),
-                                ),
-                              ),
-                            ],
-                          ),
-                          trailing: !booking.status!
-                              ? ElevatedButton(
-                                  onPressed: () {},
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.orange,
-                                    foregroundColor: Colors.white,
-                                  ),
-                                  child: const Text('Cancelar'),
-                                )
-                              : null,
                         ),
-                      );
-                    }
-                  },
+                      ],
+                    ),
+                  
+                    trailing: booking.status == 0 && authUser?.id == owner.id
+                        ? Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              approvingBookingId == booking.id
+                                  ? CircularProgressIndicator()
+                                  : ElevatedButton(
+                                      onPressed: () {
+                                        _approveBooking(booking.id!, 1);
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: AppColors.green,
+                                        foregroundColor: Colors.white,
+                                      ),
+                                      child: const Text('Aprovar'),
+                                    ),
+                              SizedBox(width: 8),
+                              approvingBookingId == booking.id
+                                  ? SizedBox.shrink()
+                                  : ElevatedButton(
+                                      onPressed: () {
+                                        _approveBooking(booking.id!, 3);
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: AppColors.darkOrange,
+                                        foregroundColor: Colors.white,
+                                      ),
+                                      child: const Text('Reprovar'),
+                                    ),
+                            ],
+                          )
+                        : null,
+                  ),
                 );
               },
-            );
-          }
-        },
-      ),
+            ),
     );
-  }
-
-  Color getStatusColor(bool? status) {
-    if (status == null) return Colors.blue;
-    return status ? Colors.green : Colors.yellow;
   }
 }

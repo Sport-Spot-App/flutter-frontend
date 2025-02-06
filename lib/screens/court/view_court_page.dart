@@ -2,7 +2,9 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:sport_spot/api/api.dart';
 import 'package:sport_spot/common/constants/app_colors.dart';
+import 'package:sport_spot/common/utils/user_map.dart';
 import 'package:sport_spot/models/court_model.dart';
+import 'package:sport_spot/models/user_model.dart';
 import 'package:sport_spot/repositories/court_repository.dart';
 import 'package:sport_spot/screens/court/court_booking.dart';
 import 'package:sport_spot/screens/map/court_map_page.dart';
@@ -22,6 +24,7 @@ class _ViewCourtPageState extends State<ViewCourtPage> {
   final CourtStore courtStore = CourtStore(repository: CourtRepository(Api()));
   bool isFavorite = false;
   int currentIndex = 0;
+  UserModel? authUser;
   List<String> diasFuncionamento = [];
   String initialHour = "";
   String finalHour = "";
@@ -39,7 +42,14 @@ class _ViewCourtPageState extends State<ViewCourtPage> {
   @override
   void initState() {
     _checkIfFavorite();
-    diasFuncionamento = dias.where((day) => widget.court.work_days!.contains( day["key"] ))
+    _loadUser();
+  }
+        Future<void> _loadUser() async {
+      final loadedUser = await UserMap.getUserMap();
+      setState(() {
+        authUser = loadedUser;
+      });
+      diasFuncionamento = dias.where((day) => widget.court.work_days!.contains( day["key"] ))
                           .map<String>((day) => day["label"])
                           .toList();
 
@@ -68,6 +78,7 @@ class _ViewCourtPageState extends State<ViewCourtPage> {
       isFavorite = courtStore.favoriteCourtIds.value.contains(widget.court.id);
     });
   }
+
 
   Future<void> _toggleFavorite() async {
     await courtStore.favoriteCourt(widget.court.id!);
@@ -179,6 +190,7 @@ class _ViewCourtPageState extends State<ViewCourtPage> {
               },
               child: Text("Ver no mapa", style: TextStyle(color: Colors.white)),
             ),
+            if (authUser?.role != 2)
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.darkOrange,

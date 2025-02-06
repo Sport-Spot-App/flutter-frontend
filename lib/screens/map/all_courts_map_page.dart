@@ -32,8 +32,17 @@ class _AllCourtsMapPageState extends State<AllCourtsMapPage> {
         });
       }
     } catch (e) {
-      // Handle error
-      print('Error fetching courts: $e');
+      if (mounted) {
+        setState(() {
+          courtList = [];
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error fetching courts: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 
