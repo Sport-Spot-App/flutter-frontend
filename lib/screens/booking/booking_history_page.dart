@@ -31,6 +31,13 @@ class BookingWithDetails {
   });
 }
 
+class StatusInfo {
+  final Color color;
+  final String text;
+
+  StatusInfo({required this.color, required this.text});
+}
+
 class _BookingHistoryPageState extends State<BookingHistoryPage> {
   final BookingRepository bookingRepository = BookingRepository(Api());
   final BookingStore bookingStore = BookingStore(repository: BookingRepository(Api()));
@@ -62,7 +69,7 @@ class _BookingHistoryPageState extends State<BookingHistoryPage> {
           owner: owner,
         ));
       } catch (e) {
-        print("Error fetching details for booking: $e");
+        Exception('Erro ao buscar reservas: $e');
       }
     }
 
@@ -74,31 +81,20 @@ class _BookingHistoryPageState extends State<BookingHistoryPage> {
     }
   }
 
-  _approveBooking(int bookingId) async {
-    await bookingStore.approveBooking(bookingId);
-    final newBookings = await bookingRepository.getBookings();
+  Future<void> _approveBooking(int bookingId) async {
+    await bookingStore.approveBooking(bookingId, 2);
+    await fetchBookings();
+  }
 
-    List<BookingWithDetails> updatedBookingsWithDetails = [];
-    for (var booking in newBookings) {
-      try {
-        final court = await courtRepository.getCourt(booking.court_id);
-        final owner = await userRepository.getUser(court.user_id!);
-        final user = await userRepository.getUser(booking.user_id!);
-        updatedBookingsWithDetails.add(BookingWithDetails(
-          booking: booking,
-          court: court,
-          owner: owner,
-          user: user,
-        ));
-      } catch (e) {
-        print("Error fetching details for booking: $e");
-      }
-    }
-
-    if (mounted) {
-      setState(() {
-        bookings = updatedBookingsWithDetails;
-      });
+  StatusInfo getStatus(int status) {
+    if (status == 0) {
+      return StatusInfo(color: const Color.fromARGB(202, 67, 136, 131), text: "Pendente");
+    } else if (status == 1) {
+      return StatusInfo(color: Colors.green, text: "Aprovado");
+    } else if (status == 2) {
+      return StatusInfo(color: Colors.red, text: "Rejeitado");
+    } else {
+      return StatusInfo(color: const Color.fromARGB(0, 255, 255, 255), text: "");
     }
   }
 
@@ -120,6 +116,7 @@ class _BookingHistoryPageState extends State<BookingHistoryPage> {
                 final String formattedStart = dateFormat.format(booking.start_datetime);
                 final String formattedEnd = dateFormat.format(booking.end_datetime);
                 final String formattedDate = dateFullFormat.format(booking.start_datetime);
+                final statusInfo = getStatus(booking.status!);
                 return Card(
                   margin: const EdgeInsets.all(10),
                   child: ListTile(
@@ -142,26 +139,42 @@ class _BookingHistoryPageState extends State<BookingHistoryPage> {
                           margin: const EdgeInsets.only(top: 5),
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
-                            color: getStatusColor(booking.status),
+                            color: statusInfo.color,
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
-                            booking.status! ? 'Confirmado' : 'Aguardando Aprovação',
+                            statusInfo.text,
                             style: const TextStyle(color: Colors.white, fontSize: 10),
                           ),
                         ),
                       ],
                     ),
-                    trailing: !booking.status!
-                        ? ElevatedButton(
-                            onPressed: () {
-                              _approveBooking(booking.id!);
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.darkOrange,
-                              foregroundColor: Colors.white,
-                            ),
-                            child: const Text('Aprovar Reserva'),
+                    trailing: booking.status == 0
+                        ? Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              ElevatedButton(
+                                onPressed: () {
+                                  _approveBooking(booking.id!);
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.green,
+                                  foregroundColor: Colors.white,
+                                ),
+                                child: const Text('Aprovar'),
+                              ),
+                              SizedBox(width: 8),
+                              ElevatedButton(
+                                onPressed: () {
+                                  _approveBooking(booking.id!);
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.darkOrange,
+                                  foregroundColor: Colors.white,
+                                ),
+                                child: const Text('Reprovar'),
+                              ),
+                            ],
                           )
                         : null,
                   ),
@@ -169,11 +182,6 @@ class _BookingHistoryPageState extends State<BookingHistoryPage> {
               },
             ),
     );
-  }
-
-  Color getStatusColor(bool? status) {
-    if (status == null) return Colors.blue;
-    return status ? Colors.green : const Color.fromARGB(202, 67, 136, 131);
   }
 }
 
