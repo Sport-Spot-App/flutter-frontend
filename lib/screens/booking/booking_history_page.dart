@@ -150,69 +150,86 @@ class _BookingHistoryPageState extends State<BookingHistoryPage> {
                 final statusInfo = getStatus(booking.status!);
                 return Card(
                   margin: const EdgeInsets.all(10),
-                  child: ListTile(
-                    leading: ClipRRect(
-                      borderRadius: BorderRadius.circular(8.0),
-                      child: const Icon(Icons.image_not_supported, size: 60),
-                    ),
-                    title: Text(
-                      court.name,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Atleta: ${user.name}'),
-                        Text('Proprietário: ${owner.name}'),
-                        Text('$formattedDate'),
-                        Text('Das $formattedStart até $formattedEnd'),
-                        Container(
-                          margin: const EdgeInsets.only(top: 5),
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: statusInfo.color,
-                            borderRadius: BorderRadius.circular(8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ListTile(
+                        leading: ClipRRect(
+                          borderRadius: BorderRadius.circular(8.0),
+                          child: court.photos != null && court.photos!.isNotEmpty
+                              ? Image.network(
+                                  "https://sportspott.tech/storage/${court.photos![0].path}",
+                                  width: 60,
+                                  height: 60,
+                                  fit: BoxFit.cover,
+                                )
+                              :
+                          const Icon(Icons.image_not_supported, size: 60),
+                        ),
+                        title: Text(
+                          court.name,
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Atleta: ${user.name}'),
+                            Text('Proprietário: ${owner.name}'),
+                            Text('$formattedDate'),
+                            Text('Das $formattedStart até $formattedEnd'),
+                            Container(
+                              margin: const EdgeInsets.only(top: 5),
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: statusInfo.color,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Text(
+                                statusInfo.text,
+                                style: const TextStyle(color: Colors.white, fontSize: 10),
+                              ),
+                            ),
+                          ],
+                        ),
+                        trailing: null,
+                      ),
+                      if (booking.status == 0 && authUser?.id == owner.id)
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Center(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                            approvingBookingId == booking.id
+                              ? CircularProgressIndicator()
+                              : ElevatedButton(
+                                onPressed: () {
+                                  _approveBooking(booking.id!, 1);
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.green,
+                                  foregroundColor: Colors.white,
+                                ),
+                                child: const Text('Aprovar'),
+                                ),
+                            SizedBox(width: 8),
+                            approvingBookingId == booking.id
+                              ? SizedBox.shrink()
+                              : ElevatedButton(
+                                onPressed: () {
+                                  _approveBooking(booking.id!, 3);
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.darkOrange,
+                                  foregroundColor: Colors.white,
+                                ),
+                                child: const Text('Reprovar'),
+                                ),
+                            ],
                           ),
-                          child: Text(
-                            statusInfo.text,
-                            style: const TextStyle(color: Colors.white, fontSize: 10),
                           ),
                         ),
-                      ],
-                    ),
-                  
-                    trailing: booking.status == 0 && authUser?.id == owner.id
-                        ? Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              approvingBookingId == booking.id
-                                  ? CircularProgressIndicator()
-                                  : ElevatedButton(
-                                      onPressed: () {
-                                        _approveBooking(booking.id!, 1);
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: AppColors.green,
-                                        foregroundColor: Colors.white,
-                                      ),
-                                      child: const Text('Aprovar'),
-                                    ),
-                              SizedBox(width: 8),
-                              approvingBookingId == booking.id
-                                  ? SizedBox.shrink()
-                                  : ElevatedButton(
-                                      onPressed: () {
-                                        _approveBooking(booking.id!, 3);
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: AppColors.darkOrange,
-                                        foregroundColor: Colors.white,
-                                      ),
-                                      child: const Text('Reprovar'),
-                                    ),
-                            ],
-                          )
-                        : null,
+                    ],
                   ),
                 );
               },
