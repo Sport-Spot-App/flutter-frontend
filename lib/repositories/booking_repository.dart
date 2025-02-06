@@ -33,8 +33,6 @@ Future<List<BookingModel>> getBookings() async {
         }
       }
     }
-
-    print('bookings: $bookings');
     return bookings;
   } else if (response.statusCode == 404) {
     throw NotFoundException('A URL informada não é válida');
