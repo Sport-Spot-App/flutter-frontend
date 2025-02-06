@@ -47,17 +47,21 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _fetchCourts() async {
     await courtStore.getCourts();
-    setState(() {
-      filteredCourts = courtStore.state.value;
-      isLoading = false;
-    });
+    if (mounted) {
+      setState(() {
+        filteredCourts = courtStore.state.value;
+        isLoading = false;
+      });
+    }
   }
 
   Future<void> _fetchFavoriteCourts() async {
     await courtStore.getFavoriteCourts();
-    setState(() {
-      favoriteCourtIds = courtStore.favoriteCourtIds.value;
-    });
+    if (mounted) {
+      setState(() {
+        favoriteCourtIds = courtStore.favoriteCourtIds.value;
+      });
+    }
   }
 
   void _filterCourts(String query) {
