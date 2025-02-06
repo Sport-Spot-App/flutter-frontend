@@ -138,18 +138,11 @@ class _CourtBookingPageState extends State<CourtBookingPage> {
   Stream<List<DateTimeRange>> _getBookedSlots({required DateTime start, required DateTime end}) async* {
     try {
       final bookings = await bookingStore.getBookingsByCourtId(widget.court.id!.toString());
-      final blockedBookings = await bookingStore.getBlockedBookings(widget.court.id!.toString(), authUser!.id.toString());
-      final blockedRanges = blockedBookings.map((booking) => DateTimeRange(
-        start: booking.start_datetime,
-        end: booking.end_datetime,
-      )).toList();
 
       final bookedRanges = bookings.map((booking) => DateTimeRange(
         start: booking.start_datetime,
         end: booking.end_datetime,
       )).toList();
-
-      bookedRanges.removeWhere((booked) => blockedRanges.any((blocked) => booked.start == blocked.start && booked.end == blocked.end));
 
       yield bookedRanges;
     } catch (e) {
