@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sport_spot/common/constants/app_colors.dart';
+import 'package:sport_spot/common/utils/user_map.dart';
 import 'package:sport_spot/models/booking_model.dart';
 import 'package:sport_spot/models/court_model.dart';
 import 'package:sport_spot/repositories/booking_repository.dart';
@@ -43,12 +44,15 @@ class _BookingHistoryPageState extends State<BookingHistoryPage> {
   final BookingStore bookingStore = BookingStore(repository: BookingRepository(Api()));
   final CourtRepository courtRepository = CourtRepository(Api());
   final UserRepository userRepository = UserRepository(Api());
+  UserModel? authUser;
   List<BookingWithDetails> bookings = [];
   bool isLoading = true;
+  int? approvingBookingId;
 
   @override
   void initState() {
     super.initState();
+    _loadUser();
     fetchBookings(); // Call fetchBookings to load the bookings
   }
 
@@ -81,10 +85,37 @@ class _BookingHistoryPageState extends State<BookingHistoryPage> {
     }
   }
 
-  Future<void> _approveBooking(int bookingId, int value) async {
-    await bookingStore.approveBooking(bookingId, value);
-    await fetchBookings();
-  }
+      Future<void> _loadUser() async {
+      final loadedUser = await UserMap.getUserMap();
+      setState(() {
+        authUser = loadedUser;
+      });
+    }
+
+    Future<void> _approveBooking(int bookingId, int value) async {
+      setState(() {
+        approvingBookingId = bookingId;
+      });
+      await bookingStore.approveBooking(bookingId, value);
+      await fetchBookings();
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              value == 1 ? 'Reserva aprovada com sucesso!' : 'Reserva rejeitada com sucesso!',
+            ),
+            backgroundColor: value == 1 ? Colors.green : Colors.red,
+            duration: Duration(seconds: 2),
+          ),
+        );
+        setState(() {
+          approvingBookingId = null;
+        });
+      }
+    }
+
+
 
   StatusInfo getStatus(int status) {
     if (status == 0) {
@@ -149,31 +180,36 @@ class _BookingHistoryPageState extends State<BookingHistoryPage> {
                         ),
                       ],
                     ),
-                    trailing: booking.status == 0
+                  
+                    trailing: booking.status == 0 && authUser?.id == owner.id
                         ? Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              ElevatedButton(
-                                onPressed: () {
-                                  _approveBooking(booking.id!, 1);
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.green,
-                                  foregroundColor: Colors.white,
-                                ),
-                                child: const Text('Aprovar'),
-                              ),
+                              approvingBookingId == booking.id
+                                  ? CircularProgressIndicator()
+                                  : ElevatedButton(
+                                      onPressed: () {
+                                        _approveBooking(booking.id!, 1);
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: AppColors.green,
+                                        foregroundColor: Colors.white,
+                                      ),
+                                      child: const Text('Aprovar'),
+                                    ),
                               SizedBox(width: 8),
-                              ElevatedButton(
-                                onPressed: () {
-                                  _approveBooking(booking.id!, 3);
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.darkOrange,
-                                  foregroundColor: Colors.white,
-                                ),
-                                child: const Text('Reprovar'),
-                              ),
+                              approvingBookingId == booking.id
+                                  ? SizedBox.shrink()
+                                  : ElevatedButton(
+                                      onPressed: () {
+                                        _approveBooking(booking.id!, 3);
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: AppColors.darkOrange,
+                                        foregroundColor: Colors.white,
+                                      ),
+                                      child: const Text('Reprovar'),
+                                    ),
                             ],
                           )
                         : null,
@@ -184,5 +220,3 @@ class _BookingHistoryPageState extends State<BookingHistoryPage> {
     );
   }
 }
-
-
